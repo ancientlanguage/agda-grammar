@@ -1,67 +1,17 @@
-module Language.Greek.Script where
+module Language.Greek.AbstractConcrete where
 
 open import Agda.Builtin.Equality
-open import Agda.Primitive
-open import Prelude.Function
 open import Prelude.Product
 open import Prelude.Maybe
-
-data ConcreteLetter : Set where
-  Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ′ Τ Υ Φ Χ Ψ Ω α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ ς τ υ φ χ ψ ω : ConcreteLetter
-
-data Mark : Set where
-  acute grave circumflex smooth rough diaeresis iotaSubscript : Mark
-
-data AbstractLetter : Set where
-  α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ τ υ φ χ ψ ω : AbstractLetter
-
-data LetterCase : Set where
-  uppercase lowercase : LetterCase
-
-data Final : Set where
-  isFinal notFinal : Final
-
-data AbstractCombo : AbstractLetter → LetterCase → Maybe Final → Set where
-  α : (c : LetterCase) → AbstractCombo α c nothing
-  β : (c : LetterCase) → AbstractCombo β c nothing
-  γ : (c : LetterCase) → AbstractCombo γ c nothing
-  δ : (c : LetterCase) → AbstractCombo δ c nothing
-  ε : (c : LetterCase) → AbstractCombo ε c nothing
-  ζ : (c : LetterCase) → AbstractCombo ζ c nothing
-  η : (c : LetterCase) → AbstractCombo η c nothing
-  θ : (c : LetterCase) → AbstractCombo θ c nothing
-  ι : (c : LetterCase) → AbstractCombo ι c nothing
-  κ : (c : LetterCase) → AbstractCombo κ c nothing
-  ƛ : (c : LetterCase) → AbstractCombo ƛ c nothing
-  μ : (c : LetterCase) → AbstractCombo μ c nothing
-  ν : (c : LetterCase) → AbstractCombo ν c nothing
-  ξ : (c : LetterCase) → AbstractCombo ξ c nothing
-  ο : (c : LetterCase) → AbstractCombo ο c nothing
-  π : (c : LetterCase) → AbstractCombo π c nothing
-  ρ : (c : LetterCase) → AbstractCombo ρ c nothing
-  Σ′ : AbstractCombo σ uppercase nothing
-  σ : (f : Final) -> AbstractCombo σ lowercase (just f)
-  τ : (c : LetterCase) → AbstractCombo τ c nothing
-  υ : (c : LetterCase) → AbstractCombo υ c nothing
-  φ : (c : LetterCase) → AbstractCombo φ c nothing
-  χ : (c : LetterCase) → AbstractCombo χ c nothing
-  ψ : (c : LetterCase) → AbstractCombo ψ c nothing
-  ω : (c : LetterCase) → AbstractCombo ω c nothing
-
-data WrappedCombo : Set where
-  combo
-    : (Σ AbstractLetter λ l
-      → Σ LetterCase λ c
-      → Σ (Maybe Final) λ f
-      → AbstractCombo l c f)
-    → WrappedCombo
+open import Language.Greek.Concrete renaming (Letter to ConcreteLetter)
+open import Language.Greek.Abstract renaming (Letter to AbstractLetter)
 
 abstractLetter
   : ConcreteLetter
   → Σ AbstractLetter λ l
-    → Σ LetterCase λ c
+    → Σ Case λ c
     → Σ (Maybe Final) λ f
-    → AbstractCombo l c f
+    → Combo l c f
 abstractLetter Α = α , uppercase , nothing , α _
 abstractLetter Β = β , uppercase , nothing , β _
 abstractLetter Γ = γ , uppercase , nothing , γ _
@@ -114,9 +64,9 @@ abstractLetter ω = ω , lowercase , nothing , ω _
 
 abstractLetterInv
   : {l : AbstractLetter}
-  → {c : LetterCase}
+  → {c : Case}
   → {f : Maybe Final}
-  → AbstractCombo l c f
+  → Combo l c f
   → ConcreteLetter
 abstractLetterInv (α uppercase) = Α
 abstractLetterInv (α lowercase) = α
@@ -170,9 +120,9 @@ abstractLetterInv (ω lowercase) = ω
 
 abstractLetterEquiv
   : (a : Σ AbstractLetter λ l
-    → Σ LetterCase λ c
+    → Σ Case λ c
     → Σ (Maybe Final) λ f
-    → AbstractCombo l c f)
+    → Combo l c f)
   → a ≡ abstractLetter (abstractLetterInv (snd (snd (snd a))))
 abstractLetterEquiv (α , uppercase , nothing , α .uppercase) = refl
 abstractLetterEquiv (α , lowercase , nothing , α .lowercase) = refl
