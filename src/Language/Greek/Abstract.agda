@@ -37,3 +37,11 @@ data Combo : Letter → Case → Maybe Final → Set where
   χ : (c : Case) → Combo χ c nothing
   ψ : (c : Case) → Combo ψ c nothing
   ω : (c : Case) → Combo ω c nothing
+
+data ComboEx : Set where
+  combo
+    : {l : Letter}
+    → {c : Case}
+    → {f : Maybe Final}
+    → Combo l c f
+    → ComboEx
