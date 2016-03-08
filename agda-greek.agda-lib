@@ -1,2 +1,5 @@
 name: agda-greek
-include: src
+include:
+  src
+  ../agda-prelude/src
+

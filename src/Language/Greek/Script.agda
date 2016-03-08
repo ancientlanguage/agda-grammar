@@ -2,6 +2,8 @@ module Language.Greek.Script where
 
 open import Agda.Builtin.Equality
 open import Agda.Primitive
+open import Prelude.Product renaming (Σ to Sg)
+open import Prelude.Maybe
 
 data ConcreteLetter : Set where
   Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ ς τ υ φ χ ψ ω : ConcreteLetter
@@ -197,3 +199,161 @@ concreteAbstractEquiv φ = refl
 concreteAbstractEquiv χ = refl
 concreteAbstractEquiv ψ = refl
 concreteAbstractEquiv ω = refl
+
+
+data Final : Set where
+  n/a isFinal notFinal : Final
+
+abstractLetterF : ConcreteLetter → AbstractLetter × LetterCase × Final
+abstractLetterF Α = α , uppercase , n/a
+abstractLetterF Β = β , uppercase , n/a
+abstractLetterF Γ = γ , uppercase , n/a
+abstractLetterF Δ = δ , uppercase , n/a
+abstractLetterF Ε = ε , uppercase , n/a
+abstractLetterF Ζ = ζ , uppercase , n/a
+abstractLetterF Η = η , uppercase , n/a
+abstractLetterF Θ = θ , uppercase , n/a
+abstractLetterF Ι = ι , uppercase , n/a
+abstractLetterF Κ = κ , uppercase , n/a
+abstractLetterF Λ = ƛ , uppercase , n/a
+abstractLetterF Μ = μ , uppercase , n/a
+abstractLetterF Ν = ν , uppercase , n/a
+abstractLetterF Ξ = ξ , uppercase , n/a
+abstractLetterF Ο = ο , uppercase , n/a
+abstractLetterF Π = π , uppercase , n/a
+abstractLetterF Ρ = ρ , uppercase , n/a
+abstractLetterF Σ = σ , uppercase , n/a
+abstractLetterF Τ = τ , uppercase , n/a
+abstractLetterF Υ = υ , uppercase , n/a
+abstractLetterF Φ = φ , uppercase , n/a
+abstractLetterF Χ = χ , uppercase , n/a
+abstractLetterF Ψ = ψ , uppercase , n/a
+abstractLetterF Ω = ω , uppercase , n/a
+abstractLetterF α = α , lowercase , n/a
+abstractLetterF β = β , lowercase , n/a
+abstractLetterF γ = γ , lowercase , n/a
+abstractLetterF δ = δ , lowercase , n/a
+abstractLetterF ε = ε , lowercase , n/a
+abstractLetterF ζ = ζ , lowercase , n/a
+abstractLetterF η = η , lowercase , n/a
+abstractLetterF θ = θ , lowercase , n/a
+abstractLetterF ι = ι , lowercase , n/a
+abstractLetterF κ = κ , lowercase , n/a
+abstractLetterF ƛ = ƛ , lowercase , n/a
+abstractLetterF μ = μ , lowercase , n/a
+abstractLetterF ν = ν , lowercase , n/a
+abstractLetterF ξ = ξ , lowercase , n/a
+abstractLetterF ο = ο , lowercase , n/a
+abstractLetterF π = π , lowercase , n/a
+abstractLetterF ρ = ρ , lowercase , n/a
+abstractLetterF σ = σ , lowercase , notFinal
+abstractLetterF ς = σ , lowercase , isFinal
+abstractLetterF τ = τ , lowercase , n/a
+abstractLetterF υ = υ , lowercase , n/a
+abstractLetterF φ = φ , lowercase , n/a
+abstractLetterF χ = χ , lowercase , n/a
+abstractLetterF ψ = ψ , lowercase , n/a
+abstractLetterF ω = ω , lowercase , n/a
+
+abstractLetterFInv : AbstractLetter × LetterCase × Final → Maybe ConcreteLetter
+abstractLetterFInv (α , uppercase , n/a) = just Α
+abstractLetterFInv (α , lowercase , n/a) = just α
+abstractLetterFInv (β , uppercase , n/a) = just Β
+abstractLetterFInv (β , lowercase , n/a) = just β
+abstractLetterFInv (γ , uppercase , n/a) = just Γ
+abstractLetterFInv (γ , lowercase , n/a) = just γ
+abstractLetterFInv (δ , uppercase , n/a) = just Δ
+abstractLetterFInv (δ , lowercase , n/a) = just δ
+abstractLetterFInv (ε , uppercase , n/a) = just Ε
+abstractLetterFInv (ε , lowercase , n/a) = just ε
+abstractLetterFInv (ζ , uppercase , n/a) = just Ζ
+abstractLetterFInv (ζ , lowercase , n/a) = just ζ
+abstractLetterFInv (η , uppercase , n/a) = just Η
+abstractLetterFInv (η , lowercase , n/a) = just η
+abstractLetterFInv (θ , uppercase , n/a) = just Θ
+abstractLetterFInv (θ , lowercase , n/a) = just θ
+abstractLetterFInv (ι , uppercase , n/a) = just Ι
+abstractLetterFInv (ι , lowercase , n/a) = just ι
+abstractLetterFInv (κ , uppercase , n/a) = just Κ
+abstractLetterFInv (κ , lowercase , n/a) = just κ
+abstractLetterFInv (ƛ , uppercase , n/a) = just Λ
+abstractLetterFInv (ƛ , lowercase , n/a) = just ƛ
+abstractLetterFInv (μ , uppercase , n/a) = just Μ
+abstractLetterFInv (μ , lowercase , n/a) = just μ
+abstractLetterFInv (ν , uppercase , n/a) = just Ν
+abstractLetterFInv (ν , lowercase , n/a) = just ν
+abstractLetterFInv (ξ , uppercase , n/a) = just Ξ
+abstractLetterFInv (ξ , lowercase , n/a) = just ξ
+abstractLetterFInv (ο , uppercase , n/a) = just Ο
+abstractLetterFInv (ο , lowercase , n/a) = just ο
+abstractLetterFInv (π , uppercase , n/a) = just Π
+abstractLetterFInv (π , lowercase , n/a) = just π
+abstractLetterFInv (ρ , uppercase , n/a) = just Ρ
+abstractLetterFInv (ρ , lowercase , n/a) = just ρ
+abstractLetterFInv (σ , uppercase , n/a) = just Σ
+abstractLetterFInv (σ , lowercase , isFinal) = just ς
+abstractLetterFInv (σ , lowercase , notFinal) = just σ
+abstractLetterFInv (τ , uppercase , n/a) = just Τ
+abstractLetterFInv (τ , lowercase , n/a) = just τ
+abstractLetterFInv (υ , uppercase , n/a) = just Υ
+abstractLetterFInv (υ , lowercase , n/a) = just υ
+abstractLetterFInv (φ , uppercase , n/a) = just Φ
+abstractLetterFInv (φ , lowercase , n/a) = just φ
+abstractLetterFInv (χ , uppercase , n/a) = just Χ
+abstractLetterFInv (χ , lowercase , n/a) = just χ
+abstractLetterFInv (ψ , uppercase , n/a) = just Ψ
+abstractLetterFInv (ψ , lowercase , n/a) = just ψ
+abstractLetterFInv (ω , uppercase , n/a) = just Ω
+abstractLetterFInv (ω , lowercase , n/a) = just ω
+abstractLetterFInv _ = nothing
+
+concreteAbstractFEquiv : (l : ConcreteLetter) → (abstractLetterFInv (abstractLetterF l) ≡ just l)
+concreteAbstractFEquiv Α = refl
+concreteAbstractFEquiv Β = refl
+concreteAbstractFEquiv Γ = refl
+concreteAbstractFEquiv Δ = refl
+concreteAbstractFEquiv Ε = refl
+concreteAbstractFEquiv Ζ = refl
+concreteAbstractFEquiv Η = refl
+concreteAbstractFEquiv Θ = refl
+concreteAbstractFEquiv Ι = refl
+concreteAbstractFEquiv Κ = refl
+concreteAbstractFEquiv Λ = refl
+concreteAbstractFEquiv Μ = refl
+concreteAbstractFEquiv Ν = refl
+concreteAbstractFEquiv Ξ = refl
+concreteAbstractFEquiv Ο = refl
+concreteAbstractFEquiv Π = refl
+concreteAbstractFEquiv Ρ = refl
+concreteAbstractFEquiv Σ = refl
+concreteAbstractFEquiv Τ = refl
+concreteAbstractFEquiv Υ = refl
+concreteAbstractFEquiv Φ = refl
+concreteAbstractFEquiv Χ = refl
+concreteAbstractFEquiv Ψ = refl
+concreteAbstractFEquiv Ω = refl
+concreteAbstractFEquiv α = refl
+concreteAbstractFEquiv β = refl
+concreteAbstractFEquiv γ = refl
+concreteAbstractFEquiv δ = refl
+concreteAbstractFEquiv ε = refl
+concreteAbstractFEquiv ζ = refl
+concreteAbstractFEquiv η = refl
+concreteAbstractFEquiv θ = refl
+concreteAbstractFEquiv ι = refl
+concreteAbstractFEquiv κ = refl
+concreteAbstractFEquiv ƛ = refl
+concreteAbstractFEquiv μ = refl
+concreteAbstractFEquiv ν = refl
+concreteAbstractFEquiv ξ = refl
+concreteAbstractFEquiv ο = refl
+concreteAbstractFEquiv π = refl
+concreteAbstractFEquiv ρ = refl
+concreteAbstractFEquiv σ = refl
+concreteAbstractFEquiv ς = refl
+concreteAbstractFEquiv τ = refl
+concreteAbstractFEquiv υ = refl
+concreteAbstractFEquiv φ = refl
+concreteAbstractFEquiv χ = refl
+concreteAbstractFEquiv ψ = refl
+concreteAbstractFEquiv ω = refl
