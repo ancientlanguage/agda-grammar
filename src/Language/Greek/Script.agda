@@ -48,6 +48,14 @@ data AbstractCombo : AbstractLetter → LetterCase → Maybe Final → Set where
   ψ : (c : LetterCase) → AbstractCombo ψ c nothing
   ω : (c : LetterCase) → AbstractCombo ω c nothing
 
+data WrappedCombo : Set where
+  combo
+    : (Σ AbstractLetter λ l
+      → Σ LetterCase λ c
+      → Σ (Maybe Final) λ f
+      → AbstractCombo l c f)
+    → WrappedCombo
+
 abstractLetter
   : ConcreteLetter
   → Σ AbstractLetter λ l
@@ -167,102 +175,54 @@ abstractLetterEquiv
     → AbstractCombo l c f)
   → a ≡ abstractLetter (abstractLetterInv (snd (snd (snd a))))
 abstractLetterEquiv (α , uppercase , nothing , α .uppercase) = refl
-abstractLetterEquiv (α , uppercase , just x , ())
 abstractLetterEquiv (α , lowercase , nothing , α .lowercase) = refl
-abstractLetterEquiv (α , lowercase , just x , ())
 abstractLetterEquiv (β , uppercase , nothing , β .uppercase) = refl
-abstractLetterEquiv (β , uppercase , just x , ())
 abstractLetterEquiv (β , lowercase , nothing , β .lowercase) = refl
-abstractLetterEquiv (β , lowercase , just x , ())
 abstractLetterEquiv (γ , uppercase , nothing , γ .uppercase) = refl
-abstractLetterEquiv (γ , uppercase , just x , ())
 abstractLetterEquiv (γ , lowercase , nothing , γ .lowercase) = refl
-abstractLetterEquiv (γ , lowercase , just x , ())
 abstractLetterEquiv (δ , uppercase , nothing , δ .uppercase) = refl
-abstractLetterEquiv (δ , uppercase , just x , ())
 abstractLetterEquiv (δ , lowercase , nothing , δ .lowercase) = refl
-abstractLetterEquiv (δ , lowercase , just x , ())
 abstractLetterEquiv (ε , uppercase , nothing , ε .uppercase) = refl
-abstractLetterEquiv (ε , uppercase , just x , ())
 abstractLetterEquiv (ε , lowercase , nothing , ε .lowercase) = refl
-abstractLetterEquiv (ε , lowercase , just x , ())
 abstractLetterEquiv (ζ , uppercase , nothing , ζ .uppercase) = refl
-abstractLetterEquiv (ζ , uppercase , just x , ())
 abstractLetterEquiv (ζ , lowercase , nothing , ζ .lowercase) = refl
-abstractLetterEquiv (ζ , lowercase , just x , ())
 abstractLetterEquiv (η , uppercase , nothing , η .uppercase) = refl
-abstractLetterEquiv (η , uppercase , just x , ())
 abstractLetterEquiv (η , lowercase , nothing , η .lowercase) = refl
-abstractLetterEquiv (η , lowercase , just x , ())
 abstractLetterEquiv (θ , uppercase , nothing , θ .uppercase) = refl
-abstractLetterEquiv (θ , uppercase , just x , ())
 abstractLetterEquiv (θ , lowercase , nothing , θ .lowercase) = refl
-abstractLetterEquiv (θ , lowercase , just x , ())
 abstractLetterEquiv (ι , uppercase , nothing , ι .uppercase) = refl
-abstractLetterEquiv (ι , uppercase , just x , ())
 abstractLetterEquiv (ι , lowercase , nothing , ι .lowercase) = refl
-abstractLetterEquiv (ι , lowercase , just x , ())
 abstractLetterEquiv (κ , uppercase , nothing , κ .uppercase) = refl
-abstractLetterEquiv (κ , uppercase , just x , ())
 abstractLetterEquiv (κ , lowercase , nothing , κ .lowercase) = refl
-abstractLetterEquiv (κ , lowercase , just x , ())
 abstractLetterEquiv (ƛ , uppercase , nothing , ƛ .uppercase) = refl
-abstractLetterEquiv (ƛ , uppercase , just x , ())
 abstractLetterEquiv (ƛ , lowercase , nothing , ƛ .lowercase) = refl
-abstractLetterEquiv (ƛ , lowercase , just x , ())
 abstractLetterEquiv (μ , uppercase , nothing , μ .uppercase) = refl
-abstractLetterEquiv (μ , uppercase , just x , ())
 abstractLetterEquiv (μ , lowercase , nothing , μ .lowercase) = refl
-abstractLetterEquiv (μ , lowercase , just x , ())
 abstractLetterEquiv (ν , uppercase , nothing , ν .uppercase) = refl
-abstractLetterEquiv (ν , uppercase , just x , ())
 abstractLetterEquiv (ν , lowercase , nothing , ν .lowercase) = refl
-abstractLetterEquiv (ν , lowercase , just x , ())
 abstractLetterEquiv (ξ , uppercase , nothing , ξ .uppercase) = refl
-abstractLetterEquiv (ξ , uppercase , just x , ())
 abstractLetterEquiv (ξ , lowercase , nothing , ξ .lowercase) = refl
-abstractLetterEquiv (ξ , lowercase , just x , ())
 abstractLetterEquiv (ο , uppercase , nothing , ο .uppercase) = refl
-abstractLetterEquiv (ο , uppercase , just x , ())
 abstractLetterEquiv (ο , lowercase , nothing , ο .lowercase) = refl
-abstractLetterEquiv (ο , lowercase , just x , ())
 abstractLetterEquiv (π , uppercase , nothing , π .uppercase) = refl
-abstractLetterEquiv (π , uppercase , just x , ())
 abstractLetterEquiv (π , lowercase , nothing , π .lowercase) = refl
-abstractLetterEquiv (π , lowercase , just x , ())
 abstractLetterEquiv (ρ , uppercase , nothing , ρ .uppercase) = refl
-abstractLetterEquiv (ρ , uppercase , just x , ())
 abstractLetterEquiv (ρ , lowercase , nothing , ρ .lowercase) = refl
-abstractLetterEquiv (ρ , lowercase , just x , ())
 abstractLetterEquiv (σ , uppercase , nothing , Σ′) = refl
-abstractLetterEquiv (σ , uppercase , just x , ())
-abstractLetterEquiv (σ , lowercase , nothing , ())
 abstractLetterEquiv (σ , lowercase , just isFinal , σ .isFinal) = refl
 abstractLetterEquiv (σ , lowercase , just notFinal , σ .notFinal) = refl
 abstractLetterEquiv (τ , uppercase , nothing , τ .uppercase) = refl
-abstractLetterEquiv (τ , uppercase , just x , ())
 abstractLetterEquiv (τ , lowercase , nothing , τ .lowercase) = refl
-abstractLetterEquiv (τ , lowercase , just x , ())
 abstractLetterEquiv (υ , uppercase , nothing , υ .uppercase) = refl
-abstractLetterEquiv (υ , uppercase , just x , ())
 abstractLetterEquiv (υ , lowercase , nothing , υ .lowercase) = refl
-abstractLetterEquiv (υ , lowercase , just x , ())
 abstractLetterEquiv (φ , uppercase , nothing , φ .uppercase) = refl
-abstractLetterEquiv (φ , uppercase , just x , ())
 abstractLetterEquiv (φ , lowercase , nothing , φ .lowercase) = refl
-abstractLetterEquiv (φ , lowercase , just x , ())
 abstractLetterEquiv (χ , uppercase , nothing , χ .uppercase) = refl
-abstractLetterEquiv (χ , uppercase , just x , ())
 abstractLetterEquiv (χ , lowercase , nothing , χ .lowercase) = refl
-abstractLetterEquiv (χ , lowercase , just x , ())
 abstractLetterEquiv (ψ , uppercase , nothing , ψ .uppercase) = refl
-abstractLetterEquiv (ψ , uppercase , just x , ())
 abstractLetterEquiv (ψ , lowercase , nothing , ψ .lowercase) = refl
-abstractLetterEquiv (ψ , lowercase , just x , ())
 abstractLetterEquiv (ω , uppercase , nothing , ω .uppercase) = refl
-abstractLetterEquiv (ω , uppercase , just x , ())
 abstractLetterEquiv (ω , lowercase , nothing , ω .lowercase) = refl
-abstractLetterEquiv (ω , lowercase , just x , ())
 
 abstractLetterEquiv'
   : (c : ConcreteLetter)
