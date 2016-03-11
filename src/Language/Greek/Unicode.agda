@@ -2,82 +2,67 @@ module Language.Greek.Unicode where
 
 open import Agda.Builtin.Char
 open import Agda.Builtin.Equality
-open import Agda.Builtin.Unit
 open import Language.Greek.Concrete
-open import Prelude.Empty
-open import Prelude.Maybe
-open import Prelude.Bool
+open import Language.Greek.Common
 
-data GreekChar : Set where
-  valid : Combined -> GreekChar
-  invalid : Char -> GreekChar
-
-validateGreekChar : GreekChar → Set
-validateGreekChar (valid x) = ⊤
-validateGreekChar (invalid x) = ⊥
-
-extractCombined : (x : GreekChar) {_ : validateGreekChar x} → Combined
-extractCombined (valid x) = x
-extractCombined (invalid x) {}
-
-concreteCombined : Char → GreekChar
-concreteCombined 'Α' = valid Α
-concreteCombined 'Β' = valid Β
-concreteCombined 'Γ' = valid Γ
-concreteCombined 'Δ' = valid Δ
-concreteCombined 'Ε' = valid Ε
-concreteCombined 'Ζ' = valid Ζ
-concreteCombined 'Η' = valid Η
-concreteCombined 'Θ' = valid Θ
-concreteCombined 'Ι' = valid Ι
-concreteCombined 'Κ' = valid Κ
-concreteCombined 'Λ' = valid Λ
-concreteCombined 'Μ' = valid Μ
-concreteCombined 'Ν' = valid Ν
-concreteCombined 'Ξ' = valid Ξ
-concreteCombined 'Ο' = valid Ο
-concreteCombined 'Π' = valid Π
-concreteCombined 'Ρ' = valid Ρ
-concreteCombined 'Σ' = valid Σ′
-concreteCombined 'Τ' = valid Τ
-concreteCombined 'Υ' = valid Υ
-concreteCombined 'Φ' = valid Φ
-concreteCombined 'Χ' = valid Χ
-concreteCombined 'Ψ' = valid Ψ
-concreteCombined 'Ω' = valid Ω
-concreteCombined 'α' = valid α
-concreteCombined 'β' = valid β
-concreteCombined 'γ' = valid γ
-concreteCombined 'δ' = valid δ
-concreteCombined 'ε' = valid ε
-concreteCombined 'ζ' = valid ζ
-concreteCombined 'η' = valid η
-concreteCombined 'θ' = valid θ
-concreteCombined 'ι' = valid ι
-concreteCombined 'κ' = valid κ
-concreteCombined 'λ' = valid ƛ
-concreteCombined 'μ' = valid μ
-concreteCombined 'ν' = valid ν
-concreteCombined 'ξ' = valid ξ
-concreteCombined 'ο' = valid ο
-concreteCombined 'π' = valid π
-concreteCombined 'ρ' = valid ρ
-concreteCombined 'ς' = valid ς
-concreteCombined 'σ' = valid σ
-concreteCombined 'τ' = valid τ
-concreteCombined 'υ' = valid υ
-concreteCombined 'φ' = valid φ
-concreteCombined 'χ' = valid χ
-concreteCombined 'ψ' = valid ψ
-concreteCombined 'ω' = valid ω
-concreteCombined '\x0300' = valid grave -- COMBINING GRAVE ACCENT
-concreteCombined '\x0301' = valid acute -- COMBINING ACUTE ACCENT
-concreteCombined '\x0308' = valid diaeresis -- COMBINING DIAERESIS
-concreteCombined '\x0313' = valid smooth -- COMBINING COMMA ABOVE
-concreteCombined '\x0314' = valid rough -- COMBINING REVERSED COMMA ABOVE
-concreteCombined '\x0342' = valid circumflex -- COMBINING GREEK PERISPOMENI
-concreteCombined '\x0345' = valid iotaSubscript -- COMBINING GREEK YPOGEGRAMMENI
-concreteCombined c = invalid c
+concreteCombined : Char → Char PartialResultTo Combined
+concreteCombined 'Α' = defined Α
+concreteCombined 'Β' = defined Β
+concreteCombined 'Γ' = defined Γ
+concreteCombined 'Δ' = defined Δ
+concreteCombined 'Ε' = defined Ε
+concreteCombined 'Ζ' = defined Ζ
+concreteCombined 'Η' = defined Η
+concreteCombined 'Θ' = defined Θ
+concreteCombined 'Ι' = defined Ι
+concreteCombined 'Κ' = defined Κ
+concreteCombined 'Λ' = defined Λ
+concreteCombined 'Μ' = defined Μ
+concreteCombined 'Ν' = defined Ν
+concreteCombined 'Ξ' = defined Ξ
+concreteCombined 'Ο' = defined Ο
+concreteCombined 'Π' = defined Π
+concreteCombined 'Ρ' = defined Ρ
+concreteCombined 'Σ' = defined Σ′
+concreteCombined 'Τ' = defined Τ
+concreteCombined 'Υ' = defined Υ
+concreteCombined 'Φ' = defined Φ
+concreteCombined 'Χ' = defined Χ
+concreteCombined 'Ψ' = defined Ψ
+concreteCombined 'Ω' = defined Ω
+concreteCombined 'α' = defined α
+concreteCombined 'β' = defined β
+concreteCombined 'γ' = defined γ
+concreteCombined 'δ' = defined δ
+concreteCombined 'ε' = defined ε
+concreteCombined 'ζ' = defined ζ
+concreteCombined 'η' = defined η
+concreteCombined 'θ' = defined θ
+concreteCombined 'ι' = defined ι
+concreteCombined 'κ' = defined κ
+concreteCombined 'λ' = defined ƛ
+concreteCombined 'μ' = defined μ
+concreteCombined 'ν' = defined ν
+concreteCombined 'ξ' = defined ξ
+concreteCombined 'ο' = defined ο
+concreteCombined 'π' = defined π
+concreteCombined 'ρ' = defined ρ
+concreteCombined 'ς' = defined ς
+concreteCombined 'σ' = defined σ
+concreteCombined 'τ' = defined τ
+concreteCombined 'υ' = defined υ
+concreteCombined 'φ' = defined φ
+concreteCombined 'χ' = defined χ
+concreteCombined 'ψ' = defined ψ
+concreteCombined 'ω' = defined ω
+concreteCombined '\x0300' = defined grave -- COMBINING GRAVE ACCENT
+concreteCombined '\x0301' = defined acute -- COMBINING ACUTE ACCENT
+concreteCombined '\x0308' = defined diaeresis -- COMBINING DIAERESIS
+concreteCombined '\x0313' = defined smooth -- COMBINING COMMA ABOVE
+concreteCombined '\x0314' = defined rough -- COMBINING REVERSED COMMA ABOVE
+concreteCombined '\x0342' = defined circumflex -- COMBINING GREEK PERISPOMENI
+concreteCombined '\x0345' = defined iotaSubscript -- COMBINING GREEK YPOGEGRAMMENI
+concreteCombined c = undefined c
 
 concreteCombinedInv : Combined → Char
 concreteCombinedInv Α = 'Α'
@@ -137,7 +122,7 @@ concreteCombinedInv rough = '\x0314' -- COMBINING REVERSED COMMA ABOVE
 concreteCombinedInv circumflex = '\x0342' -- COMBINING GREEK PERISPOMENI
 concreteCombinedInv iotaSubscript = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 
-concreteCombinedEquiv : (c : Combined) → valid c ≡ concreteCombined (concreteCombinedInv c)
+concreteCombinedEquiv : (c : Combined) → defined c ≡ concreteCombined (concreteCombinedInv c)
 concreteCombinedEquiv Α = refl
 concreteCombinedEquiv Β = refl
 concreteCombinedEquiv Γ = refl
