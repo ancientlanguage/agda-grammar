@@ -1,5 +1,6 @@
 module Everything where
 
+import Common.EquivSum
 import Common.PartialResult
 import Language.Greek.Abstract
 import Language.Greek.AbstractConcrete
