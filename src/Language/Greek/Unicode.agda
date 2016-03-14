@@ -3,7 +3,7 @@ module Language.Greek.Unicode where
 open import Agda.Builtin.Char
 open import Agda.Builtin.Equality
 open import Language.Greek.Concrete
-open import Language.Greek.Common
+open import Common.PartialResult
 
 concreteCombined : Char → PartialResult Char Combined
 concreteCombined 'Α' = defined Α

@@ -1,4 +1,4 @@
-module Language.Greek.Common where
+module Common.PartialResult where
 
 open import Agda.Primitive
 open import Agda.Builtin.Unit
