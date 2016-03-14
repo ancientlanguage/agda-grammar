@@ -5,7 +5,7 @@ open import Agda.Builtin.Equality
 open import Language.Greek.Concrete
 open import Language.Greek.Common
 
-concreteCombined : Char → Char PartialResultTo Combined
+concreteCombined : Char → PartialResult Char Combined
 concreteCombined 'Α' = defined Α
 concreteCombined 'Β' = defined Β
 concreteCombined 'Γ' = defined Γ

@@ -4,33 +4,33 @@ open import Agda.Primitive
 open import Agda.Builtin.Unit
 open import Prelude.Empty
 
-data _PartialResultTo_
+data PartialResult
   {ℓ₁ : Level}
   {ℓ₂ : Level}
   (A : Set ℓ₁)
   (B : Set ℓ₂)
   : Set (ℓ₁ ⊔ ℓ₂)
   where
-  defined : B → A PartialResultTo B
-  undefined : A → A PartialResultTo B
+  defined : B → PartialResult A B
+  undefined : A → PartialResult A B
 
-defined?
+Defined?
   : {ℓ₁ : Level}
   → {ℓ₂ : Level}
   → {A : Set ℓ₁}
   → {B : Set ℓ₂}
-  → A PartialResultTo B
+  → PartialResult A B
   → Set
-defined? (defined x) = ⊤
-defined? (undefined x) = ⊥
+Defined? (defined x) = ⊤
+Defined? (undefined x) = ⊥
 
 extractDefined
   : {ℓ₁ : Level}
   → {ℓ₂ : Level}
   → {A : Set ℓ₁}
   → {B : Set ℓ₂}
-  → (x : A PartialResultTo B)
-  → {_ : defined? x}
+  → (x : PartialResult A B)
+  → {_ : Defined? x}
   → B
 extractDefined (defined x) = x
 extractDefined (undefined x) {}
