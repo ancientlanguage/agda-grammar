@@ -1,10 +1,10 @@
 module Language.Greek.ConcreteCombined where
 
 open import Agda.Builtin.Equality
-open import Prelude.Sum
+open import Common.Sum
 open import Language.Greek.Concrete
 
-letterOrMark : Combined → Either Letter Mark
+letterOrMark : Combined → Letter ⊎ Mark
 letterOrMark Α = left Α
 letterOrMark Β = left Β
 letterOrMark Γ = left Γ
@@ -62,7 +62,7 @@ letterOrMark rough = right rough
 letterOrMark diaeresis = right diaeresis
 letterOrMark iotaSubscript = right iotaSubscript
 
-letterOrMarkInv : Either Letter Mark → Combined
+letterOrMarkInv : Letter ⊎ Mark → Combined
 letterOrMarkInv (left Α) = Α
 letterOrMarkInv (left Β) = Β
 letterOrMarkInv (left Γ) = Γ
@@ -120,7 +120,7 @@ letterOrMarkInv (right rough) = rough
 letterOrMarkInv (right diaeresis) = diaeresis
 letterOrMarkInv (right iotaSubscript) = iotaSubscript
 
-letterOrMarkEquiv : (lom : Either Letter Mark) → lom ≡ letterOrMark (letterOrMarkInv lom)
+letterOrMarkEquiv : (lom : Letter ⊎ Mark) → lom ≡ letterOrMark (letterOrMarkInv lom)
 letterOrMarkEquiv (left Α) = refl
 letterOrMarkEquiv (left Β) = refl
 letterOrMarkEquiv (left Γ) = refl
