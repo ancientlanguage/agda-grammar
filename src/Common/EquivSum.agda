@@ -7,9 +7,7 @@ open import Prelude.Product
 open import Common.Sum
 
 equivSumLeft
-  : {ℓ₁ : Level}
-  → {ℓ₁′ : Level}
-  → {ℓ₂ : Level}
+  : {ℓ₁ ℓ₁′ ℓ₂ : Level}
   → {A : Set ℓ₁}
   → {A′ : Set ℓ₁′}
   → {B : Set ℓ₂}

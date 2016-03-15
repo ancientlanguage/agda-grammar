@@ -11,11 +11,11 @@ open import Language.Greek.ConcreteCombined
 
 myEquiv
   : (x : ConcreteLetter ⊎ Mark)
-  → Σ (ConcreteLetter ⊎ Mark → ComboEx ⊎ Mark) λ f →
-    Σ (ComboEx ⊎ Mark → ConcreteLetter ⊎ Mark) λ fInv →
+  → Σ (ConcreteLetter ⊎ Mark → Combo ⊎ Mark) λ f →
+    Σ (Combo ⊎ Mark → ConcreteLetter ⊎ Mark) λ fInv →
     (x ≡ fInv (f x))
-myEquiv = equivSumLeft abstractLetter abstractLetterInv abstractLetterEquiv
+myEquiv = equivSumLeft abstractLetter abstractLetterInv abstractLetterEquivP
 
---testEquiv
+-- testEquiv
 --  : (c : Combined)
 --  → (c ≡ 

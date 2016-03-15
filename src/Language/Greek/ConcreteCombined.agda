@@ -2,6 +2,7 @@ module Language.Greek.ConcreteCombined where
 
 open import Agda.Builtin.Equality
 open import Common.Sum
+open import Common.Equiv
 open import Language.Greek.Concrete
 
 letterOrMark : Combined → Letter ⊎ Mark
@@ -120,60 +121,63 @@ letterOrMarkInv (right rough) = rough
 letterOrMarkInv (right diaeresis) = diaeresis
 letterOrMarkInv (right iotaSubscript) = iotaSubscript
 
-letterOrMarkEquiv : (lom : Letter ⊎ Mark) → lom ≡ letterOrMark (letterOrMarkInv lom)
-letterOrMarkEquiv (left Α) = refl
-letterOrMarkEquiv (left Β) = refl
-letterOrMarkEquiv (left Γ) = refl
-letterOrMarkEquiv (left Δ) = refl
-letterOrMarkEquiv (left Ε) = refl
-letterOrMarkEquiv (left Ζ) = refl
-letterOrMarkEquiv (left Η) = refl
-letterOrMarkEquiv (left Θ) = refl
-letterOrMarkEquiv (left Ι) = refl
-letterOrMarkEquiv (left Κ) = refl
-letterOrMarkEquiv (left Λ) = refl
-letterOrMarkEquiv (left Μ) = refl
-letterOrMarkEquiv (left Ν) = refl
-letterOrMarkEquiv (left Ξ) = refl
-letterOrMarkEquiv (left Ο) = refl
-letterOrMarkEquiv (left Π) = refl
-letterOrMarkEquiv (left Ρ) = refl
-letterOrMarkEquiv (left Σ′) = refl
-letterOrMarkEquiv (left Τ) = refl
-letterOrMarkEquiv (left Υ) = refl
-letterOrMarkEquiv (left Φ) = refl
-letterOrMarkEquiv (left Χ) = refl
-letterOrMarkEquiv (left Ψ) = refl
-letterOrMarkEquiv (left Ω) = refl
-letterOrMarkEquiv (left α) = refl
-letterOrMarkEquiv (left β) = refl
-letterOrMarkEquiv (left γ) = refl
-letterOrMarkEquiv (left δ) = refl
-letterOrMarkEquiv (left ε) = refl
-letterOrMarkEquiv (left ζ) = refl
-letterOrMarkEquiv (left η) = refl
-letterOrMarkEquiv (left θ) = refl
-letterOrMarkEquiv (left ι) = refl
-letterOrMarkEquiv (left κ) = refl
-letterOrMarkEquiv (left ƛ) = refl
-letterOrMarkEquiv (left μ) = refl
-letterOrMarkEquiv (left ν) = refl
-letterOrMarkEquiv (left ξ) = refl
-letterOrMarkEquiv (left ο) = refl
-letterOrMarkEquiv (left π) = refl
-letterOrMarkEquiv (left ρ) = refl
-letterOrMarkEquiv (left σ) = refl
-letterOrMarkEquiv (left ς) = refl
-letterOrMarkEquiv (left τ) = refl
-letterOrMarkEquiv (left υ) = refl
-letterOrMarkEquiv (left φ) = refl
-letterOrMarkEquiv (left χ) = refl
-letterOrMarkEquiv (left ψ) = refl
-letterOrMarkEquiv (left ω) = refl
-letterOrMarkEquiv (right acute) = refl
-letterOrMarkEquiv (right grave) = refl
-letterOrMarkEquiv (right circumflex) = refl
-letterOrMarkEquiv (right smooth) = refl
-letterOrMarkEquiv (right rough) = refl
-letterOrMarkEquiv (right diaeresis) = refl
-letterOrMarkEquiv (right iotaSubscript) = refl
+letterOrMarkEquivP : (x : Letter ⊎ Mark) → x ≡ letterOrMark (letterOrMarkInv x)
+letterOrMarkEquivP (left Α) = refl
+letterOrMarkEquivP (left Β) = refl
+letterOrMarkEquivP (left Γ) = refl
+letterOrMarkEquivP (left Δ) = refl
+letterOrMarkEquivP (left Ε) = refl
+letterOrMarkEquivP (left Ζ) = refl
+letterOrMarkEquivP (left Η) = refl
+letterOrMarkEquivP (left Θ) = refl
+letterOrMarkEquivP (left Ι) = refl
+letterOrMarkEquivP (left Κ) = refl
+letterOrMarkEquivP (left Λ) = refl
+letterOrMarkEquivP (left Μ) = refl
+letterOrMarkEquivP (left Ν) = refl
+letterOrMarkEquivP (left Ξ) = refl
+letterOrMarkEquivP (left Ο) = refl
+letterOrMarkEquivP (left Π) = refl
+letterOrMarkEquivP (left Ρ) = refl
+letterOrMarkEquivP (left Σ′) = refl
+letterOrMarkEquivP (left Τ) = refl
+letterOrMarkEquivP (left Υ) = refl
+letterOrMarkEquivP (left Φ) = refl
+letterOrMarkEquivP (left Χ) = refl
+letterOrMarkEquivP (left Ψ) = refl
+letterOrMarkEquivP (left Ω) = refl
+letterOrMarkEquivP (left α) = refl
+letterOrMarkEquivP (left β) = refl
+letterOrMarkEquivP (left γ) = refl
+letterOrMarkEquivP (left δ) = refl
+letterOrMarkEquivP (left ε) = refl
+letterOrMarkEquivP (left ζ) = refl
+letterOrMarkEquivP (left η) = refl
+letterOrMarkEquivP (left θ) = refl
+letterOrMarkEquivP (left ι) = refl
+letterOrMarkEquivP (left κ) = refl
+letterOrMarkEquivP (left ƛ) = refl
+letterOrMarkEquivP (left μ) = refl
+letterOrMarkEquivP (left ν) = refl
+letterOrMarkEquivP (left ξ) = refl
+letterOrMarkEquivP (left ο) = refl
+letterOrMarkEquivP (left π) = refl
+letterOrMarkEquivP (left ρ) = refl
+letterOrMarkEquivP (left σ) = refl
+letterOrMarkEquivP (left ς) = refl
+letterOrMarkEquivP (left τ) = refl
+letterOrMarkEquivP (left υ) = refl
+letterOrMarkEquivP (left φ) = refl
+letterOrMarkEquivP (left χ) = refl
+letterOrMarkEquivP (left ψ) = refl
+letterOrMarkEquivP (left ω) = refl
+letterOrMarkEquivP (right acute) = refl
+letterOrMarkEquivP (right grave) = refl
+letterOrMarkEquivP (right circumflex) = refl
+letterOrMarkEquivP (right smooth) = refl
+letterOrMarkEquivP (right rough) = refl
+letterOrMarkEquivP (right diaeresis) = refl
+letterOrMarkEquivP (right iotaSubscript) = refl
+
+letterOrMarkEquiv : Equiv Combined (Letter ⊎ Mark)
+letterOrMarkEquiv = equiv letterOrMark letterOrMarkInv letterOrMarkEquivP

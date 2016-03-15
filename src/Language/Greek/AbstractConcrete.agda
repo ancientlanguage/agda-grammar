@@ -3,10 +3,11 @@ module Language.Greek.AbstractConcrete where
 open import Agda.Builtin.Equality
 open import Prelude.Product
 open import Prelude.Maybe
+open import Common.Equiv
 open import Language.Greek.Concrete renaming (Letter to ConcreteLetter)
 open import Language.Greek.Abstract renaming (Letter to AbstractLetter)
 
-abstractLetter : ConcreteLetter → ComboEx
+abstractLetter : ConcreteLetter → Combo
 abstractLetter Α = combo (α uppercase)
 abstractLetter Β = combo (β uppercase)
 abstractLetter Γ = combo (γ uppercase)
@@ -57,7 +58,7 @@ abstractLetter χ = combo (χ lowercase)
 abstractLetter ψ = combo (ψ lowercase)
 abstractLetter ω = combo (ω lowercase)
 
-abstractLetterInv : ComboEx → ConcreteLetter
+abstractLetterInv : Combo → ConcreteLetter
 abstractLetterInv (combo (α uppercase)) = Α
 abstractLetterInv (combo (α lowercase)) = α
 abstractLetterInv (combo (β uppercase)) = Β
@@ -108,53 +109,56 @@ abstractLetterInv (combo (ψ lowercase)) = ψ
 abstractLetterInv (combo (ω uppercase)) = Ω
 abstractLetterInv (combo (ω lowercase)) = ω
 
-abstractLetterEquiv : (c : ComboEx) → c ≡ (abstractLetter (abstractLetterInv c))
-abstractLetterEquiv (combo (α uppercase)) = refl
-abstractLetterEquiv (combo (α lowercase)) = refl
-abstractLetterEquiv (combo (β uppercase)) = refl
-abstractLetterEquiv (combo (β lowercase)) = refl
-abstractLetterEquiv (combo (γ uppercase)) = refl
-abstractLetterEquiv (combo (γ lowercase)) = refl
-abstractLetterEquiv (combo (δ uppercase)) = refl
-abstractLetterEquiv (combo (δ lowercase)) = refl
-abstractLetterEquiv (combo (ε uppercase)) = refl
-abstractLetterEquiv (combo (ε lowercase)) = refl
-abstractLetterEquiv (combo (ζ uppercase)) = refl
-abstractLetterEquiv (combo (ζ lowercase)) = refl
-abstractLetterEquiv (combo (η uppercase)) = refl
-abstractLetterEquiv (combo (η lowercase)) = refl
-abstractLetterEquiv (combo (θ uppercase)) = refl
-abstractLetterEquiv (combo (θ lowercase)) = refl
-abstractLetterEquiv (combo (ι uppercase)) = refl
-abstractLetterEquiv (combo (ι lowercase)) = refl
-abstractLetterEquiv (combo (κ uppercase)) = refl
-abstractLetterEquiv (combo (κ lowercase)) = refl
-abstractLetterEquiv (combo (ƛ uppercase)) = refl
-abstractLetterEquiv (combo (ƛ lowercase)) = refl
-abstractLetterEquiv (combo (μ uppercase)) = refl
-abstractLetterEquiv (combo (μ lowercase)) = refl
-abstractLetterEquiv (combo (ν uppercase)) = refl
-abstractLetterEquiv (combo (ν lowercase)) = refl
-abstractLetterEquiv (combo (ξ uppercase)) = refl
-abstractLetterEquiv (combo (ξ lowercase)) = refl
-abstractLetterEquiv (combo (ο uppercase)) = refl
-abstractLetterEquiv (combo (ο lowercase)) = refl
-abstractLetterEquiv (combo (π uppercase)) = refl
-abstractLetterEquiv (combo (π lowercase)) = refl
-abstractLetterEquiv (combo (ρ uppercase)) = refl
-abstractLetterEquiv (combo (ρ lowercase)) = refl
-abstractLetterEquiv (combo Σ′) = refl
-abstractLetterEquiv (combo (σ notFinal)) = refl
-abstractLetterEquiv (combo (σ isFinal)) = refl
-abstractLetterEquiv (combo (τ uppercase)) = refl
-abstractLetterEquiv (combo (τ lowercase)) = refl
-abstractLetterEquiv (combo (υ uppercase)) = refl
-abstractLetterEquiv (combo (υ lowercase)) = refl
-abstractLetterEquiv (combo (φ uppercase)) = refl
-abstractLetterEquiv (combo (φ lowercase)) = refl
-abstractLetterEquiv (combo (χ uppercase)) = refl
-abstractLetterEquiv (combo (χ lowercase)) = refl
-abstractLetterEquiv (combo (ψ uppercase)) = refl
-abstractLetterEquiv (combo (ψ lowercase)) = refl
-abstractLetterEquiv (combo (ω uppercase)) = refl
-abstractLetterEquiv (combo (ω lowercase)) = refl
+abstractLetterEquivP : (c : Combo) → c ≡ (abstractLetter (abstractLetterInv c))
+abstractLetterEquivP (combo (α uppercase)) = refl
+abstractLetterEquivP (combo (α lowercase)) = refl
+abstractLetterEquivP (combo (β uppercase)) = refl
+abstractLetterEquivP (combo (β lowercase)) = refl
+abstractLetterEquivP (combo (γ uppercase)) = refl
+abstractLetterEquivP (combo (γ lowercase)) = refl
+abstractLetterEquivP (combo (δ uppercase)) = refl
+abstractLetterEquivP (combo (δ lowercase)) = refl
+abstractLetterEquivP (combo (ε uppercase)) = refl
+abstractLetterEquivP (combo (ε lowercase)) = refl
+abstractLetterEquivP (combo (ζ uppercase)) = refl
+abstractLetterEquivP (combo (ζ lowercase)) = refl
+abstractLetterEquivP (combo (η uppercase)) = refl
+abstractLetterEquivP (combo (η lowercase)) = refl
+abstractLetterEquivP (combo (θ uppercase)) = refl
+abstractLetterEquivP (combo (θ lowercase)) = refl
+abstractLetterEquivP (combo (ι uppercase)) = refl
+abstractLetterEquivP (combo (ι lowercase)) = refl
+abstractLetterEquivP (combo (κ uppercase)) = refl
+abstractLetterEquivP (combo (κ lowercase)) = refl
+abstractLetterEquivP (combo (ƛ uppercase)) = refl
+abstractLetterEquivP (combo (ƛ lowercase)) = refl
+abstractLetterEquivP (combo (μ uppercase)) = refl
+abstractLetterEquivP (combo (μ lowercase)) = refl
+abstractLetterEquivP (combo (ν uppercase)) = refl
+abstractLetterEquivP (combo (ν lowercase)) = refl
+abstractLetterEquivP (combo (ξ uppercase)) = refl
+abstractLetterEquivP (combo (ξ lowercase)) = refl
+abstractLetterEquivP (combo (ο uppercase)) = refl
+abstractLetterEquivP (combo (ο lowercase)) = refl
+abstractLetterEquivP (combo (π uppercase)) = refl
+abstractLetterEquivP (combo (π lowercase)) = refl
+abstractLetterEquivP (combo (ρ uppercase)) = refl
+abstractLetterEquivP (combo (ρ lowercase)) = refl
+abstractLetterEquivP (combo Σ′) = refl
+abstractLetterEquivP (combo (σ notFinal)) = refl
+abstractLetterEquivP (combo (σ isFinal)) = refl
+abstractLetterEquivP (combo (τ uppercase)) = refl
+abstractLetterEquivP (combo (τ lowercase)) = refl
+abstractLetterEquivP (combo (υ uppercase)) = refl
+abstractLetterEquivP (combo (υ lowercase)) = refl
+abstractLetterEquivP (combo (φ uppercase)) = refl
+abstractLetterEquivP (combo (φ lowercase)) = refl
+abstractLetterEquivP (combo (χ uppercase)) = refl
+abstractLetterEquivP (combo (χ lowercase)) = refl
+abstractLetterEquivP (combo (ψ uppercase)) = refl
+abstractLetterEquivP (combo (ψ lowercase)) = refl
+abstractLetterEquivP (combo (ω uppercase)) = refl
+abstractLetterEquivP (combo (ω lowercase)) = refl
+
+abstractLetterEquiv : Equiv ConcreteLetter Combo
+abstractLetterEquiv = equiv abstractLetter abstractLetterInv abstractLetterEquivP
