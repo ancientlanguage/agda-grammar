@@ -12,4 +12,4 @@ record Equiv
   field
     f : A → B
     f⁻¹ : B → A
-    p : (b : B) → b ≡ f (f⁻¹ b)
+    p : (x : B) → x ≡ f (f⁻¹ x)
