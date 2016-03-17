@@ -3,7 +3,7 @@ module Language.Greek.AbstractConcrete where
 open import Agda.Builtin.Equality
 open import Prelude.Product
 open import Prelude.Maybe
-open import Common.Equiv
+open import Common.RoundTrip
 open import Language.Greek.Concrete renaming (Letter to ConcreteLetter)
 open import Language.Greek.Abstract renaming (Letter to AbstractLetter)
 
@@ -160,5 +160,5 @@ abstractLetterEquivP (combo (ψ lowercase)) = refl
 abstractLetterEquivP (combo (ω uppercase)) = refl
 abstractLetterEquivP (combo (ω lowercase)) = refl
 
-abstractLetterEquiv : Equiv ConcreteLetter Combo
+abstractLetterEquiv : ConcreteLetter ⟳ Combo
 abstractLetterEquiv = equiv abstractLetter abstractLetterInv abstractLetterEquivP

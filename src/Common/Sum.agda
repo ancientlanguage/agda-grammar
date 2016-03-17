@@ -2,6 +2,8 @@ module Common.Sum where
 
 open import Agda.Primitive
 
+infixr 1 _⊎_
+
 data _⊎_ {a b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
   left : (x : A) → A ⊎ B
   right : (y : B) → A ⊎ B

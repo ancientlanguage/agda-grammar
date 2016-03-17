@@ -2,7 +2,7 @@ module Language.Greek.ConcreteCombined where
 
 open import Agda.Builtin.Equality
 open import Common.Sum
-open import Common.Equiv
+open import Common.RoundTrip
 open import Language.Greek.Concrete
 
 letterOrMark : Combined → Letter ⊎ Mark
@@ -179,5 +179,5 @@ letterOrMarkEquivP (right rough) = refl
 letterOrMarkEquivP (right diaeresis) = refl
 letterOrMarkEquivP (right iotaSubscript) = refl
 
-letterOrMarkEquiv : Equiv Combined (Letter ⊎ Mark)
+letterOrMarkEquiv : Combined ⟳ Letter ⊎ Mark
 letterOrMarkEquiv = equiv letterOrMark letterOrMarkInv letterOrMarkEquivP

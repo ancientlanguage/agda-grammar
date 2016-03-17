@@ -3,6 +3,7 @@ module Common.PartialResult where
 open import Agda.Primitive
 open import Agda.Builtin.Unit
 open import Prelude.Empty
+open import Common.Sum
 
 data PartialResult
   {ℓ₁ ℓ₂ : Level}

@@ -1,8 +1,8 @@
 module Everything where
 
-import Common.Equiv
-import Common.EquivCompose
-import Common.EquivSum
+import Common.RoundTrip
+import Common.RoundTripTransitive
+import Common.RoundTripSum
 import Common.PartialResult
 import Common.Sum
 import Language.Greek.Abstract
