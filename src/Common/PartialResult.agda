@@ -5,30 +5,32 @@ open import Agda.Builtin.Unit
 open import Prelude.Empty
 open import Common.Sum
 
-data PartialResult
-  {ℓ₁ ℓ₂ : Level}
-  (A : Set ℓ₁)
-  (B : Set ℓ₂)
-  : Set (ℓ₁ ⊔ ℓ₂)
+infixl 1 _⁇_
+
+data _⁇_
+  {la le : Level}
+  (A : Set la)
+  (E : Set le)
+  : Set (la ⊔ le)
   where
-  defined : B → PartialResult A B
-  undefined : A → PartialResult A B
+  defined : A → A ⁇ E
+  undefined : E → A ⁇ E
 
 Defined?
-  : {ℓ₁ ℓ₂ : Level}
-  → {A : Set ℓ₁}
-  → {B : Set ℓ₂}
-  → PartialResult A B
+  : {la le : Level}
+  → {A : Set la}
+  → {E : Set le}
+  → A ⁇ E
   → Set
 Defined? (defined x) = ⊤
 Defined? (undefined x) = ⊥
 
 extractDefined
-  : {ℓ₁ ℓ₂ : Level}
-  → {A : Set ℓ₁}
-  → {B : Set ℓ₂}
-  → (x : PartialResult A B)
+  : {la le : Level}
+  → {A : Set la}
+  → {E : Set le}
+  → (x : A ⁇ E)
   → {_ : Defined? x}
-  → B
+  → A
 extractDefined (defined x) = x
 extractDefined (undefined x) {}
