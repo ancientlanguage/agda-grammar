@@ -1,6 +1,7 @@
 module Everything where
 
 import Common.Equiv
+import Common.EquivCompose
 import Common.EquivSum
 import Common.PartialResult
 import Common.Sum
