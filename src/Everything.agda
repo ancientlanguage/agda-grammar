@@ -1,6 +1,7 @@
 module Everything where
 
 import Common.RoundTrip
+import Common.RoundTripPartial
 import Common.RoundTripTransitive
 import Common.RoundTripSum
 import Common.PartialResult
