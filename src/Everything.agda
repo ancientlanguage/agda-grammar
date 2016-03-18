@@ -1,10 +1,11 @@
 module Everything where
 
 import Common.RoundTrip
-import Common.RoundTripPartial
 import Common.RoundTripReflexive
-import Common.RoundTripPartialTransitive
 import Common.RoundTripTransitive
+import Common.RoundTripPartial
+import Common.RoundTripPartialReflexive
+import Common.RoundTripPartialTransitive
 import Common.RoundTripSum
 import Common.PartialResult
 import Common.Sum
