@@ -1,0 +1,3 @@
+[submodule "modules/UlfNorell/agda-prelude"]
+	path = modules/UlfNorell/agda-prelude
+	url = https://github.com/UlfNorell/agda-prelude.git
