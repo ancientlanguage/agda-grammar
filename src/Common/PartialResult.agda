@@ -35,6 +35,17 @@ extractDefined
 extractDefined (defined x) = x
 extractDefined (undefined x) {}
 
+mapUndefined
+  : {la le1 le2 : Level}
+  → {A : Set la}
+  → {E1 : Set le1}
+  → {E2 : Set le2}
+  → (E1 → E2)
+  → A ⁇ E1
+  → A ⁇ E2
+mapUndefined f (defined x) = defined x
+mapUndefined f (undefined x) = undefined (f x)
+
 joinDefinedAux
   : {lb lc le : Level}
   → {B : Set lb}
