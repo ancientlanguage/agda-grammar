@@ -20,6 +20,6 @@ roundTripTransitive {C = C} (equiv A→B B→A pab) (equiv B→C C→B pbc) = eq
 
     pac : (c : C) → c ≡ B→C (A→B (B→A (C→B c)))
     pac c with cong B→C (pab (C→B c))
-    … | r rewrite sym (pbc c)= r
+    … | r rewrite sym (pbc c) = r
 
 _⊕_ = roundTripTransitive

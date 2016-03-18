@@ -34,3 +34,25 @@ extractDefined
   → A
 extractDefined (defined x) = x
 extractDefined (undefined x) {}
+
+joinDefinedAux
+  : {lb lc le : Level}
+  → {B : Set lb}
+  → {C : Set lc}
+  → {E : Set le}
+  → (B → C ⁇ E)
+  → (B ⁇ E)
+  → (C ⁇ E)
+joinDefinedAux g (defined x) = g x
+joinDefinedAux g (undefined x) = undefined x
+
+joinDefined
+  : {la lb lc le : Level}
+  → {A : Set la}
+  → {B : Set lb}
+  → {C : Set lc}
+  → {E : Set le}
+  → (A → B ⁇ E)
+  → (B → C ⁇ E)
+  → (A → C ⁇ E)
+joinDefined f g x = joinDefinedAux g (f x)
