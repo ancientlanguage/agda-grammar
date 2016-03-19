@@ -4,6 +4,7 @@ import Common.RoundTrip
 import Common.RoundTripReflexive
 import Common.RoundTripTransitive
 import Common.RoundTripPartial
+import Common.RoundTripPartialMap
 import Common.RoundTripPartialReflexive
 import Common.RoundTripPartialTransitive
 import Common.RoundTripSum
