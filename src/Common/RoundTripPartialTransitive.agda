@@ -25,8 +25,11 @@ transitiveRTP
   (equiv B→C⁇E C→B pbc)
   = equiv A→C⁇E C→A pac
   where
+    B⁇E→C⁇E : B ⁇ E → C ⁇ E
+    B⁇E→C⁇E = liftDomain B→C⁇E
+
     A→C⁇E : A → C ⁇ E
-    A→C⁇E = joinDefined A→B⁇E B→C⁇E
+    A→C⁇E = B⁇E→C⁇E ∘ A→B⁇E 
 
     C→A : C → A
     C→A = B→A ∘ C→B
@@ -41,9 +44,6 @@ transitiveRTP
 
       paux : defined (C→B c) ≡ A→B⁇E (B→A (C→B c))
       paux = pab (C→B c)
-
-      B⁇E→C⁇E : B ⁇ E → C ⁇ E
-      B⁇E→C⁇E = joinDefinedAux B→C⁇E
 
       pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
       pr = cong B⁇E→C⁇E paux

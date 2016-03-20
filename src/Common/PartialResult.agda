@@ -3,6 +3,7 @@ module Common.PartialResult where
 open import Agda.Primitive
 open import Agda.Builtin.Unit
 open import Prelude.Empty
+open import Prelude.Function using (_∘_)
 open import Common.Sum
 
 infixl 1 _⁇_
@@ -46,7 +47,7 @@ mapUndefined
 mapUndefined f (defined x) = defined x
 mapUndefined f (undefined x) = undefined (f x)
 
-joinDefinedAux
+liftDomain
   : {lb lc le : Level}
   → {B : Set lb}
   → {C : Set lc}
@@ -54,8 +55,8 @@ joinDefinedAux
   → (B → C ⁇ E)
   → (B ⁇ E)
   → (C ⁇ E)
-joinDefinedAux g (defined x) = g x
-joinDefinedAux g (undefined x) = undefined x
+liftDomain g (defined x) = g x
+liftDomain g (undefined x) = undefined x
 
 joinDefined
   : {la lb lc le : Level}
@@ -66,4 +67,4 @@ joinDefined
   → (A → B ⁇ E)
   → (B → C ⁇ E)
   → (A → C ⁇ E)
-joinDefined f g x = joinDefinedAux g (f x)
+joinDefined f g = liftDomain g ∘ f
