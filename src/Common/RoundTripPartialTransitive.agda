@@ -16,7 +16,14 @@ transitiveRTP :
   → A ↻ B ⁇ E
   → B ↻ C ⁇ E
   → A ↻ C ⁇ E
-transitiveRTP {A = A} {B = B} {C = C} {E = E} (equiv A→B⁇E B→A pab) (equiv B→C⁇E C→B pbc) = equiv A→C⁇E C→A pac
+transitiveRTP
+  {A = A}
+  {B = B}
+  {C = C}
+  {E = E}
+  (equiv A→B⁇E B→A pab)
+  (equiv B→C⁇E C→B pbc)
+  = equiv A→C⁇E C→A pac
   where
     A→C⁇E : A → C ⁇ E
     A→C⁇E = joinDefined A→B⁇E B→C⁇E
@@ -24,8 +31,21 @@ transitiveRTP {A = A} {B = B} {C = C} {E = E} (equiv A→B⁇E B→A pab) (equiv
     C→A : C → A
     C→A = B→A ∘ C→B
 
-    pac : (c : C) → defined c ≡ A→C⁇E (B→A (C→B c))
-    pac c with cong (joinDefinedAux B→C⁇E) (pab (C→B c))
-    … | r rewrite sym (pbc c) = r
+    pac
+      : (c : C)
+      → defined c ≡ A→C⁇E (B→A (C→B c))
+    pac c = trans pl pr
+      where
+      pl : defined c ≡ B→C⁇E (C→B c)
+      pl = pbc c
+
+      paux : defined (C→B c) ≡ A→B⁇E (B→A (C→B c))
+      paux = pab (C→B c)
+
+      B⁇E→C⁇E : B ⁇ E → C ⁇ E
+      B⁇E→C⁇E = joinDefinedAux B→C⁇E
+
+      pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
+      pr = cong B⁇E→C⁇E paux
 
 _⊕⁇_ = transitiveRTP
