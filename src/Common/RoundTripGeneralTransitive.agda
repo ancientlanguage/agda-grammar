@@ -6,20 +6,20 @@ open import Prelude.Equality
 open import Prelude.Function
 open import Common.RoundTripGeneral
 
-transitiveRTG :
-  {la lb lc : Level}
-  → {A : Set la}
-  → {B : Set lb}
-  → {C : Set lc}
-  → {F : {lf : Level} → Set lf → Set lf}
+transitiveRTG
+  : {F : {lf : Level} → Set lf → Set lf}
   → {pure : {lx : Level} {X : Set lx} → X → F X}
   → {liftDomain : {lx ly : Level} {X : Set lx} {Y : Set ly} → (X → F Y) → (F X → F Y)}
   → {law : {lx ly : Level} {X : Set lx} {Y : Set ly} (f : X → F Y) (x : X) → liftDomain f (pure x) ≡ f x}
-  → RoundTripGeneral A B F pure liftDomain law
-  → RoundTripGeneral B C F pure liftDomain law
-  → RoundTripGeneral A C F pure liftDomain law
+  → {la lb lc : Level}
+  → {A : Set la}
+  → {B : Set lb}
+  → {C : Set lc}
+  → RoundTripGeneral F pure liftDomain law A B
+  → RoundTripGeneral F pure liftDomain law B C
+  → RoundTripGeneral F pure liftDomain law A C
 transitiveRTG
-  {la} {lb} {lc} {A} {B} {C} {F} {pure} {liftDomain} {law}
+  {F} {pure} {liftDomain} {law} {la} {lb} {lc} {A} {B} {C}
   (roundTripGeneral A→FB B→A pab)
   (roundTripGeneral B→FC C→B pbc)
   = roundTripGeneral A→FC C→A pac

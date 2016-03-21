@@ -4,13 +4,13 @@ open import Agda.Primitive
 open import Agda.Builtin.Equality
 
 record RoundTripGeneral
-  {la lb : Level}
-  (A : Set la)
-  (B : Set lb)
   (F : {lf : Level} → Set lf → Set lf)
   (pure : {lx : Level} {X : Set lx} → X → F X)
   (liftDomain : {lx ly : Level} {X : Set lx} {Y : Set ly} → (X → F Y) → (F X → F Y))
   (law : {lx ly : Level} {X : Set lx} {Y : Set ly} (f : X → F Y) (x : X) → liftDomain f (pure x) ≡ f x)
+  {la lb : Level}
+  (A : Set la)
+  (B : Set lb)
   : Set (la ⊔ lb) where
   constructor roundTripGeneral
   field

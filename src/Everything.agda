@@ -1,6 +1,9 @@
 module Everything where
 
 import Common.RoundTrip
+import Common.RoundTripGeneral
+import Common.RoundTripGeneralReflexive
+import Common.RoundTripGeneralTransitive
 import Common.RoundTripReflexive
 import Common.RoundTripTransitive
 import Common.RoundTripPartial
