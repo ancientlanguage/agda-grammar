@@ -1,3 +1,6 @@
 [submodule "modules/UlfNorell/agda-prelude"]
 	path = modules/UlfNorell/agda-prelude
 	url = https://github.com/UlfNorell/agda-prelude.git
+[submodule "modules/freebroccolo/agda-prelude"]
+	path = modules/freebroccolo/agda-prelude
+	url = https://github.com/freebroccolo/agda-prelude.git
