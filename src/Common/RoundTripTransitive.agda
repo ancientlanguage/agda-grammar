@@ -1,8 +1,9 @@
 module Common.RoundTripTransitive where
 
 open import Agda.Primitive
-open import Prelude.Equality
-open import Prelude.Function
+open import Agda.Builtin.Equality
+open import Prelude.Path
+open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTrip
 
 roundTripTransitive
@@ -22,15 +23,15 @@ roundTripTransitive
   = equiv A→C C→A pac
   where
     A→C : A → C
-    A→C = B→C ∘ A→B
+    A→C = B→C Π.∘ A→B
 
     C→A : C → A
-    C→A = B→A ∘ C→B
+    C→A = B→A Π.∘ C→B
 
     pac
       : (c : C)
       → c ≡ B→C (A→B (B→A (C→B c)))
-    pac c = trans pl pr
+    pac c = pl ≡.⟓ pr
       where
       pl : c ≡ B→C (C→B c)
       pl = pbc c
@@ -39,6 +40,6 @@ roundTripTransitive
       paux = pab (C→B c)
 
       pr : B→C (C→B c) ≡ B→C (A→B (B→A (C→B c)))
-      pr = cong B→C paux
+      pr = B→C ≡.· paux
 
 _⊕_ = roundTripTransitive

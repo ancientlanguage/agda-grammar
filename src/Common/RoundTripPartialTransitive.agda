@@ -2,10 +2,13 @@ module Common.RoundTripPartialTransitive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Prelude.Equality
-open import Prelude.Function
+open import Prelude.Path
+open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTripPartial
 open import Common.PartialResult
+
+open ≡
+open Π
 
 transitiveRTP :
   {la lb lc le : Level}
@@ -37,7 +40,7 @@ transitiveRTP
     pac
       : (c : C)
       → defined c ≡ A→C⁇E (B→A (C→B c))
-    pac c = trans pl pr
+    pac c = pl ≡.⟓ pr
       where
       pl : defined c ≡ B→C⁇E (C→B c)
       pl = pbc c
@@ -46,6 +49,6 @@ transitiveRTP
       paux = pab (C→B c)
 
       pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
-      pr = cong B⁇E→C⁇E paux
+      pr = B⁇E→C⁇E · paux
 
 _⊕⁇_ = transitiveRTP

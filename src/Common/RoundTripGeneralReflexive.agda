@@ -2,9 +2,11 @@ module Common.RoundTripGeneralReflexive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Prelude.Equality
-open import Prelude.Function
+open import Prelude.Path
+open import Common.Identity
 open import Common.RoundTripGeneral
+
+open ≡
 
 roundTripGeneralReflexive :
   {F : {lf : Level} → Set lf → Set lf}
@@ -17,4 +19,4 @@ roundTripGeneralReflexive :
 roundTripGeneralReflexive {pure = pure} {law = law} {A = A} = roundTripGeneral pure id p
   where
     p : (x : A) → pure x ≡ pure (id x)
-    p x = cong pure refl
+    p x = pure · refl

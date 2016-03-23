@@ -2,11 +2,11 @@ module Common.RoundTripSum where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Prelude.Equality
-open import Prelude.Function
-open import Prelude.Product
+open import Prelude.Path
 open import Common.RoundTrip
 open import Common.Sum
+
+open ≡
 
 mapLeft
   : {ℓ₁ ℓ₁′ ℓ₂ : Level}
@@ -32,7 +32,7 @@ roundTripSumLeft {A = A} {A′ = A′} {B = B} (equiv f f⁻¹ p) = equiv g g⁻
     g⁻¹ = mapLeft f⁻¹
 
     q :  (b : A′ ⊎ B) → b ≡ g (g⁻¹ b)
-    q (left x) = cong left (p x)
+    q (left x) = left · p x
     q (right y) = refl
 
 mapRight
@@ -60,4 +60,4 @@ roundTripSumRight {A = A} {B = B} {B′ = B′} (equiv A→B B→A p) = equiv A�
 
     q : (b : A ⊎ B′) → b ≡ A⊎B→A⊎B′ (A⊎B′→A⊎B b)
     q (left x) = refl
-    q (right y) = cong right (p y)
+    q (right y) = right · p y

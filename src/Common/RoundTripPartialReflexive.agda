@@ -2,9 +2,12 @@ module Common.RoundTripPartialReflexive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Prelude.Function
+open import Prelude.Monoidal.Product.Indexed
+open import Common.Identity
 open import Common.PartialResult
 open import Common.RoundTripPartial
+
+open Π
 
 roundTripReflexive
   : {la le : Level}

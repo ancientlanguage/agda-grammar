@@ -2,7 +2,7 @@ module Common.RoundTripReflexive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Prelude.Function
+open import Common.Identity
 open import Common.RoundTrip
 
 roundTripReflexive

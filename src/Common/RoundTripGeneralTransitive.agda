@@ -2,9 +2,12 @@ module Common.RoundTripGeneralTransitive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Prelude.Equality
-open import Prelude.Function
+open import Prelude.Path
+open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTripGeneral
+
+open ≡
+open Π
 
 transitiveRTG
   : {F : {lf : Level} → Set lf → Set lf}
@@ -36,7 +39,7 @@ transitiveRTG
     pac
       : (c : C)
       → pure c ≡ A→FC (B→A (C→B c))
-    pac c = trans pl pr
+    pac c = pl ≡.⟓ pr
       where
       pl : pure c ≡ B→FC (C→B c)
       pl = pbc c
@@ -45,5 +48,5 @@ transitiveRTG
       paux = pab (C→B c)
 
       pr : B→FC (C→B c) ≡ A→FC (B→A (C→B c))
-      pr with cong FB→FC paux
+      pr with FB→FC · paux
       … | r rewrite law B→FC (C→B c) = r

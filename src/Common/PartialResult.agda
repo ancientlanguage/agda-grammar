@@ -2,9 +2,11 @@ module Common.PartialResult where
 
 open import Agda.Primitive
 open import Agda.Builtin.Unit
-open import Prelude.Empty
-open import Prelude.Function using (_∘_)
+open import Prelude.Monoidal.Void
+open import Prelude.Monoidal.Product.Indexed
 open import Common.Sum
+
+open Π
 
 infixl 1 _⁇_
 
@@ -24,7 +26,7 @@ Defined?
   → A ⁇ E
   → Set
 Defined? (defined x) = ⊤
-Defined? (undefined x) = ⊥
+Defined? (undefined x) = 𝟘
 
 extractDefined
   : {la le : Level}

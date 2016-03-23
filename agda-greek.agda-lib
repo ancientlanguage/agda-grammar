@@ -1,5 +1,4 @@
 name: agda-greek
 include:
   src
-  modules/UlfNorell/agda-prelude/src
-
+  modules/freebroccolo/agda-prelude/src

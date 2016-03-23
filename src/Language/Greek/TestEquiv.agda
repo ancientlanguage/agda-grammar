@@ -1,7 +1,6 @@
 module Language.Greek.TestEquiv where
 
 open import Agda.Builtin.Equality
-open import Prelude.Product
 open import Common.RoundTrip
 open import Common.RoundTripSum
 open import Common.RoundTripTransitive
