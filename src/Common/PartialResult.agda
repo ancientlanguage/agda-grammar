@@ -4,7 +4,6 @@ open import Agda.Primitive
 open import Agda.Builtin.Unit
 open import Prelude.Monoidal.Void
 open import Prelude.Monoidal.Product.Indexed
-open import Common.Sum
 
 open Π
 

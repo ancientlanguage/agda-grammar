@@ -12,7 +12,6 @@ import Common.RoundTripPartialReflexive
 import Common.RoundTripPartialTransitive
 import Common.RoundTripSum
 import Common.PartialResult
-import Common.Sum
 import Language.Greek.Abstract
 import Language.Greek.AbstractConcrete
 import Language.Greek.Concrete

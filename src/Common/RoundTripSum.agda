@@ -2,62 +2,27 @@ module Common.RoundTripSum where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
+open import Prelude.Monoidal.Coproduct
+open import Prelude.Monoidal.Exponential.Boot
 open import Prelude.Path
 open import Common.RoundTrip
-open import Common.Sum
 
-open ≡
+open ≡ using (_·_)
+open ⊕
 
-mapLeft
-  : {ℓ₁ ℓ₁′ ℓ₂ : Level}
-  → {A : Set ℓ₁}
-  → {A′ : Set ℓ₁′}
-  → {B : Set ℓ₂}
-  → (f : A → A′)
-  → A ⊎ B
-  → A′ ⊎ B
-mapLeft f (left x) = left (f x)
-mapLeft f (right y) = right y
-
-roundTripSumLeft
-  : {ℓ₁ ℓ₁′ ℓ₂ : Level}
-  → {A : Set ℓ₁}
-  → {A′ : Set ℓ₁′}
-  → {B : Set ℓ₂}
-  → A ⟳ A′
-  → (A ⊎ B) ⟳ (A′ ⊎ B)
-roundTripSumLeft {A = A} {A′ = A′} {B = B} (equiv f f⁻¹ p) = equiv g g⁻¹ q
+roundTripSumMap
+  : {la lx lb ly : Level}
+  → {A : Set la}
+  → {X : Set lx}
+  → {B : Set lb}
+  → {Y : Set ly}
+  → A ⟳ X
+  → B ⟳ Y
+  → (A ⊕ B) ⟳ (X ⊕ Y)
+roundTripSumMap {A = A} {X = X} {B = B} {Y = Y} (equiv A→X X→A p) (equiv B→Y Y→B q) = equiv ab→xy xy→ab r
   where
-    g = mapLeft f
-    g⁻¹ = mapLeft f⁻¹
-
-    q :  (b : A′ ⊎ B) → b ≡ g (g⁻¹ b)
-    q (left x) = left · p x
-    q (right y) = refl
-
-mapRight
-  : {ℓ₁ ℓ₂ ℓ₂′ : Level}
-  → {A : Set ℓ₁}
-  → {B : Set ℓ₂}
-  → {B′ : Set ℓ₂′}
-  → (f : B → B′)
-  → A ⊎ B
-  → A ⊎ B′
-mapRight f (left x) = left x
-mapRight f (right y) = right (f y)
-
-roundTripSumRight
-  : {ℓ₁ ℓ₂ ℓ₂′ : Level}
-  → {A : Set ℓ₁}
-  → {B : Set ℓ₂}
-  → {B′ : Set ℓ₂′}
-  → B ⟳ B′
-  → (A ⊎ B) ⟳ (A ⊎ B′)
-roundTripSumRight {A = A} {B = B} {B′ = B′} (equiv A→B B→A p) = equiv A⊎B→A⊎B′ A⊎B′→A⊎B q
-  where
-    A⊎B→A⊎B′ = mapRight A→B
-    A⊎B′→A⊎B = mapRight B→A
-
-    q : (b : A ⊎ B′) → b ≡ A⊎B→A⊎B′ (A⊎B′→A⊎B b)
-    q (left x) = refl
-    q (right y) = right · p y
+    ab→xy = [_⊕_] A→X B→Y
+    xy→ab = [_⊕_] X→A Y→B
+    r : (xy : X ⊕ Y) → xy ≡ ab→xy (xy→ab xy)
+    r (inl x) = inl · p x
+    r (inr y) = inr · q y

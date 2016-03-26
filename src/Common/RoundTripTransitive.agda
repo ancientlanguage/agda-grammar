@@ -6,6 +6,8 @@ open import Prelude.Path
 open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTrip
 
+open ≡
+
 roundTripTransitive
   : {la lb lc : Level}
   → {A : Set la}
@@ -31,7 +33,7 @@ roundTripTransitive
     pac
       : (c : C)
       → c ≡ B→C (A→B (B→A (C→B c)))
-    pac c = pl ≡.⟓ pr
+    pac c = pl ⟓ pr
       where
       pl : c ≡ B→C (C→B c)
       pl = pbc c
@@ -40,6 +42,7 @@ roundTripTransitive
       paux = pab (C→B c)
 
       pr : B→C (C→B c) ≡ B→C (A→B (B→A (C→B c)))
-      pr = B→C ≡.· paux
+      pr = B→C · paux
 
-_⊕_ = roundTripTransitive
+module ⟳ where
+  _∘_ = roundTripTransitive
