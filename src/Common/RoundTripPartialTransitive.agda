@@ -51,4 +51,4 @@ transitiveRTP
       pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
       pr = B⁇E→C⁇E · paux
 
-_⊕⁇_ = transitiveRTP
+_∘⁇_ = transitiveRTP

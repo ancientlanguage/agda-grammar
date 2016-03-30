@@ -4,6 +4,7 @@ open import Agda.Builtin.Char
 open import Agda.Builtin.Equality
 open import Language.Greek.Concrete
 open import Common.PartialResult
+open import Common.RoundTripPartial
 
 concreteCombined : Char → Combined ⁇ Char
 concreteCombined 'Α' = defined Α
@@ -179,3 +180,6 @@ concreteCombinedEquiv smooth = refl
 concreteCombinedEquiv rough = refl
 concreteCombinedEquiv diaeresis = refl
 concreteCombinedEquiv iotaSubscript = refl
+
+concreteCombinedRoundTripPartial : Char ↻ Combined ⁇ Char
+concreteCombinedRoundTripPartial = equiv concreteCombined concreteCombinedInv concreteCombinedEquiv

@@ -10,12 +10,12 @@ open import Common.RoundTripPartial
 open Π using (_∘_)
 open ⇒ using (idn)
 
-roundTripReflexive
+roundTripPartialReflexive
   : {la le : Level}
   → {A : Set la}
   → {E : Set le}
   → A ↻ A ⁇ E
-roundTripReflexive {A = A} = equiv idnP idn p
+roundTripPartialReflexive {A = A} = equiv idnP idn p
   where
     idnP = defined ∘ idn
     p : (x : A) → defined x ≡ idnP (idn x)

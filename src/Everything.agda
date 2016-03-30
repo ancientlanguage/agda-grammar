@@ -7,6 +7,7 @@ import Common.RoundTripGeneralTransitive
 import Common.RoundTripReflexive
 import Common.RoundTripTransitive
 import Common.RoundTripPartial
+import Common.RoundTripPartialLift
 import Common.RoundTripPartialMap
 import Common.RoundTripPartialReflexive
 import Common.RoundTripPartialTransitive
