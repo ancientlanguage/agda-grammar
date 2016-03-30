@@ -1,4 +1,4 @@
-module Language.Greek.TestEquiv where
+module Language.Greek.Pipeline where
 
 open import Agda.Builtin.Char
 open import Agda.Builtin.Equality
@@ -19,8 +19,8 @@ open import Language.Greek.Unicode
 
 open ⟳ using (_∘_)
 
-testEquiv : Combined ⟳ Combo ⊕ Mark
-testEquiv = letterOrMarkEquiv ∘ roundTripSumMap abstractLetterEquiv roundTripReflexive
+letter : Combined ⟳ Combo ⊕ Mark
+letter = letterOrMarkEquiv ∘ roundTripSumMap abstractLetterEquiv roundTripReflexive
 
-testUnicode : Char ↻ (Combo ⊕ Mark) ⁇ Char
-testUnicode = concreteCombinedRoundTripPartial ∘⁇ lift testEquiv
+pipeline : Char ↻ (Combo ⊕ Mark) ⁇ Char
+pipeline = concreteCombinedRoundTripPartial ∘⁇ lift letter

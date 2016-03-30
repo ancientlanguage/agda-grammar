@@ -18,7 +18,7 @@ roundTripSumMap
   → {Y : Set ly}
   → A ⟳ X
   → B ⟳ Y
-  → (A ⊕ B) ⟳ (X ⊕ Y)
+  → A ⊕ B ⟳ X ⊕ Y
 roundTripSumMap {A = A} {X = X} {B = B} {Y = Y} (equiv A→X X→A p) (equiv B→Y Y→B q) = equiv ab→xy xy→ab r
   where
     ab→xy = [_⊕_] A→X B→Y
