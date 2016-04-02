@@ -20,3 +20,4 @@ import Language.Greek.ConcreteCombined
 import Language.Greek.Unicode
 import Language.Greek.Pipeline
 import Language.Greek.Test
+import Unicode.Decompose
