@@ -17,9 +17,9 @@ mapE :
   → {E1 : Set le1}
   → {E2 : Set le2}
   → (E1 → E2)
-  → A ↻ B ⁇ E1
-  → A ↻ B ⁇ E2
-mapE {B = B} f (equiv A→B⁇E1 B→A p) = equiv A→B⁇E2 B→A q
+  → RoundTripP E1 A B
+  → RoundTripP E2 A B
+mapE {B = B} f (roundTripP A→B⁇E1 B→A p) = roundTripP A→B⁇E2 B→A q
   where
     A→B⁇E2 = mapUndefined f ∘ A→B⁇E1
     q : (x : B) → defined x ≡ A→B⁇E2 (B→A x)

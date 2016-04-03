@@ -14,8 +14,8 @@ roundTripPartialReflexive
   : {la le : Level}
   → {A : Set la}
   → {E : Set le}
-  → A ↻ A ⁇ E
-roundTripPartialReflexive {A = A} = equiv idnP idn p
+  → RoundTripP E A A 
+roundTripPartialReflexive {A = A} = roundTripP idnP idn p
   where
     idnP = defined ∘ idn
     p : (x : A) → defined x ≡ idnP (idn x)

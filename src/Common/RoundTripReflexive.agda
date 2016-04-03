@@ -10,8 +10,8 @@ open ⇒
 roundTripReflexive
   : {la : Level}
   → {A : Set la}
-  → A ⟳ A
-roundTripReflexive {A = A} = equiv idn idn p
+  → RoundTrip A A
+roundTripReflexive {A = A} = roundTrip idn idn p
   where
     p : (x : A) → x ≡ idn (idn x)
     p x = refl

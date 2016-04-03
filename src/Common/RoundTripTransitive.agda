@@ -13,16 +13,16 @@ roundTripTransitive
   → {A : Set la}
   → {B : Set lb}
   → {C : Set lc}
-  → A ⟳ B
-  → B ⟳ C
-  → A ⟳ C
+  → RoundTrip A B
+  → RoundTrip B C
+  → RoundTrip A C
 roundTripTransitive
   {A = A}
   {B = B}
   {C = C}
-  (equiv A→B B→A pab)
-  (equiv B→C C→B pbc)
-  = equiv A→C C→A pac
+  (roundTrip A→B B→A pab)
+  (roundTrip B→C C→B pbc)
+  = roundTrip A→C C→A pac
   where
     A→C : A → C
     A→C = B→C Π.∘ A→B
@@ -44,5 +44,4 @@ roundTripTransitive
       pr : B→C (C→B c) ≡ B→C (A→B (B→A (C→B c)))
       pr = B→C · paux
 
-module ⟳ where
-  _∘_ = roundTripTransitive
+_⟳∘_ = roundTripTransitive

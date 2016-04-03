@@ -11,12 +11,10 @@ open import Common.RoundTripPartial
 open import Common.RoundTripPartialLift
 open import Common.RoundTripPartialReflexive
 open import Common.RoundTripPartialTransitive
-open import Language.Greek.Concrete renaming (Letter to ConcreteLetter)
-open import Language.Greek.Abstract renaming (Letter to AbstractLetter)
+open import Language.Greek.Concrete
+open import Language.Greek.Abstract
 open import Language.Greek.AbstractConcrete
 open import Language.Greek.Unicode
 
-open ⟳ using (_∘_)
-
-pipeline : Char ↻ (LetterCaseFinal ⊕ Mark) ⁇ Char
-pipeline = char↻Letter⊕Mark ∘⁇ lift (roundTripSumMap abstractLetterEquiv roundTripReflexive)
+pipeline : RoundTripP Char Char (LetterCaseFinal ⊕ Mark)
+pipeline = Char↻Letter⊕Mark ↻∘ lift (rtMapLeft ConcreteLetter⟳LetterCaseFinal)

@@ -4,15 +4,13 @@ open import Agda.Primitive
 open import Agda.Builtin.Equality
 open import Common.PartialResult
 
-infixl 0 _↻_⁇_
-
-record _↻_⁇_
-  {la lb le : Level}
+record RoundTripP
+  {le la lb : Level}
+  (E : Set le)
   (A : Set la)
   (B : Set lb)
-  (E : Set le)
-  : Set (la ⊔ lb ⊔ le) where
-  constructor equiv
+  : Set (le ⊔ la ⊔ lb) where
+  constructor roundTripP
   field
     A→B⁇E : A → B ⁇ E
     B→A : B → A

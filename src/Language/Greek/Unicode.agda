@@ -186,5 +186,5 @@ proof (inr rough) = refl
 proof (inr diaeresis) = refl
 proof (inr iotaSubscript) = refl
 
-char↻Letter⊕Mark : Char ↻ Letter ⊕ Mark ⁇ Char
-char↻Letter⊕Mark = equiv fromChar toChar proof
+Char↻Letter⊕Mark : RoundTripP Char Char (Letter ⊕ Mark)
+Char↻Letter⊕Mark = roundTripP fromChar toChar proof

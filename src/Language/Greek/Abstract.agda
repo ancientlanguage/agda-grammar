@@ -39,7 +39,7 @@ data LetterCaseFinalI : Letter → Case → Maybe Final → Set where
   ω : (c : Case) → LetterCaseFinalI ω c no
 
 record LetterCaseFinal : Set where
-  constructor combo
+  constructor lcf
   field
     {l} : Letter
     {c} : Case

@@ -13,9 +13,9 @@ lift
   → {A : Set la}
   → {B : Set lb}
   → {E : Set le}
-  → A ⟳ B
-  → A ↻ B ⁇ E
-lift {A = A} {B = B} (equiv A→B B→A p) = equiv A→B⁇E B→A q
+  → RoundTrip A B
+  → RoundTripP E A B
+lift {A = A} {B = B} (roundTrip A→B B→A p) = roundTripP A→B⁇E B→A q
   where
     A→B⁇E = defined Π.∘ A→B
 

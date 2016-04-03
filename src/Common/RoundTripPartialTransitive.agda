@@ -16,17 +16,17 @@ transitiveRTP :
   → {B : Set lb}
   → {C : Set lc}
   → {E : Set le}
-  → A ↻ B ⁇ E
-  → B ↻ C ⁇ E
-  → A ↻ C ⁇ E
+  → RoundTripP E A B
+  → RoundTripP E B C
+  → RoundTripP E A C
 transitiveRTP
   {A = A}
   {B = B}
   {C = C}
   {E = E}
-  (equiv A→B⁇E B→A pab)
-  (equiv B→C⁇E C→B pbc)
-  = equiv A→C⁇E C→A pac
+  (roundTripP A→B⁇E B→A pab)
+  (roundTripP B→C⁇E C→B pbc)
+  = roundTripP A→C⁇E C→A pac
   where
     B⁇E→C⁇E : B ⁇ E → C ⁇ E
     B⁇E→C⁇E = liftDomain B→C⁇E
@@ -51,4 +51,4 @@ transitiveRTP
       pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
       pr = B⁇E→C⁇E · paux
 
-_∘⁇_ = transitiveRTP
+_↻∘_ = transitiveRTP
