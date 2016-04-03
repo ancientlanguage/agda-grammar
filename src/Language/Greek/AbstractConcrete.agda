@@ -6,7 +6,7 @@ open import Common.RoundTrip
 open import Language.Greek.Concrete renaming (Letter to ConcreteLetter)
 open import Language.Greek.Abstract renaming (Letter to AbstractLetter)
 
-abstractLetter : ConcreteLetter → Combo
+abstractLetter : ConcreteLetter → LetterCaseFinal
 abstractLetter Α = combo (α uppercase)
 abstractLetter Β = combo (β uppercase)
 abstractLetter Γ = combo (γ uppercase)
@@ -57,7 +57,7 @@ abstractLetter χ = combo (χ lowercase)
 abstractLetter ψ = combo (ψ lowercase)
 abstractLetter ω = combo (ω lowercase)
 
-abstractLetterInv : Combo → ConcreteLetter
+abstractLetterInv : LetterCaseFinal → ConcreteLetter
 abstractLetterInv (combo (α uppercase)) = Α
 abstractLetterInv (combo (α lowercase)) = α
 abstractLetterInv (combo (β uppercase)) = Β
@@ -108,7 +108,7 @@ abstractLetterInv (combo (ψ lowercase)) = ψ
 abstractLetterInv (combo (ω uppercase)) = Ω
 abstractLetterInv (combo (ω lowercase)) = ω
 
-abstractLetterEquivP : (c : Combo) → c ≡ (abstractLetter (abstractLetterInv c))
+abstractLetterEquivP : (c : LetterCaseFinal) → c ≡ (abstractLetter (abstractLetterInv c))
 abstractLetterEquivP (combo (α uppercase)) = refl
 abstractLetterEquivP (combo (α lowercase)) = refl
 abstractLetterEquivP (combo (β uppercase)) = refl
@@ -159,5 +159,5 @@ abstractLetterEquivP (combo (ψ lowercase)) = refl
 abstractLetterEquivP (combo (ω uppercase)) = refl
 abstractLetterEquivP (combo (ω lowercase)) = refl
 
-abstractLetterEquiv : ConcreteLetter ⟳ Combo
+abstractLetterEquiv : ConcreteLetter ⟳ LetterCaseFinal
 abstractLetterEquiv = equiv abstractLetter abstractLetterInv abstractLetterEquivP

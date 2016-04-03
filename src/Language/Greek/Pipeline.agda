@@ -19,8 +19,8 @@ open import Language.Greek.Unicode
 
 open ⟳ using (_∘_)
 
-letter : Combined ⟳ Combo ⊕ Mark
+letter : Combined ⟳ LetterCaseFinal ⊕ Mark
 letter = letterOrMarkEquiv ∘ roundTripSumMap abstractLetterEquiv roundTripReflexive
 
-pipeline : Char ↻ (Combo ⊕ Mark) ⁇ Char
+pipeline : Char ↻ (LetterCaseFinal ⊕ Mark) ⁇ Char
 pipeline = concreteCombinedRoundTripPartial ∘⁇ lift letter
