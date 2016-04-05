@@ -9,10 +9,10 @@ open import Common.RoundTripPartial
 open import Common.PartialResult
 
 lift
-  : {la lb le : Level}
+  : {le la lb : Level}
+  → {E : Set le}
   → {A : Set la}
   → {B : Set lb}
-  → {E : Set le}
   → RoundTrip A B
   → RoundTripP E A B
 lift {A = A} {B = B} (roundTrip A→B B→A p) = roundTripP A→B⁇E B→A q

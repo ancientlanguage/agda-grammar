@@ -7,11 +7,11 @@ open import Common.RoundTrip
 
 open ⇒
 
-roundTripReflexive
+rtRefl
   : {la : Level}
   → {A : Set la}
   → RoundTrip A A
-roundTripReflexive {A = A} = roundTrip idn idn p
+rtRefl {A = A} = roundTrip idn idn p
   where
     p : (x : A) → x ≡ idn (idn x)
     p x = refl

@@ -11,6 +11,7 @@ import Common.RoundTripPartialLift
 import Common.RoundTripPartialMap
 import Common.RoundTripPartialReflexive
 import Common.RoundTripPartialTransitive
+import Common.RoundTripProduct
 import Common.RoundTripSum
 import Common.PartialResult
 import Language.Greek.Abstract
