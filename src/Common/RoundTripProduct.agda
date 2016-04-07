@@ -29,9 +29,11 @@ rtMapProduct
   (roundTrip B→Y Y→B q)
   = roundTrip ab→xy xy→ab r
   where
-    ab→xy = ⟨_⊗_⟩ A→X B→Y
-    xy→ab = ⟨_⊗_⟩ X→A Y→B
+    ab→xy = ⟨ A→X ⊗ B→Y ⟩
+    xy→ab = ⟨ X→A ⊗ Y→B ⟩
 
-    r : (xy : X ⊗ Y) → xy ≡ ab→xy (xy→ab xy)
+    r : (xy : X ⊗ Y)
+      → xy ≡ ab→xy (xy→ab xy)
     r (fst , snd) with p fst | q snd
     … | p1 | p2 rewrite ≡.inv p1 | ≡.inv p2 = refl
+
