@@ -13,3 +13,5 @@ record RoundTrip
     A→B : A → B
     B→A : B → A
     p : (x : B) → x ≡ A→B (B→A x)
+
+syntax RoundTrip A B = A ⟳ B

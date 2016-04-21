@@ -7,16 +7,16 @@ open import Prelude.Monoidal.Product.Indexed
 
 open Π
 
-infixl 1 _⁇_
-
-data _⁇_
-  {la le : Level}
-  (A : Set la)
+data PartialResult
+  {le la : Level}
   (E : Set le)
-  : Set (la ⊔ le)
+  (A : Set la)
+  : Set (le ⊔ la)
   where
   defined : A → A ⁇ E
   undefined : E → A ⁇ E
+
+syntax PartialResult E A = A ⁇ E
 
 Defined?
   : {la le : Level}

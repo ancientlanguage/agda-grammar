@@ -14,8 +14,8 @@ rtpRefl
   : {le la : Level}
   → {E : Set le}
   → {A : Set la}
-  → RoundTripP E A A 
-rtpRefl {A = A} = roundTripP idnP idn p
+  → A ↻ A // E
+rtpRefl {A = A} = roundTripPartial idnP idn p
   where
     idnP = defined ∘ idn
     p : (x : A) → defined x ≡ idnP (idn x)

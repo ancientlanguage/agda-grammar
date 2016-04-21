@@ -15,13 +15,12 @@ open import Common.RoundTripPartialLift
 open import Common.RoundTripPartialMap
 open import Common.RoundTripPartialReflexive
 open import Common.RoundTripPartialTransitive
-open import Language.Greek.Concrete
-open import Language.Greek.Abstract
+open import Language.Greek.Script
 open import Language.Greek.AbstractConcrete
 open import Language.Greek.Unicode
 
-rt1 : RoundTripP Char Char (LetterCaseFinal ⊕ Mark)
-rt1 = Char↻Letter⊕Mark ↻∘ lift (rtMapLeft ConcreteLetter⟳LetterCaseFinal)
+rt1 : Char ↻ LetterCaseFinal ⊕ Mark // NonGreekChar
+rt1 = Char↻Symbol⊕Mark ↻.∘↑ (⟳.mapLeft Symbol⟳LetterCaseFinal)
 
 {-
 p1

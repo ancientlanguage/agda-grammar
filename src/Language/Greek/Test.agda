@@ -4,11 +4,11 @@ open import Agda.Builtin.Char
 open import Prelude.Monoidal.Coproduct
 open import Prelude.Monoidal.Void
 open import Common.PartialResult
-open import Language.Greek.Concrete
+open import Language.Greek.Script
 open import Language.Greek.Unicode
 
-valid : Letter ⊕ Mark
+valid : Symbol ⊕ Mark
 valid = extractDefined (fromChar 'α')
 
--- invalid : Letter ⊕ Mark
+-- invalid : Symbol ⊕ Mark
 -- invalid = extractDefined (fromChar 'Q')

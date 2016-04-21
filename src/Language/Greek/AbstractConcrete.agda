@@ -3,10 +3,9 @@ module Language.Greek.AbstractConcrete where
 open import Agda.Builtin.Equality
 open import Prelude.Maybe
 open import Common.RoundTrip
-open import Language.Greek.Concrete renaming (Letter to ConcreteLetter)
-open import Language.Greek.Abstract renaming (Letter to AbstractLetter)
+open import Language.Greek.Script
 
-fromConcrete : ConcreteLetter → LetterCaseFinal
+fromConcrete : Symbol → LetterCaseFinal
 fromConcrete Α = lcf (α uppercase)
 fromConcrete Β = lcf (β uppercase)
 fromConcrete Γ = lcf (γ uppercase)
@@ -57,7 +56,7 @@ fromConcrete χ = lcf (χ lowercase)
 fromConcrete ψ = lcf (ψ lowercase)
 fromConcrete ω = lcf (ω lowercase)
 
-toConcrete : LetterCaseFinal → ConcreteLetter
+toConcrete : LetterCaseFinal → Symbol
 toConcrete (lcf (α uppercase)) = Α
 toConcrete (lcf (α lowercase)) = α
 toConcrete (lcf (β uppercase)) = Β
@@ -159,5 +158,5 @@ proof (lcf (ψ lowercase)) = refl
 proof (lcf (ω uppercase)) = refl
 proof (lcf (ω lowercase)) = refl
 
-ConcreteLetter⟳LetterCaseFinal : RoundTrip ConcreteLetter LetterCaseFinal
-ConcreteLetter⟳LetterCaseFinal = roundTrip fromConcrete toConcrete proof
+Symbol⟳LetterCaseFinal : Symbol ⟳ LetterCaseFinal
+Symbol⟳LetterCaseFinal = roundTrip fromConcrete toConcrete proof

@@ -2,7 +2,7 @@ module Language.Greek.Unicode where
 
 open import Agda.Builtin.Char
 open import Agda.Builtin.Equality
-open import Language.Greek.Concrete
+open import Language.Greek.Script
 open import Prelude.Monoidal.Coproduct
 open import Common.PartialResult
 open import Common.RoundTripPartial
@@ -11,7 +11,10 @@ open ⊕
   using (inl)
   using (inr)
 
-fromChar : Char → (Letter ⊕ Mark) ⁇ Char
+data NonGreekChar : Set where
+  nonGreekChar : Char → NonGreekChar
+
+fromChar : Char → (Symbol ⊕ Mark) ⁇ NonGreekChar
 fromChar 'Α' = defined (inl Α)
 fromChar 'Β' = defined (inl Β)
 fromChar 'Γ' = defined (inl Γ)
@@ -68,9 +71,9 @@ fromChar '\x0313' = defined (inr smooth) -- COMBINING COMMA ABOVE
 fromChar '\x0314' = defined (inr rough) -- COMBINING REVERSED COMMA ABOVE
 fromChar '\x0342' = defined (inr circumflex) -- COMBINING GREEK PERISPOMENI
 fromChar '\x0345' = defined (inr iotaSubscript) -- COMBINING GREEK YPOGEGRAMMENI
-fromChar c = undefined c
+fromChar c = undefined (nonGreekChar c)
 
-toChar : Letter ⊕ Mark → Char
+toChar : Symbol ⊕ Mark → Char
 toChar (inl Α) = 'Α'
 toChar (inl Β) = 'Β'
 toChar (inl Γ) = 'Γ'
@@ -128,7 +131,7 @@ toChar (inr rough) = '\x0314' -- COMBINING REVERSED COMMA ABOVE
 toChar (inr circumflex) = '\x0342' -- COMBINING GREEK PERISPOMENI
 toChar (inr iotaSubscript) = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 
-proof : (x : Letter ⊕ Mark) → defined x ≡ fromChar (toChar x)
+proof : (x : Symbol ⊕ Mark) → defined x ≡ fromChar (toChar x)
 proof (inl Α) = refl
 proof (inl Β) = refl
 proof (inl Γ) = refl
@@ -186,5 +189,5 @@ proof (inr rough) = refl
 proof (inr diaeresis) = refl
 proof (inr iotaSubscript) = refl
 
-Char↻Letter⊕Mark : RoundTripP Char Char (Letter ⊕ Mark)
-Char↻Letter⊕Mark = roundTripP fromChar toChar proof
+Char↻Symbol⊕Mark : Char ↻ Symbol ⊕ Mark // NonGreekChar
+Char↻Symbol⊕Mark = roundTripPartial fromChar toChar proof

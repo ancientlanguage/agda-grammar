@@ -7,27 +7,27 @@ open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTripPartial
 open import Common.PartialResult
 
-open ≡
-open Π
-
-transitiveRTP :
+transitive :
   {la lb lc le : Level}
   → {A : Set la}
   → {B : Set lb}
   → {C : Set lc}
   → {E : Set le}
-  → RoundTripP E A B
-  → RoundTripP E B C
-  → RoundTripP E A C
-transitiveRTP
+  → A ↻ B // E
+  → B ↻ C // E
+  → A ↻ C // E
+transitive
   {A = A}
   {B = B}
   {C = C}
   {E = E}
-  (roundTripP A→B⁇E B→A pab)
-  (roundTripP B→C⁇E C→B pbc)
-  = roundTripP A→C⁇E C→A pac
+  (roundTripPartial A→B⁇E B→A pab)
+  (roundTripPartial B→C⁇E C→B pbc)
+  = roundTripPartial A→C⁇E C→A pac
   where
+    open ≡
+    open Π
+
     B⁇E→C⁇E : B ⁇ E → C ⁇ E
     B⁇E→C⁇E = liftDomain B→C⁇E
 
@@ -51,4 +51,18 @@ transitiveRTP
       pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
       pr = B⁇E→C⁇E · paux
 
-_↻∘_ = transitiveRTP
+module ↻ where
+  _∘_ = transitive
+
+  open import Common.RoundTrip
+  open import Common.RoundTripPartialLift
+  _∘↑_ :
+    {la lb lc le : Level}
+    → {A : Set la}
+    → {B : Set lb}
+    → {C : Set lc}
+    → {E : Set le}
+    → A ↻ B // E
+    → B ⟳ C
+    → A ↻ C // E
+  _∘↑_ x y = transitive x (lift y)
