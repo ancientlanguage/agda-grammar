@@ -12,7 +12,7 @@ module ⟳ where
   reflexivity
     : {la : Level}
     → {A : Set la}
-    → RoundTrip A A
+    → A ⟳ A
   reflexivity {A = A} = roundTrip idn idn p
     where
       p : (x : A) → x ≡ idn (idn x)

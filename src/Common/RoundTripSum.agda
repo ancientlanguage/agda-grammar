@@ -6,12 +6,11 @@ open import Prelude.Monoidal.Coproduct
 open import Prelude.Monoidal.Exponential
 open import Prelude.Path
 open import Common.RoundTrip
+open import Common.RoundTripReflexive
 
 open ⊕
 
-module ⟳ where
-  open import Common.RoundTripReflexive
-
+module ⟳⊕ where
   mapBoth
     : {la lx lb ly : Level}
     → {A : Set la}

@@ -20,7 +20,7 @@ open import Language.Greek.AbstractConcrete
 open import Language.Greek.Unicode
 
 rt1 : Char ↻ LetterCaseFinal ⊕ Mark // NonGreekChar
-rt1 = Char↻Symbol⊕Mark ↻.∘↑ (⟳.mapLeft Symbol⟳LetterCaseFinal)
+rt1 = Char↻Symbol⊕Mark ↻.∘↑ (⟳⊕.mapLeft Symbol⟳LetterCaseFinal)
 
 {-
 p1
