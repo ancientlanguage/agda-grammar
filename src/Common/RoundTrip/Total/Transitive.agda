@@ -31,12 +31,18 @@ roundTripTransitive
     again
       : (x : C)
       → there (back x) ≡ x
-    again c = left ≡.⟓ (again2 c)
+    again c = expanded
       where
       embed-back2 : there1 (back1 (back2 c)) ≡ back2 c
       embed-back2 = again1 (back2 c)
 
       left : there2 (there1 (back1 (back2 c))) ≡ there2 (back2 c)
       left = there2 ≡.· embed-back2
+
+      right : there2 (back2 c) ≡ c
+      right = again2 c
+
+      expanded : there2 (there1 (back1 (back2 c))) ≡ c
+      expanded = left ≡.⟓ right
 
 _⟳∘_ = roundTripTransitive
