@@ -15,9 +15,9 @@ lift
   → {B : Set lb}
   → A ⟳ B
   → A ↻ B // E
-lift {A = A} {B = B} (roundTrip A→B B→A p) = roundTripPartial A→B⁇E B→A q
+lift {A = A} {B = B} (roundTrip there back again) = roundTripPartial A→B⁇E back q
   where
-    A→B⁇E = defined Π.∘ A→B
+    A→B⁇E = defined Π.∘ there
 
-    q : (x : B) → defined x ≡ A→B⁇E (B→A x)
-    q x = defined ≡.· p x
+    q : (x : B) → defined x ≡ A→B⁇E (back x)
+    q x rewrite again x = refl

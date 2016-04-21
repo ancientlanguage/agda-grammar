@@ -20,26 +20,27 @@ module ⟳Vec where
     {n = n}
     {A = A}
     {B = B}
-    (roundTrip A→B B→A p)
-    = roundTrip there back q
+    (roundTrip there back again)
+    = roundTrip thereV backV againV
     where
-      there
+      thereV
         : {s : Size}
         → {m : Nat}
         → Vec {s = s} A m
         → Vec {s = s} B m
-      there = Vec.map A→B
+      thereV = Vec.map there
 
-      back
+      backV
         : {s : Size}
         → {m : Nat}
         → Vec {s = s} B m
         → Vec {s = s} A m
-      back = Vec.map B→A
+      backV = Vec.map back
 
-      q : {s : Size}
+      againV
+        : {s : Size}
         → {m : Nat}
         → (x : Vec {s = s} B m)
-        → x ≡ there (back x)
-      q [] = refl
-      q (x ∷ xs) rewrite ≡.inv (p x) | ≡.inv (q xs) = refl
+        → thereV (backV x) ≡ x
+      againV [] = refl
+      againV (x ∷ xs) rewrite again x | againV xs = refl

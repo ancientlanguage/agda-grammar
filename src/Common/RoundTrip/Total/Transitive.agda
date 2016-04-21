@@ -6,42 +6,37 @@ open import Prelude.Path
 open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTrip.Total.Definition
 
-open ≡
-
 roundTripTransitive
   : {la lb lc : Level}
   → {A : Set la}
   → {B : Set lb}
   → {C : Set lc}
-  → RoundTrip A B
-  → RoundTrip B C
-  → RoundTrip A C
+  → A ⟳ B
+  → B ⟳ C
+  → A ⟳ C
 roundTripTransitive
   {A = A}
   {B = B}
   {C = C}
-  (roundTrip A→B B→A pab)
-  (roundTrip B→C C→B pbc)
-  = roundTrip A→C C→A pac
+  (roundTrip there1 back1 again1)
+  (roundTrip there2 back2 again2)
+  = roundTrip there back again
   where
-    A→C : A → C
-    A→C = B→C Π.∘ A→B
+    there : A → C
+    there = there2 Π.∘ there1
 
-    C→A : C → A
-    C→A = B→A Π.∘ C→B
+    back : C → A
+    back = back1 Π.∘ back2
 
-    pac
-      : (c : C)
-      → c ≡ B→C (A→B (B→A (C→B c)))
-    pac c = pl ⟓ pr
+    again
+      : (x : C)
+      → there (back x) ≡ x
+    again c = left ≡.⟓ (again2 c)
       where
-      pl : c ≡ B→C (C→B c)
-      pl = pbc c
+      embed-back2 : there1 (back1 (back2 c)) ≡ back2 c
+      embed-back2 = again1 (back2 c)
 
-      paux : C→B c ≡ A→B (B→A (C→B c))
-      paux = pab (C→B c)
-
-      pr : B→C (C→B c) ≡ B→C (A→B (B→A (C→B c)))
-      pr = B→C · paux
+      left : there2 (there1 (back1 (back2 c))) ≡ there2 (back2 c)
+      left = there2 ≡.· embed-back2
 
 _⟳∘_ = roundTripTransitive

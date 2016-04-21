@@ -107,7 +107,7 @@ toSymbol (lcf (ψ lowercase)) = ψ
 toSymbol (lcf (ω uppercase)) = Ω
 toSymbol (lcf (ω lowercase)) = ω
 
-proof : (x : LetterCaseFinal) → x ≡ fromSymbol (toSymbol x)
+proof : (x : LetterCaseFinal) → fromSymbol (toSymbol x) ≡ x
 proof (lcf (α uppercase)) = refl
 proof (lcf (α lowercase)) = refl
 proof (lcf (β uppercase)) = refl

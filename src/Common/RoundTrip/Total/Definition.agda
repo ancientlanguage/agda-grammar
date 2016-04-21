@@ -10,8 +10,10 @@ record RoundTrip
   : Set (la ⊔ lb) where
   constructor roundTrip
   field
-    A→B : A → B
-    B→A : B → A
-    p : (x : B) → x ≡ A→B (B→A x)
+    there : A → B
+    back : B → A
+    again
+      : (x : B)
+      → there (back x) ≡ x
 
 _⟳_ = RoundTrip

@@ -12,7 +12,6 @@ open ≡ using (_·_)
 open ⊗
 
 module ⟳⊗ where
-
   mapBoth
     : {la lx lb ly : Level}
     → {A : Set la}
@@ -27,17 +26,17 @@ module ⟳⊗ where
     {X = X}
     {B = B}
     {Y = Y}
-    (roundTrip A→X X→A p)
-    (roundTrip B→Y Y→B q)
-    = roundTrip ab→xy xy→ab r
+    (roundTrip thereLeft backLeft againLeft)
+    (roundTrip thereRight backRight againRight)
+    = roundTrip there back again
     where
-      ab→xy = ⟨ A→X ⊗ B→Y ⟩
-      xy→ab = ⟨ X→A ⊗ Y→B ⟩
+      there = ⟨ thereLeft ⊗ thereRight ⟩
+      back = ⟨ backLeft ⊗ backRight ⟩
 
-      r : (xy : X ⊗ Y)
-        → xy ≡ ab→xy (xy→ab xy)
-      r (fst , snd) with p fst | q snd
-      … | p1 | p2 rewrite ≡.inv p1 | ≡.inv p2 = refl
+      again
+        : (x : X ⊗ Y)
+        → there (back x) ≡ x
+      again (fst , snd) rewrite againLeft fst | againRight snd = refl
 
   mapLeft
     : {la lx lb : Level}

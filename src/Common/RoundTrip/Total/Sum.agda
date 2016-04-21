@@ -25,17 +25,18 @@ module ⟳⊕ where
     {X = X}
     {B = B}
     {Y = Y}
-    (roundTrip A→X X→A p)
-    (roundTrip B→Y Y→B q)
-    = roundTrip ab→xy xy→ab r
+    (roundTrip thereLeft backLeft againLeft)
+    (roundTrip thereRight backRight againRight)
+    = roundTrip there back again
     where
-      ab→xy = [ A→X ⊕ B→Y ]
-      xy→ab = [ X→A ⊕ Y→B ]
+      there = [ thereLeft ⊕ thereRight ]
+      back = [ backLeft ⊕ backRight ]
 
-      r : (xy : X ⊕ Y)
-        → xy ≡ ab→xy (xy→ab xy)
-      r (inl x) = inl ≡.· p x
-      r (inr y) = inr ≡.· q y
+      again
+        : (x : X ⊕ Y)
+        → there (back x) ≡ x
+      again (inl x) = inl ≡.· againLeft x
+      again (inr y) = inr ≡.· againRight y
 
   mapLeft
     : {la lx lb : Level}
