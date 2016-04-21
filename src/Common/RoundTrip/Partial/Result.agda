@@ -1,4 +1,4 @@
-module Common.PartialResult where
+module Common.RoundTrip.Partial.Result where
 
 open import Agda.Primitive
 open import Agda.Builtin.Unit
@@ -7,16 +7,16 @@ open import Prelude.Monoidal.Product.Indexed
 
 open Π
 
-data PartialResult
+data Result
   {le la : Level}
   (E : Set le)
   (A : Set la)
   : Set (le ⊔ la)
   where
-  defined : A → A ⁇ E
-  undefined : E → A ⁇ E
+  defined : A → Result E A
+  undefined : E → Result E A
 
-syntax PartialResult E A = A ⁇ E
+syntax Result E A = A ⁇ E
 
 Defined?
   : {la le : Level}

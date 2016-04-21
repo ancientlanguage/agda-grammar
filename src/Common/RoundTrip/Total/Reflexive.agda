@@ -1,9 +1,9 @@
-module Common.RoundTripReflexive where
+module Common.RoundTrip.Total.Reflexive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
 open import Prelude.Monoidal.Exponential
-open import Common.RoundTrip
+open import Common.RoundTrip.Total.Definition
 
 open ⇒
 

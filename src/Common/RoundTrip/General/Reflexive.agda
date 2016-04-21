@@ -1,10 +1,10 @@
-module Common.RoundTripGeneralReflexive where
+module Common.RoundTrip.General.Reflexive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
 open import Prelude.Path
 open import Prelude.Monoidal.Exponential
-open import Common.RoundTripGeneral
+open import Common.RoundTrip.General.Definition
 
 open ⇒ using (idn)
 open ≡ using (_·_)

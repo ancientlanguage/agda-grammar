@@ -1,8 +1,8 @@
-module Common.RoundTripPartial where
+module Common.RoundTrip.Partial.Definition where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
-open import Common.PartialResult
+open import Common.RoundTrip.Partial.Result
 
 record RoundTripPartial
   {le la lb : Level}

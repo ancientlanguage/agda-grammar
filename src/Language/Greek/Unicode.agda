@@ -4,8 +4,8 @@ open import Agda.Builtin.Char
 open import Agda.Builtin.Equality
 open import Language.Greek.Script
 open import Prelude.Monoidal.Coproduct
-open import Common.PartialResult
-open import Common.RoundTripPartial
+open import Common.RoundTrip.Partial.Result
+open import Common.RoundTrip.Partial.Definition
 
 open ⊕
   using (inl)

@@ -1,4 +1,4 @@
-module Common.RoundTripGeneral where
+module Common.RoundTrip.General.Definition where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality

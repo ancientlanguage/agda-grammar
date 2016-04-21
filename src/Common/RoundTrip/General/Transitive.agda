@@ -1,10 +1,10 @@
-module Common.RoundTripGeneralTransitive where
+module Common.RoundTrip.General.Transitive where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
 open import Prelude.Path
 open import Prelude.Monoidal.Product.Indexed
-open import Common.RoundTripGeneral
+open import Common.RoundTrip.General.Definition
 
 open ≡
 open Π
