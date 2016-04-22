@@ -21,35 +21,35 @@ transitive
   {B = B}
   {C = C}
   {E = E}
-  (roundTripPartial A→B⁇E B→A pab)
-  (roundTripPartial B→C⁇E C→B pbc)
-  = roundTripPartial A→C⁇E C→A pac
+  (roundTripPartial there1 back1 again1)
+  (roundTripPartial there2 back2 again2)
+  = roundTripPartial there back again
   where
     open ≡
     open Π
 
-    B⁇E→C⁇E : B ⁇ E → C ⁇ E
-    B⁇E→C⁇E = liftDomain B→C⁇E
+    there2↑ : B ⁇ E → C ⁇ E
+    there2↑ = liftDomain there2
 
-    A→C⁇E : A → C ⁇ E
-    A→C⁇E = B⁇E→C⁇E ∘ A→B⁇E 
+    there : A → C ⁇ E
+    there = there2↑ ∘ there1
 
-    C→A : C → A
-    C→A = B→A ∘ C→B
+    back : C → A
+    back = back1 ∘ back2
 
-    pac
-      : (c : C)
-      → defined c ≡ A→C⁇E (B→A (C→B c))
-    pac c = pl ≡.⟓ pr
+    again
+      : (x : C)
+      → there (back x) ≡ defined x
+    again x = left ≡.⟓ right
       where
-      pl : defined c ≡ B→C⁇E (C→B c)
-      pl = pbc c
+      aux : there1 (back1 (back2 x)) ≡ defined (back2 x)
+      aux = again1 (back2 x)
 
-      paux : defined (C→B c) ≡ A→B⁇E (B→A (C→B c))
-      paux = pab (C→B c)
+      left : there2↑ (there1 (back1 (back2 x))) ≡ there2 (back2 x)
+      left = there2↑ · aux
 
-      pr : B→C⁇E (C→B c) ≡ A→C⁇E (B→A (C→B c))
-      pr = B⁇E→C⁇E · paux
+      right : there2 (back2 x) ≡ defined x
+      right = again2 x
 
 module ↻ where
   _∘_ = transitive

@@ -131,7 +131,7 @@ toChar (inr rough) = '\x0314' -- COMBINING REVERSED COMMA ABOVE
 toChar (inr circumflex) = '\x0342' -- COMBINING GREEK PERISPOMENI
 toChar (inr iotaSubscript) = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 
-proof : (x : Symbol ⊕ Mark) → defined x ≡ fromChar (toChar x)
+proof : (x : Symbol ⊕ Mark) → fromChar (toChar x) ≡ defined x
 proof (inl Α) = refl
 proof (inl Β) = refl
 proof (inl Γ) = refl

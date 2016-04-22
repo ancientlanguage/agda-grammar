@@ -16,8 +16,10 @@ module ↻ where
     → {E : Set le}
     → {A : Set la}
     → A ↻ A // E
-  reflexivity {A = A} = roundTripPartial idnP idn p
+  reflexivity {A = A} = roundTripPartial there idn again
     where
-      idnP = defined ∘ idn
-      p : (x : A) → defined x ≡ idnP (idn x)
-      p x = refl
+      there = defined ∘ idn
+      again
+        : (x : A)
+        → there (idn x) ≡ defined x
+      again x = refl

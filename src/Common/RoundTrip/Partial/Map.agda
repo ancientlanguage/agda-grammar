@@ -7,9 +7,6 @@ open import Prelude.Monoidal.Product.Indexed
 open import Common.RoundTrip.Partial.Definition
 open import Common.RoundTrip.Partial.Result
 
-open Π
-open ≡
-
 module ↻ where
   map :
     {la lb le1 le2 : Level}
@@ -20,9 +17,13 @@ module ↻ where
     → (E1 → E2)
     → A ↻ B // E1
     → A ↻ B // E2
-  map {B = B} f (roundTripPartial A→B⁇E1 B→A p) = roundTripPartial A→B⁇E2 B→A q
+  map {B = B} f (roundTripPartial there1 back again1) = roundTripPartial there2 back again2
     where
-      A→B⁇E2 = mapUndefined f ∘ A→B⁇E1
+      open Π
+      there2 = mapUndefined f ∘ there1
 
-      q : (x : B) → defined x ≡ A→B⁇E2 (B→A x)
-      q x = mapUndefined f · p x
+      open ≡
+      again2
+        : (x : B)
+        → there2 (back x) ≡ defined x
+      again2 x = mapUndefined f · again1 x

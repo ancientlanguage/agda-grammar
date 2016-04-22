@@ -12,8 +12,10 @@ record RoundTripPartial
   : Set (le ⊔ la ⊔ lb) where
   constructor roundTripPartial
   field
-    A→B⁇E : A → B ⁇ E
-    B→A : B → A
-    p : (x : B) → defined x ≡ A→B⁇E (B→A x)
+    there : A → B ⁇ E
+    back : B → A
+    again
+      : (x : B)
+      → there (back x) ≡ defined x
 
 syntax RoundTripPartial E A B = A ↻ B // E
