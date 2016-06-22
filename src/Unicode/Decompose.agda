@@ -4,7 +4,7 @@ open import Agda.Builtin.Char
 open import Agda.Builtin.List
 open import Agda.Builtin.String
 
-decomposeChar : Char -> String
+decomposeChar : Char → String
 decomposeChar '\x00C0' = "\x0041\x0300"
 decomposeChar '\x00C1' = "\x0041\x0301"
 decomposeChar '\x00C2' = "\x0041\x0302"
@@ -2066,3 +2066,10 @@ decomposeChar '\x2FA1B' = "\x9F16"
 decomposeChar '\x2FA1C' = "\x9F3B"
 decomposeChar '\x2FA1D' = "\x2A600"
 decomposeChar c = primStringFromList (c ∷ [])
+
+decompose : String → String
+decompose xs = go (primStringToList xs)
+  where
+  go : List Char → String
+  go [] = primStringFromList []
+  go (x ∷ xs) = primStringAppend (decomposeChar x) (go xs)
