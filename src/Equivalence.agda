@@ -1,4 +1,4 @@
-module Equivalence.Extensional where
+module Equivalence where
 
 open import Agda.Primitive
 open import Agda.Builtin.Equality
