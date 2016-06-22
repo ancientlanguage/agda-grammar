@@ -51,10 +51,13 @@ module Properties where
       right c rewrite right1 (back2 c) | right2 c = refl
 
 module Product where
-  infixl 5 _×_
+  infixr 5 _×_
   infixr 3 _,_
-  data _×_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
-    _,_ : A → B → A × B
+  record _×_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
+    constructor _,_
+    field
+      fst : A
+      snd : B
 
   over
     : {la lb lc ld : Level}
@@ -67,23 +70,51 @@ module Product where
     (equivalence thereAC backAC leftAC rightAC)
     (equivalence thereBD backBD leftBD rightBD)
     = equivalence there back left right
-     where
-       give
-         : {la lb lc ld : Level}
-         → {A : Set la} {B : Set lb} {C : Set lc} {D : Set ld}
-         → (A → C)
-         → (B → D)
-         → (A × B) → (C × D)
-       give f g (a , b) = f a , g b
+    where
+      open _×_
 
-       there : A × B → C × D
-       there = give thereAC thereBD
+      there : A × B → C × D
+      there (a , b) = thereAC a , thereBD b
 
-       back : C × D → A × B
-       back = give backAC backBD
+      back : C × D → A × B
+      back (c , d) = backAC c , backBD d
 
-       left : (x : A × B) → back (there x) ≡ x
-       left (a , b) rewrite leftAC a | leftBD b = refl
+      left : (x : A × B) → back (there x) ≡ x
+      left (a , b) rewrite leftAC a | leftBD b = refl
 
-       right : (x : C × D) → there (back x) ≡ x
-       right (c , d) rewrite rightAC c | rightBD d = refl
+      right : (x : C × D) → there (back x) ≡ x
+      right (c , d) rewrite rightAC c | rightBD d = refl
+
+module Coproduct where
+  infixr 4 _+_
+  data _+_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
+    _<| : (a : A) → A + B
+    |>_ : (b : B) → A + B
+
+  over
+    : {la lb lc ld : Level}
+    → {A : Set la} {B : Set lb} {C : Set lc} {D : Set ld}
+    → A ≅ C
+    → B ≅ D
+    → (A + B) ≅ (C + D)
+  over
+    {A = A} {B = B} {C = C} {D = D}
+    (equivalence thereAC backAC leftAC rightAC)
+    (equivalence thereBD backBD leftBD rightBD)
+    = equivalence there back left right
+    where
+      there : A + B → C + D
+      there (a <|) = thereAC a <|
+      there (|> b) = |> thereBD b
+
+      back : C + D → A + B
+      back (a <|) = backAC a <|
+      back (|> b) = |> backBD b
+
+      left : (x : A + B) → back (there x) ≡ x
+      left (a <|) rewrite leftAC a = refl
+      left (|> b) rewrite leftBD b = refl
+
+      right : (x : C + D) → there (back x) ≡ x
+      right (a <|) rewrite rightAC a = refl
+      right (|> b) rewrite rightBD b = refl
