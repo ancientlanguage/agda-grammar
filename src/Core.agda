@@ -99,14 +99,14 @@ module Product where
       right : (x : C × D) → there (back x) ≡ x
       right (c , d) rewrite rightAC c | rightBD d = refl
 
-module Coproduct where
+module Sum where
   infixr 4 _+_
   infix 1 _<| |>_
   data _+_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
     _<| : (a : A) → A + B
     |>_ : (b : B) → A + B
 
-  module Bool where
+  module Choice where
     open import Agda.Builtin.Bool
     is<| is|> : {la lb : Level} {A : Set la} {B : Set lb} → (A + B) → Bool
     is<| (a <|) = true
