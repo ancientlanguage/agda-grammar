@@ -108,7 +108,7 @@ module Sum where
 
   module Choice where
     open import Agda.Builtin.Bool
-    is<| is|> : {la lb : Level} {A : Set la} {B : Set lb} → (A + B) → Bool
+    is<|_ is|>_ : {la lb : Level} {A : Set la} {B : Set lb} → (A + B) → Bool
     is<| (a <|) = true
     is<| (|> b) = false
     is|> (a <|) = false
@@ -142,3 +142,37 @@ module Sum where
       right : (x : C + D) → there (back x) ≡ x
       right (a <|) rewrite rightAC a = refl
       right (|> b) rewrite rightBD b = refl
+
+module Vector where
+  open import Agda.Builtin.Nat
+  data Vec {la : Level} (A : Set la) : Nat → Set la where
+    [] : Vec A 0
+    _∷_ : A → {n : Nat} → Vec A n → Vec A (suc n)
+
+  record Vector {la : Level} (A : Set la) : Set la where
+    constructor vector
+    field
+      {count} : Nat
+      items : Vec A count
+
+  open import Agda.Builtin.List
+
+  open Equivalence
+  list≅vector : {la lb : Level} {A : Set la} {B : Set lb} → List A ≅ Vector A
+  list≅vector {A = A} {B = B} = equivalence there back left right
+    where
+    there : List A → Vector A
+    there [] = vector []
+    there (x ∷ xs) = vector (x ∷ Vector.items (there xs))
+
+    back : Vector A → List A
+    back (vector []) = []
+    back (vector (x ∷ items)) = x ∷ back (vector items)
+
+    left : (xs : List A) → back (there xs) ≡ xs
+    left [] = refl
+    left (x ∷ xs) rewrite left xs = refl
+
+    right : (xs : Vector A) → there (back xs) ≡ xs
+    right (vector []) = refl
+    right (vector (x ∷ items)) rewrite right (vector items) = refl
