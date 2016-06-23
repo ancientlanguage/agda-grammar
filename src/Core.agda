@@ -15,6 +15,10 @@ module Inhabit where
   from-⊥ : {la : Level} → {A : Set la} → ⊥ → A
   from-⊥ ()
 
+module Function where
+  id : {la : Level} → {A : Set la} → A → A
+  id x = x
+
 module Equivalence where
   infix 4 _≅_
   record _≅_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
@@ -30,7 +34,7 @@ module Equivalence where
       : {la : Level}
       → {A : Set la}
       → A ≅ A
-    reflexivity = equivalence (λ a → a) (λ a → a) (λ _ → refl) (λ _ → refl)
+    reflexivity = equivalence Function.id Function.id (λ _ → refl) (λ _ → refl)
 
     symmetry
       : {la lb : Level}
@@ -99,20 +103,33 @@ module Product where
       right : (x : C × D) → there (back x) ≡ x
       right (c , d) rewrite rightAC c | rightBD d = refl
 
-module Sum where
-  infixr 4 _+_
-  infix 1 _<| |>_
-  data _+_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
-    _<| : (a : A) → A + B
-    |>_ : (b : B) → A + B
+  over-fst
+    : {la lb lc : Level}
+    → {A : Set la} {B : Set lb} {C : Set lc}
+    → A ≅ C
+    → (A × B) ≅ (C × B)
+  over-fst p = over p Equivalence.Properties.reflexivity
 
-  module Choice where
+  over-snd
+    : {la lb ld : Level}
+    → {A : Set la} {B : Set lb} {D : Set ld}
+    → B ≅ D
+    → (A × B) ≅ (A × D)
+  over-snd p = over Equivalence.Properties.reflexivity p
+
+module Sum where
+  infixr 4 _⊕_
+  data _⊕_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
+    inj1 : (a : A) → A ⊕ B
+    inj2 : (b : B) → A ⊕ B
+
+  module Which where
     open import Agda.Builtin.Bool
-    is<|_ is|>_ : {la lb : Level} {A : Set la} {B : Set lb} → (A + B) → Bool
-    is<| (a <|) = true
-    is<| (|> b) = false
-    is|> (a <|) = false
-    is|> (|> b) = true
+    inj1? inj2? : {la lb : Level} {A : Set la} {B : Set lb} → (A ⊕ B) → Bool
+    inj1? (inj1 a) = true
+    inj1? (inj2 b) = false
+    inj2? (inj1 a) = false
+    inj2? (inj2 b) = true
 
   open Equivalence
   over
@@ -120,28 +137,42 @@ module Sum where
     → {A : Set la} {B : Set lb} {C : Set lc} {D : Set ld}
     → A ≅ C
     → B ≅ D
-    → (A + B) ≅ (C + D)
+    → (A ⊕ B) ≅ (C ⊕ D)
   over
     {A = A} {B = B} {C = C} {D = D}
     (equivalence thereAC backAC leftAC rightAC)
     (equivalence thereBD backBD leftBD rightBD)
     = equivalence there back left right
     where
-      there : A + B → C + D
-      there (a <|) = thereAC a <|
-      there (|> b) = |> thereBD b
+      there : A ⊕ B → C ⊕ D
+      there (inj1 a) = inj1 (thereAC a)
+      there (inj2 b) = inj2 (thereBD b)
 
-      back : C + D → A + B
-      back (a <|) = backAC a <|
-      back (|> b) = |> backBD b
+      back : C ⊕ D → A ⊕ B
+      back (inj1 a) = inj1 (backAC a)
+      back (inj2 b) = inj2 (backBD b)
 
-      left : (x : A + B) → back (there x) ≡ x
-      left (a <|) rewrite leftAC a = refl
-      left (|> b) rewrite leftBD b = refl
+      left : (x : A ⊕ B) → back (there x) ≡ x
+      left (inj1 a) rewrite leftAC a = refl
+      left (inj2 b) rewrite leftBD b = refl
 
-      right : (x : C + D) → there (back x) ≡ x
-      right (a <|) rewrite rightAC a = refl
-      right (|> b) rewrite rightBD b = refl
+      right : (x : C ⊕ D) → there (back x) ≡ x
+      right (inj1 a) rewrite rightAC a = refl
+      right (inj2 b) rewrite rightBD b = refl
+
+  over-inj1
+    : {la lb lc : Level}
+    → {A : Set la} {B : Set lb} {C : Set lc}
+    → A ≅ C
+    → (A ⊕ B) ≅ (C ⊕ B)
+  over-inj1 p = over p Equivalence.Properties.reflexivity
+
+  over-inj2
+    : {la lb ld : Level}
+    → {A : Set la} {B : Set lb} {D : Set ld}
+    → B ≅ D
+    → (A ⊕ B) ≅ (A ⊕ D)
+  over-inj2 p = over Equivalence.Properties.reflexivity p
 
 module Vector where
   open import Agda.Builtin.Nat

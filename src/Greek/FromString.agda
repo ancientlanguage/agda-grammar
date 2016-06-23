@@ -6,71 +6,71 @@ open import Greek.Script
 open Sum
 open Concrete
 
-from-char : Char → Char + Script
-from-char 'Α' = |> letter Α
-from-char 'Β' = |> letter Β
-from-char 'Γ' = |> letter Γ
-from-char 'Δ' = |> letter Δ
-from-char 'Ε' = |> letter Ε
-from-char 'Ζ' = |> letter Ζ
-from-char 'Η' = |> letter Η
-from-char 'Θ' = |> letter Θ
-from-char 'Ι' = |> letter Ι
-from-char 'Κ' = |> letter Κ
-from-char 'Λ' = |> letter Λ
-from-char 'Μ' = |> letter Μ
-from-char 'Ν' = |> letter Ν
-from-char 'Ξ' = |> letter Ξ
-from-char 'Ο' = |> letter Ο
-from-char 'Π' = |> letter Π
-from-char 'Ρ' = |> letter Ρ
-from-char 'Σ' = |> letter Σ
-from-char 'Τ' = |> letter Τ
-from-char 'Υ' = |> letter Υ
-from-char 'Φ' = |> letter Φ
-from-char 'Χ' = |> letter Χ
-from-char 'Ψ' = |> letter Ψ
-from-char 'Ω' = |> letter Ω
-from-char 'α' = |> letter α
-from-char 'β' = |> letter β
-from-char 'γ' = |> letter γ
-from-char 'δ' = |> letter δ
-from-char 'ε' = |> letter ε
-from-char 'ζ' = |> letter ζ
-from-char 'η' = |> letter η
-from-char 'θ' = |> letter θ
-from-char 'ι' = |> letter ι
-from-char 'κ' = |> letter κ
-from-char 'λ' = |> letter ƛ
-from-char 'μ' = |> letter μ
-from-char 'ν' = |> letter ν
-from-char 'ξ' = |> letter ξ
-from-char 'ο' = |> letter ο
-from-char 'π' = |> letter π
-from-char 'ρ' = |> letter ρ
-from-char 'σ' = |> letter σ
-from-char 'ς' = |> letter ς
-from-char 'τ' = |> letter τ
-from-char 'υ' = |> letter υ
-from-char 'φ' = |> letter φ
-from-char 'χ' = |> letter χ
-from-char 'ψ' = |> letter ψ
-from-char 'ω' = |> letter ω
-from-char '\x0300' = |> mark grave -- COMBINING GRAVE ACCENT
-from-char '\x0301' = |> mark acute -- COMBINING ACUTE ACCENT
-from-char '\x0308' = |> mark diaeresis -- COMBINING DIAERESIS
-from-char '\x0313' = |> mark smooth -- COMBINING COMMA ABOVE
-from-char '\x0314' = |> mark rough -- COMBINING REVERSED COMMA ABOVE
-from-char '\x0342' = |> mark circumflex -- COMBINING GREEK PERISPOMENI
-from-char '\x0345' = |> mark iota-sub -- COMBINING GREEK YPOGEGRAMMENI
-from-char '(' = |> punctuation left-paren
-from-char ')' = |> punctuation right-paren
-from-char ',' = |> punctuation comma
-from-char '.' = |> punctuation period
-from-char '·' = |> punctuation mid-dot
-from-char '—' = |> punctuation em-dash
-from-char ';' = |> punctuation semicolon
-from-char x = x <|
+from-char : Char → Char ⊕ Script
+from-char 'Α' = inj2 (letter Α)
+from-char 'Β' = inj2 (letter Β)
+from-char 'Γ' = inj2 (letter Γ)
+from-char 'Δ' = inj2 (letter Δ)
+from-char 'Ε' = inj2 (letter Ε)
+from-char 'Ζ' = inj2 (letter Ζ)
+from-char 'Η' = inj2 (letter Η)
+from-char 'Θ' = inj2 (letter Θ)
+from-char 'Ι' = inj2 (letter Ι)
+from-char 'Κ' = inj2 (letter Κ)
+from-char 'Λ' = inj2 (letter Λ)
+from-char 'Μ' = inj2 (letter Μ)
+from-char 'Ν' = inj2 (letter Ν)
+from-char 'Ξ' = inj2 (letter Ξ)
+from-char 'Ο' = inj2 (letter Ο)
+from-char 'Π' = inj2 (letter Π)
+from-char 'Ρ' = inj2 (letter Ρ)
+from-char 'Σ' = inj2 (letter Σ)
+from-char 'Τ' = inj2 (letter Τ)
+from-char 'Υ' = inj2 (letter Υ)
+from-char 'Φ' = inj2 (letter Φ)
+from-char 'Χ' = inj2 (letter Χ)
+from-char 'Ψ' = inj2 (letter Ψ)
+from-char 'Ω' = inj2 (letter Ω)
+from-char 'α' = inj2 (letter α)
+from-char 'β' = inj2 (letter β)
+from-char 'γ' = inj2 (letter γ)
+from-char 'δ' = inj2 (letter δ)
+from-char 'ε' = inj2 (letter ε)
+from-char 'ζ' = inj2 (letter ζ)
+from-char 'η' = inj2 (letter η)
+from-char 'θ' = inj2 (letter θ)
+from-char 'ι' = inj2 (letter ι)
+from-char 'κ' = inj2 (letter κ)
+from-char 'λ' = inj2 (letter ƛ)
+from-char 'μ' = inj2 (letter μ)
+from-char 'ν' = inj2 (letter ν)
+from-char 'ξ' = inj2 (letter ξ)
+from-char 'ο' = inj2 (letter ο)
+from-char 'π' = inj2 (letter π)
+from-char 'ρ' = inj2 (letter ρ)
+from-char 'σ' = inj2 (letter σ)
+from-char 'ς' = inj2 (letter ς)
+from-char 'τ' = inj2 (letter τ)
+from-char 'υ' = inj2 (letter υ)
+from-char 'φ' = inj2 (letter φ)
+from-char 'χ' = inj2 (letter χ)
+from-char 'ψ' = inj2 (letter ψ)
+from-char 'ω' = inj2 (letter ω)
+from-char '\x0300' = inj2 (mark grave) -- COMBINING GRAVE ACCENT
+from-char '\x0301' = inj2 (mark acute) -- COMBINING ACUTE ACCENT
+from-char '\x0308' = inj2 (mark diaeresis) -- COMBINING DIAERESIS
+from-char '\x0313' = inj2 (mark smooth) -- COMBINING COMMA ABOVE
+from-char '\x0314' = inj2 (mark rough) -- COMBINING REVERSED COMMA ABOVE
+from-char '\x0342' = inj2 (mark circumflex) -- COMBINING GREEK PERISPOMENI
+from-char '\x0345' = inj2 (mark iota-sub) -- COMBINING GREEK YPOGEGRAMMENI
+from-char '(' = inj2 (punctuation left-paren)
+from-char ')' = inj2 (punctuation right-paren)
+from-char ',' = inj2 (punctuation comma)
+from-char '.' = inj2 (punctuation period)
+from-char '·' = inj2 (punctuation mid-dot)
+from-char '—' = inj2 (punctuation em-dash)
+from-char ';' = inj2 (punctuation semicolon)
+from-char x = inj1 x
 
 open import Agda.Primitive
 open import Agda.Builtin.List
@@ -81,32 +81,36 @@ map f [] = []
 map f (x ∷ xs) = f x ∷ map f xs
 
 open import Agda.Builtin.Unit
-assume|> : {la lb : Level} {A : Set la} {B : Set lb} → List (A + B) → ⊤ + List B
-assume|> [] = |> []
-assume|> ((a <|) ∷ xs) = _ <|
-assume|> ((|> b) ∷ xs) with assume|> xs
-assume|> ((|> b) ∷ xs) | a <| = _ <|
-assume|> ((|> b) ∷ xs) | |> bs = |> b ∷ bs
+assume-inj2 : {la lb : Level} {A : Set la} {B : Set lb} → List (A ⊕ B) → ⊤ ⊕ List B
+assume-inj2 [] = inj2 []
+assume-inj2 (inj1 a ∷ xs) = inj1 _
+assume-inj2 (inj2 b ∷ xs) with assume-inj2 xs
+assume-inj2 (inj2 b ∷ xs) | inj1 a = inj1 _
+assume-inj2 (inj2 b ∷ xs) | inj2 bs = inj2 (b ∷ bs)
 
-from-any-string : String → List (Char + Script)
+from-any-string : String → List (Char ⊕ Script)
 from-any-string xs = map from-char (primStringToList (decompose xs))
 
 open import Agda.Builtin.Bool
 open import Agda.Builtin.Unit
 open import Agda.Builtin.FromString
 open Inhabit
-from-string : (xs : String) → {{_ : [ Choice.is|> (assume|> (from-any-string xs)) ]}} → List Script
-from-string xs {{p}} with assume|> (from-any-string xs)
-… | a <| = from-⊥ p
-… | |> b = b
+from-string : (xs : String) → {{_ : [ Which.inj2? (assume-inj2 (from-any-string xs)) ]}} → List Script
+from-string xs {{p}} with assume-inj2 (from-any-string xs)
+… | inj1 a = from-⊥ p
+… | inj2 b = b
 
 instance
   StringScript : IsString (List Script)
-  IsString.Constraint StringScript xs = [ Choice.is|> (assume|> (from-any-string xs)) ] 
+  IsString.Constraint StringScript xs = [ Which.inj2? (assume-inj2 (from-any-string xs)) ]
   IsString.fromString StringScript xs = from-string xs
 
 module Sanity where
   open import Agda.Builtin.List
+  concrete-letters : List Script
+  concrete-letters = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρσςτυφχψ"
+  check-punctuation : List Script
+  check-punctuation = ",·;.()—"
   Βίβλος : List Script
   Βίβλος = "Βίβλος"
   Ἰησοῦ : List Script
