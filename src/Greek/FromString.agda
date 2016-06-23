@@ -80,14 +80,6 @@ map : {la lb : Level} {A : Set la} {B : Set lb} → (A → B) → List A → Lis
 map f [] = []
 map f (x ∷ xs) = f x ∷ map f xs
 
-open import Agda.Builtin.Unit
-assume-inj2 : {la lb : Level} {A : Set la} {B : Set lb} → List (A ⊕ B) → ⊤ ⊕ List B
-assume-inj2 [] = inj2 []
-assume-inj2 (inj1 a ∷ xs) = inj1 _
-assume-inj2 (inj2 b ∷ xs) with assume-inj2 xs
-assume-inj2 (inj2 b ∷ xs) | inj1 a = inj1 _
-assume-inj2 (inj2 b ∷ xs) | inj2 bs = inj2 (b ∷ bs)
-
 from-any-string : String → List (Char ⊕ Script)
 from-any-string xs = map from-char (primStringToList (decompose xs))
 
@@ -95,14 +87,15 @@ open import Agda.Builtin.Bool
 open import Agda.Builtin.Unit
 open import Agda.Builtin.FromString
 open Inhabit
-from-string : (xs : String) → {{_ : [ Which.inj2? (assume-inj2 (from-any-string xs)) ]}} → List Script
-from-string xs {{p}} with assume-inj2 (from-any-string xs)
+open Sum.Assert
+from-string : (xs : String) → {{_ : [ Which.inj2? (assert-inj2 (from-any-string xs)) ]}} → List Script
+from-string xs {{p}} with assert-inj2 (from-any-string xs)
 … | inj1 a = from-⊥ p
 … | inj2 b = b
 
 instance
   StringScript : IsString (List Script)
-  IsString.Constraint StringScript xs = [ Which.inj2? (assume-inj2 (from-any-string xs)) ]
+  IsString.Constraint StringScript xs = [ Which.inj2? (assert-inj2 (from-any-string xs)) ]
   IsString.fromString StringScript xs = from-string xs
 
 module Sanity where

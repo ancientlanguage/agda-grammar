@@ -174,6 +174,16 @@ module Sum where
     → (A ⊕ B) ≅ (A ⊕ D)
   over-inj2 p = over Equivalence.Properties.reflexivity p
 
+  module Assert where
+    open import Agda.Builtin.List
+    assert-inj2 : {la lb : Level} {A : Set la} {B : Set lb} → List (A ⊕ B) → List A ⊕ List B
+    assert-inj2 [] = inj2 []
+    assert-inj2 (x ∷ xs) with assert-inj2 xs
+    assert-inj2 (inj1 a ∷ xs) | inj1 as = inj1 (a ∷ as)
+    assert-inj2 (inj2 b ∷ xs) | inj1 as = inj1 as
+    assert-inj2 (inj1 a ∷ xs) | inj2 bs = inj1 (a ∷ [])
+    assert-inj2 (inj2 b ∷ xs) | inj2 bs = inj2 (b ∷ bs)
+
 module Vector where
   open import Agda.Builtin.Nat
   data Vec {la : Level} (A : Set la) : Nat → Set la where
