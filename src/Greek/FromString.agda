@@ -7,70 +7,71 @@ open Sum
 open Concrete
 
 from-char : Char → Char ⊕ Script
-from-char 'Α' = inj2 (letter Α)
-from-char 'Β' = inj2 (letter Β)
-from-char 'Γ' = inj2 (letter Γ)
-from-char 'Δ' = inj2 (letter Δ)
-from-char 'Ε' = inj2 (letter Ε)
-from-char 'Ζ' = inj2 (letter Ζ)
-from-char 'Η' = inj2 (letter Η)
-from-char 'Θ' = inj2 (letter Θ)
-from-char 'Ι' = inj2 (letter Ι)
-from-char 'Κ' = inj2 (letter Κ)
-from-char 'Λ' = inj2 (letter Λ)
-from-char 'Μ' = inj2 (letter Μ)
-from-char 'Ν' = inj2 (letter Ν)
-from-char 'Ξ' = inj2 (letter Ξ)
-from-char 'Ο' = inj2 (letter Ο)
-from-char 'Π' = inj2 (letter Π)
-from-char 'Ρ' = inj2 (letter Ρ)
-from-char 'Σ' = inj2 (letter Σ)
-from-char 'Τ' = inj2 (letter Τ)
-from-char 'Υ' = inj2 (letter Υ)
-from-char 'Φ' = inj2 (letter Φ)
-from-char 'Χ' = inj2 (letter Χ)
-from-char 'Ψ' = inj2 (letter Ψ)
-from-char 'Ω' = inj2 (letter Ω)
-from-char 'α' = inj2 (letter α)
-from-char 'β' = inj2 (letter β)
-from-char 'γ' = inj2 (letter γ)
-from-char 'δ' = inj2 (letter δ)
-from-char 'ε' = inj2 (letter ε)
-from-char 'ζ' = inj2 (letter ζ)
-from-char 'η' = inj2 (letter η)
-from-char 'θ' = inj2 (letter θ)
-from-char 'ι' = inj2 (letter ι)
-from-char 'κ' = inj2 (letter κ)
-from-char 'λ' = inj2 (letter ƛ)
-from-char 'μ' = inj2 (letter μ)
-from-char 'ν' = inj2 (letter ν)
-from-char 'ξ' = inj2 (letter ξ)
-from-char 'ο' = inj2 (letter ο)
-from-char 'π' = inj2 (letter π)
-from-char 'ρ' = inj2 (letter ρ)
-from-char 'σ' = inj2 (letter σ)
-from-char 'ς' = inj2 (letter ς)
-from-char 'τ' = inj2 (letter τ)
-from-char 'υ' = inj2 (letter υ)
-from-char 'φ' = inj2 (letter φ)
-from-char 'χ' = inj2 (letter χ)
-from-char 'ψ' = inj2 (letter ψ)
-from-char 'ω' = inj2 (letter ω)
-from-char '\x0300' = inj2 (mark grave) -- COMBINING GRAVE ACCENT
-from-char '\x0301' = inj2 (mark acute) -- COMBINING ACUTE ACCENT
-from-char '\x0308' = inj2 (mark diaeresis) -- COMBINING DIAERESIS
-from-char '\x0313' = inj2 (mark smooth) -- COMBINING COMMA ABOVE
-from-char '\x0314' = inj2 (mark rough) -- COMBINING REVERSED COMMA ABOVE
-from-char '\x0342' = inj2 (mark circumflex) -- COMBINING GREEK PERISPOMENI
-from-char '\x0345' = inj2 (mark iota-sub) -- COMBINING GREEK YPOGEGRAMMENI
-from-char '(' = inj2 (punctuation left-paren)
-from-char ')' = inj2 (punctuation right-paren)
-from-char ',' = inj2 (punctuation comma)
-from-char '.' = inj2 (punctuation period)
-from-char '·' = inj2 (punctuation mid-dot)
-from-char '—' = inj2 (punctuation em-dash)
-from-char ';' = inj2 (punctuation semicolon)
-from-char x = inj1 x
+from-char 'Α' = inr (letter Α)
+from-char 'Β' = inr (letter Β)
+from-char 'Γ' = inr (letter Γ)
+from-char 'Δ' = inr (letter Δ)
+from-char 'Ε' = inr (letter Ε)
+from-char 'Ζ' = inr (letter Ζ)
+from-char 'Η' = inr (letter Η)
+from-char 'Θ' = inr (letter Θ)
+from-char 'Ι' = inr (letter Ι)
+from-char 'Κ' = inr (letter Κ)
+from-char 'Λ' = inr (letter Λ)
+from-char 'Μ' = inr (letter Μ)
+from-char 'Ν' = inr (letter Ν)
+from-char 'Ξ' = inr (letter Ξ)
+from-char 'Ο' = inr (letter Ο)
+from-char 'Π' = inr (letter Π)
+from-char 'Ρ' = inr (letter Ρ)
+from-char 'Σ' = inr (letter Σ)
+from-char 'Τ' = inr (letter Τ)
+from-char 'Υ' = inr (letter Υ)
+from-char 'Φ' = inr (letter Φ)
+from-char 'Χ' = inr (letter Χ)
+from-char 'Ψ' = inr (letter Ψ)
+from-char 'Ω' = inr (letter Ω)
+from-char 'α' = inr (letter α)
+from-char 'β' = inr (letter β)
+from-char 'γ' = inr (letter γ)
+from-char 'δ' = inr (letter δ)
+from-char 'ε' = inr (letter ε)
+from-char 'ζ' = inr (letter ζ)
+from-char 'η' = inr (letter η)
+from-char 'θ' = inr (letter θ)
+from-char 'ι' = inr (letter ι)
+from-char 'κ' = inr (letter κ)
+from-char 'λ' = inr (letter ƛ)
+from-char 'μ' = inr (letter μ)
+from-char 'ν' = inr (letter ν)
+from-char 'ξ' = inr (letter ξ)
+from-char 'ο' = inr (letter ο)
+from-char 'π' = inr (letter π)
+from-char 'ρ' = inr (letter ρ)
+from-char 'σ' = inr (letter σ)
+from-char 'ς' = inr (letter ς)
+from-char 'τ' = inr (letter τ)
+from-char 'υ' = inr (letter υ)
+from-char 'φ' = inr (letter φ)
+from-char 'χ' = inr (letter χ)
+from-char 'ψ' = inr (letter ψ)
+from-char 'ω' = inr (letter ω)
+from-char '\x0300' = inr (mark grave) -- COMBINING GRAVE ACCENT
+from-char '\x0301' = inr (mark acute) -- COMBINING ACUTE ACCENT
+from-char '\x0308' = inr (mark diaeresis) -- COMBINING DIAERESIS
+from-char '\x0313' = inr (mark smooth) -- COMBINING COMMA ABOVE
+from-char '\x0314' = inr (mark rough) -- COMBINING REVERSED COMMA ABOVE
+from-char '\x0342' = inr (mark circumflex) -- COMBINING GREEK PERISPOMENI
+from-char '\x0345' = inr (mark iota-sub) -- COMBINING GREEK YPOGEGRAMMENI
+from-char '(' = inr (punctuation left-paren)
+from-char ')' = inr (punctuation right-paren)
+from-char ',' = inr (punctuation comma)
+from-char '.' = inr (punctuation period)
+from-char '·' = inr (punctuation mid-dot)
+from-char '—' = inr (punctuation em-dash)
+from-char ';' = inr (punctuation semicolon)
+from-char '\x2019' = inr (punctuation right-single-quote)
+from-char x = inl x
 
 open import Agda.Primitive
 open import Agda.Builtin.List
@@ -87,15 +88,13 @@ open import Agda.Builtin.Bool
 open import Agda.Builtin.Unit
 open import Agda.Builtin.FromString
 open Inhabit
-open Sum.Assert
-from-string : (xs : String) → {{_ : [ Which.inj2? (assert-inj2 (from-any-string xs)) ]}} → List Script
-from-string xs {{p}} with assert-inj2 (from-any-string xs)
-… | inj1 a = from-⊥ p
-… | inj2 b = b
+open List.Split
+from-string : (xs : String) → {{p : inr?-set (split-inr (from-any-string xs))}} → List Script
+from-string xs {{p}} = assert-inr (from-any-string xs) {p}
 
 instance
   StringScript : IsString (List Script)
-  IsString.Constraint StringScript xs = [ Which.inj2? (assert-inj2 (from-any-string xs)) ]
+  IsString.Constraint StringScript xs = inr?-set (split-inr (from-any-string xs))
   IsString.fromString StringScript xs = from-string xs
 
 module Sanity where
@@ -126,3 +125,5 @@ module Sanity where
   μοι-semicolon = "μοι;"
   ἔδοξα : List Script
   ἔδοξα = "ἔδοξα"
+  κατ’ : List Script
+  κατ’ = "κατ’"

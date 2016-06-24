@@ -120,16 +120,16 @@ module Product where
 module Sum where
   infixr 4 _⊕_
   data _⊕_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
-    inj1 : (a : A) → A ⊕ B
-    inj2 : (b : B) → A ⊕ B
+    inl : (a : A) → A ⊕ B
+    inr : (b : B) → A ⊕ B
 
   module Which where
     open import Agda.Builtin.Bool
-    inj1? inj2? : {la lb : Level} {A : Set la} {B : Set lb} → (A ⊕ B) → Bool
-    inj1? (inj1 a) = true
-    inj1? (inj2 b) = false
-    inj2? (inj1 a) = false
-    inj2? (inj2 b) = true
+    inl? inr? : {la lb : Level} {A : Set la} {B : Set lb} → (A ⊕ B) → Bool
+    inl? (inl a) = true
+    inl? (inr b) = false
+    inr? (inl a) = false
+    inr? (inr b) = true
 
   open Equivalence
   over
@@ -145,20 +145,20 @@ module Sum where
     = equivalence there back left right
     where
       there : A ⊕ B → C ⊕ D
-      there (inj1 a) = inj1 (thereAC a)
-      there (inj2 b) = inj2 (thereBD b)
+      there (inl a) = inl (thereAC a)
+      there (inr b) = inr (thereBD b)
 
       back : C ⊕ D → A ⊕ B
-      back (inj1 a) = inj1 (backAC a)
-      back (inj2 b) = inj2 (backBD b)
+      back (inl a) = inl (backAC a)
+      back (inr b) = inr (backBD b)
 
       left : (x : A ⊕ B) → back (there x) ≡ x
-      left (inj1 a) rewrite leftAC a = refl
-      left (inj2 b) rewrite leftBD b = refl
+      left (inl a) rewrite leftAC a = refl
+      left (inr b) rewrite leftBD b = refl
 
       right : (x : C ⊕ D) → there (back x) ≡ x
-      right (inj1 a) rewrite rightAC a = refl
-      right (inj2 b) rewrite rightBD b = refl
+      right (inl a) rewrite rightAC a = refl
+      right (inr b) rewrite rightBD b = refl
 
   over-inj1
     : {la lb lc : Level}
@@ -174,46 +174,81 @@ module Sum where
     → (A ⊕ B) ≅ (A ⊕ D)
   over-inj2 p = over Equivalence.Properties.reflexivity p
 
-  module Assert where
-    open import Agda.Builtin.List
-    assert-inj2 : {la lb : Level} {A : Set la} {B : Set lb} → List (A ⊕ B) → List A ⊕ List B
-    assert-inj2 [] = inj2 []
-    assert-inj2 (x ∷ xs) with assert-inj2 xs
-    assert-inj2 (inj1 a ∷ xs) | inj1 as = inj1 (a ∷ as)
-    assert-inj2 (inj2 b ∷ xs) | inj1 as = inj1 as
-    assert-inj2 (inj1 a ∷ xs) | inj2 bs = inj1 (a ∷ [])
-    assert-inj2 (inj2 b ∷ xs) | inj2 bs = inj2 (b ∷ bs)
-
 module Vector where
   open import Agda.Builtin.Nat
-  data Vec {la : Level} (A : Set la) : Nat → Set la where
-    [] : Vec A 0
-    _∷_ : A → {n : Nat} → Vec A n → Vec A (suc n)
+  module Definition where
+    data Vec {la : Level} (A : Set la) : Nat → Set la where
+      [] : Vec A 0
+      _∷_ : A → {n : Nat} → Vec A n → Vec A (suc n)
+  open Definition
 
-  record Vector {la : Level} (A : Set la) : Set la where
-    constructor vector
-    field
-      {count} : Nat
-      items : Vec A count
+  module Functor where
+    map : {la lb : Level} {A : Set la} {B : Set lb} {n : Nat}
+      → (A → B)
+      → Vec A n
+      → Vec B n
+    map f [] = []
+    map f (x ∷ items) = f x ∷ map f items
 
-  open import Agda.Builtin.List
+  module Wrapper where
+    record Vector {la : Level} (A : Set la) : Set la where
+      constructor vector
+      field
+        {count} : Nat
+        items : Vec A count
+    module Wrapper-Functor where
+      map : {la lb : Level} {A : Set la} {B : Set lb}
+        → (A → B)
+        → Vector A
+        → Vector B
+      map f (vector xs) = vector (Functor.map f xs)
 
-  open Equivalence
-  list≅vector : {la lb : Level} {A : Set la} {B : Set lb} → List A ≅ Vector A
-  list≅vector {A = A} {B = B} = equivalence there back left right
-    where
-    there : List A → Vector A
-    there [] = vector []
-    there (x ∷ xs) = vector (x ∷ Vector.items (there xs))
+    module ListVector where
+      open import Agda.Builtin.List
+      open Equivalence
+      list≅vector : {la : Level} {A : Set la} → List A ≅ Vector A
+      list≅vector {A = A} = equivalence there back left right
+        where
+        there : List A → Vector A
+        there [] = vector []
+        there (x ∷ xs) = vector (x ∷ Vector.items (there xs))
 
-    back : Vector A → List A
-    back (vector []) = []
-    back (vector (x ∷ items)) = x ∷ back (vector items)
+        back : Vector A → List A
+        back (vector []) = []
+        back (vector (x ∷ items)) = x ∷ back (vector items)
 
-    left : (xs : List A) → back (there xs) ≡ xs
-    left [] = refl
-    left (x ∷ xs) rewrite left xs = refl
+        left : (xs : List A) → back (there xs) ≡ xs
+        left [] = refl
+        left (x ∷ xs) rewrite left xs = refl
 
-    right : (xs : Vector A) → there (back xs) ≡ xs
-    right (vector []) = refl
-    right (vector (x ∷ items)) rewrite right (vector items) = refl
+        right : (xs : Vector A) → there (back xs) ≡ xs
+        right (vector []) = refl
+        right (vector (x ∷ items)) rewrite right (vector items) = refl
+
+module List where
+  module Split where
+    open import Agda.Builtin.List
+    open Sum
+    split-inr : {la lb : Level} {A : Set la} {B : Set lb}
+      → List (A ⊕ B)
+      → List A ⊕ List B
+    split-inr [] = inr []
+    split-inr (x ∷ xs) with split-inr xs
+    split-inr (inl a ∷ xs) | inl as = inl (a ∷ as)
+    split-inr (inr b ∷ xs) | inl as = inl as
+    split-inr (inl a ∷ xs) | inr bs = inl (a ∷ [])
+    split-inr (inr b ∷ xs) | inr bs = inr (b ∷ bs)
+
+    open Inhabit
+    inr?-set : {la lb : Level} {A : Set la} {B : Set lb}
+      → A ⊕ B
+      → Set
+    inr?-set x = [ Which.inr? x ]
+
+    assert-inr : {la lb : Level} {A : Set la} {B : Set lb}
+      → (xs : List (A ⊕ B))
+      → {p : inr?-set (split-inr xs)}
+      → List B
+    assert-inr xs {p} with split-inr xs
+    … | inl _ = from-⊥ p
+    … | inr b = b
