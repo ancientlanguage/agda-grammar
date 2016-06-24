@@ -1,7 +1,7 @@
 module Core where
 
 open import Agda.Primitive
-open import Agda.Builtin.Equality
+open import Agda.Builtin.Equality using (_≡_; refl)
 
 module Inhabit where
   data ⊥ : Set where
@@ -19,7 +19,15 @@ module Function where
   id : {la : Level} → {A : Set la} → A → A
   id x = x
 
+  _∘_ : {la lb lc : Level} {A : Set la} {B : Set lb} {C : Set lc}
+    → (B → C)
+    → (A → B)
+    → (A → C)
+  (f ∘ g) x = f (g x)
+
 module Equivalence where
+  open import Agda.Builtin.Equality using (_≡_; refl) public
+
   infix 4 _≅_
   record _≅_ {la lb : Level} (A : Set la) (B : Set lb) : Set (la ⊔ lb) where
     constructor equivalence
@@ -174,6 +182,83 @@ module Sum where
     → (A ⊕ B) ≅ (A ⊕ D)
   over-inj2 p = over Equivalence.Properties.reflexivity p
 
+  open Inhabit
+  inr?-set : {la lb : Level} {A : Set la} {B : Set lb}
+    → A ⊕ B
+    → Set
+  inr?-set x = [ Which.inr? x ]
+
+module List where
+  open import Agda.Builtin.List using (List; []; _∷_) public
+
+  module Functor where
+    module Definition where
+      map : {la lb : Level} {A : Set la} {B : Set lb}
+        → (A → B)
+        → List A
+        → List B
+      map f [] = []
+      map f (x ∷ items) = f x ∷ map f items
+    open Definition
+    module Laws where
+      open Function
+      identity : {la : Level} {A : Set la} → (xs : List A) → map id xs ≡ id xs
+      identity [] = refl
+      identity (x ∷ xs) rewrite identity xs = refl
+
+      composition : {la lb lc : Level} {A : Set la} {B : Set lb} {C : Set lc}
+        → (g : B → C)
+        → (h : A → B)
+        → (xs : List A)
+        → map (g ∘ h) xs ≡ (map g ∘ map h) xs
+      composition g h [] = refl
+      composition g h (x ∷ xs) rewrite composition g h xs = refl
+
+  module Split where
+    open Sum
+    module Right where
+      split-inr : {la lb : Level} {A : Set la} {B : Set lb}
+        → List (A ⊕ B)
+        → List A ⊕ List B
+      split-inr [] = inr []
+      split-inr (x ∷ xs) with split-inr xs
+      split-inr (inl a ∷ xs) | inl as = inl (a ∷ as)
+      split-inr (inr b ∷ xs) | inl as = inl as
+      split-inr (inl a ∷ xs) | inr bs = inl (a ∷ [])
+      split-inr (inr b ∷ xs) | inr bs = inr (b ∷ bs)
+
+      assert-inr : {la lb : Level} {A : Set la} {B : Set lb}
+        → (xs : List (A ⊕ B))
+        → {p : inr?-set (split-inr xs)}
+        → List B
+      assert-inr xs {p} with split-inr xs
+      … | inl _ = Inhabit.from-⊥ p
+      … | inr b = b
+
+  module Over where
+    open Functor.Definition
+    open Equivalence
+    over
+      : {la lb : Level}
+      → {A : Set la} {B : Set lb}
+      → A ≅ B
+      → List A ≅ List B
+    over
+      {A = A} {B = B}
+      (equivalence thereAB backAB leftAB rightAB)
+      = equivalence there back left right
+      where
+      there : List A → List B
+      there = map thereAB
+      back : List B → List A
+      back = map backAB
+      left : (xs : List A) → back (there xs) ≡ xs
+      left [] = refl
+      left (x ∷ xs) rewrite leftAB x | left xs = refl
+      right : (xs : List B) → there (back xs) ≡ xs
+      right [] = refl
+      right (x ∷ xs) rewrite rightAB x | right xs = refl
+
 module Vector where
   open import Agda.Builtin.Nat
   module Definition where
@@ -190,6 +275,27 @@ module Vector where
     map f [] = []
     map f (x ∷ items) = f x ∷ map f items
 
+  module Split where
+    open List
+    open Sum
+    split-inr : {la lb : Level} {A : Set la} {B : Set lb} {n : Nat}
+      → Vec (A ⊕ B) n
+      → List A ⊕ Vec B n
+    split-inr [] = inr []
+    split-inr (x ∷ xs) with split-inr xs
+    split-inr (inl a ∷ xs) | inl as = inl (a ∷ as)
+    split-inr (inr b ∷ xs) | inl as = inl as
+    split-inr (inl a ∷ xs) | inr bs = inl (a ∷ [])
+    split-inr (inr b ∷ xs) | inr bs = inr (b ∷ bs)
+
+    assert-inr : {la lb : Level} {A : Set la} {B : Set lb} {n : Nat}
+      → (xs : Vec (A ⊕ B) n)
+      → {p : inr?-set (split-inr xs)}
+      → Vec B n
+    assert-inr xs {p} with split-inr xs
+    … | inl _ = Inhabit.from-⊥ p
+    … | inr b = b
+
   module Wrapper where
     record Vector {la : Level} (A : Set la) : Set la where
       constructor vector
@@ -204,7 +310,7 @@ module Vector where
       map f (vector xs) = vector (Functor.map f xs)
 
     module ListVector where
-      open import Agda.Builtin.List
+      open List
       open Equivalence
       list≅vector : {la : Level} {A : Set la} → List A ≅ Vector A
       list≅vector {A = A} = equivalence there back left right
@@ -224,31 +330,3 @@ module Vector where
         right : (xs : Vector A) → there (back xs) ≡ xs
         right (vector []) = refl
         right (vector (x ∷ items)) rewrite right (vector items) = refl
-
-module List where
-  module Split where
-    open import Agda.Builtin.List
-    open Sum
-    split-inr : {la lb : Level} {A : Set la} {B : Set lb}
-      → List (A ⊕ B)
-      → List A ⊕ List B
-    split-inr [] = inr []
-    split-inr (x ∷ xs) with split-inr xs
-    split-inr (inl a ∷ xs) | inl as = inl (a ∷ as)
-    split-inr (inr b ∷ xs) | inl as = inl as
-    split-inr (inl a ∷ xs) | inr bs = inl (a ∷ [])
-    split-inr (inr b ∷ xs) | inr bs = inr (b ∷ bs)
-
-    open Inhabit
-    inr?-set : {la lb : Level} {A : Set la} {B : Set lb}
-      → A ⊕ B
-      → Set
-    inr?-set x = [ Which.inr? x ]
-
-    assert-inr : {la lb : Level} {A : Set la} {B : Set lb}
-      → (xs : List (A ⊕ B))
-      → {p : inr?-set (split-inr xs)}
-      → List B
-    assert-inr xs {p} with split-inr xs
-    … | inl _ = from-⊥ p
-    … | inr b = b

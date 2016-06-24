@@ -19,11 +19,27 @@ data NonPunctuation : Set where
   letter : Concrete.Letter → NonPunctuation
   mark : Mark → NonPunctuation
 
-module Map where
+module Equivalences where
   import Core
   open Core.Sum
+  open Core.Equivalence
 
-  split-punctuation : Script → Punctuation ⊕ NonPunctuation
-  split-punctuation (letter x) = inr (letter x)
-  split-punctuation (mark x) = inr (mark x)
-  split-punctuation (punctuation x) = inl x
+  script/punctuation : Script ≅ (Punctuation ⊕ NonPunctuation)
+  script/punctuation = equivalence there back left right
+    where
+    there : Script → Punctuation ⊕ NonPunctuation
+    there (letter x) = inr (letter x)
+    there (mark x) = inr (mark x)
+    there (punctuation x) = inl x
+    back : Punctuation ⊕ NonPunctuation → Script
+    back (inl a) = punctuation a
+    back (inr (letter x)) = letter x
+    back (inr (mark x)) = mark x
+    left : (x : Script) → back (there x) ≡ x
+    left (letter x) = refl
+    left (mark x) = refl
+    left (punctuation x) = refl
+    right : (x : Punctuation ⊕ NonPunctuation) → there (back x) ≡ x
+    right (inl a) = refl
+    right (inr (letter x)) = refl
+    right (inr (mark x)) = refl

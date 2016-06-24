@@ -88,7 +88,7 @@ open import Agda.Builtin.Bool
 open import Agda.Builtin.Unit
 open import Agda.Builtin.FromString
 open Inhabit
-open List.Split
+open List.Split.Right
 from-string : (xs : String) → {{p : inr?-set (split-inr (from-any-string xs))}} → List Script
 from-string xs {{p}} = assert-inr (from-any-string xs) {p}
 
