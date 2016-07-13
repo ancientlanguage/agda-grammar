@@ -215,7 +215,7 @@ breathe
   : Capitalization × List+ (List Consonantῥ × VocalicSyllable × Maybe Accent × Maybe Breathing) × List Consonantῥ
   ≅ InvalidBreathing
     + Capitalization
-    × List+ InitialConsonant × VocalicSyllable × Maybe Accent
+    × InitialConsonant × VocalicSyllable × Maybe Accent
     × List (Consonant × VocalicSyllable × Maybe Accent)
     × List Consonant
 breathe = {!!}
@@ -235,13 +235,13 @@ data WordAccent : Set where
 
 accentualize
   : Capitalization
-    × List+ InitialConsonant × VocalicSyllable × Maybe Accent
+    × InitialConsonant × VocalicSyllable × Maybe Accent
     × List (Consonant × VocalicSyllable × Maybe Accent)
     × List Consonant
   ≅ InvalidAccent
     + Capitalization
     × WordAccent
-    × List+ InitialConsonant × VocalicSyllable
+    × InitialConsonant × VocalicSyllable
     × List (Consonant × VocalicSyllable)
     × List Consonant
 accentualize = {!!}
