@@ -163,6 +163,7 @@ concrete-abstract = equiv to from to-from from-to
   to χ = letter-case-final (χ lower)
   to ψ = letter-case-final (ψ lower)
   to ω = letter-case-final (ω lower)
+
   from : LetterCaseFinal → ConcreteLetter
   from (letter-case-final (α upper)) = Α
   from (letter-case-final (α lower)) = α
@@ -213,6 +214,7 @@ concrete-abstract = equiv to from to-from from-to
   from (letter-case-final Σ) = Σ
   from (letter-case-final σ) = σ
   from (letter-case-final ς) = ς
+
   to-from : (x : LetterCaseFinal) → to (from x) ≡ x
   to-from (letter-case-final (α upper)) = refl
   to-from (letter-case-final (α lower)) = refl
@@ -263,6 +265,7 @@ concrete-abstract = equiv to from to-from from-to
   to-from (letter-case-final Σ) = refl
   to-from (letter-case-final σ) = refl
   to-from (letter-case-final ς) = refl
+
   from-to : (x :  ConcreteLetter) → from (to x) ≡ x
   from-to Α = refl
   from-to Β = refl
@@ -314,24 +317,133 @@ concrete-abstract = equiv to from to-from from-to
   from-to ψ = refl
   from-to ω = refl
 
+module Eq where
+  id : {A : Set} → A ≅ A
+  id = equiv (λ x → x) (λ x → x) (λ _ → refl) (λ _ → refl)
+
+  _∘_ : {A B C : Set} → B ≅ C → A ≅ B → A ≅ C
+  _∘_ {A} {B} {C} (equiv toY fromY to-fromY from-toY) (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
+    where
+    to : A → C
+    to x = toY (toX x)
+
+    from : C → A
+    from x = fromX (fromY x)
+
+    to-from : (x : C) → to (from x) ≡ x
+    to-from x rewrite to-fromX (fromY x) | to-fromY x = refl
+
+    from-to : (x : A) → from (to x) ≡ x
+    from-to x rewrite from-toY (toX x) | from-toX x = refl
+
+over-list : {A B : Set} → A ≅ B → List A ≅ List B
+over-list {A} {B} (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
+  where
+  to : List A → List B
+  to [] = []
+  to (x ∷ xs) = toX x ∷ to xs
+
+  from : List B → List A
+  from [] = []
+  from (x ∷ xs) = fromX x ∷ from xs
+
+  to-from : (xs : List B) → to (from xs) ≡ xs
+  to-from [] = refl
+  to-from (x ∷ xs) rewrite to-fromX x | to-from xs = refl
+
+  from-to : (xs : List A) → from (to xs) ≡ xs
+  from-to [] = refl
+  from-to (x ∷ xs) rewrite from-toX x | from-to xs = refl
+
+swap-sum : {A B : Set} → A + B ≅ B + A
+swap-sum = equiv swap swap same same
+  where
+  swap : {A B : Set} → A + B → B + A
+  swap (inl x) = inr x
+  swap (inr x) = inl x
+
+  same : {A B : Set} → (x : A + B) → swap (swap x) ≡ x
+  same (inl x) = refl
+  same (inr x) = refl
+
+over-product : {A B C D : Set} → A ≅ B → C ≅ D → A × C ≅ B × D
+over-product {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
+  where
+  to : A × C → B × D
+  to (a , c) = (toX a , toY c)
+
+  from : B × D → A × C
+  from (b , c) = (fromX b , fromY c)
+
+  to-from : (x : B × D) → to (from x) ≡ x
+  to-from (b , d) rewrite to-fromX b | to-fromY d = refl
+
+  from-to : (x : A × C) → from (to x) ≡ x
+  from-to (a , c) rewrite from-toX a | from-toY c = refl
+
+over-fst : {A B C : Set} → A ≅ B → A × C ≅ B × C
+over-fst eq = over-product eq Eq.id
+
+over-snd : {A B C : Set} → A ≅ B → C × A ≅ C × B
+over-snd eq = over-product Eq.id eq
+
+over-list+ : {A B : Set} → A ≅ B → List+ A ≅ List+ B
+over-list+ eq = over-product eq (over-list eq)
+
+over-sum : {A B C D : Set} → A ≅ B → C ≅ D → A + C ≅ B + D
+over-sum {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
+  where
+  to : A + C → B + D
+  to (inl a) = inl (toX a)
+  to (inr c) = inr (toY c)
+
+  from : B + D → A + C
+  from (inl b) = inl (fromX b)
+  from (inr d) = inr (fromY d)
+
+  to-from : (x : B + D) → to (from x) ≡ x
+  to-from (inl b) rewrite to-fromX b = refl
+  to-from (inr d) rewrite to-fromY d = refl
+
+  from-to : (x : A + C) → from (to x) ≡ x
+  from-to (inl a) rewrite from-toX a = refl
+  from-to (inr c) rewrite from-toY c = refl
+
+over-inl : {A B C : Set} → A ≅ B → A + C ≅ B + C
+over-inl eq = over-sum eq Eq.id
+
+over-inr : {A B C : Set} → A ≅ B → C + A ≅ C + B
+over-inr eq = over-sum Eq.id eq
+
 abstraction
   : List+ (ConcreteLetter + Mark)
   ≅ List+ (LetterCaseFinal + Mark)
-abstraction = {!!}
+abstraction = over-list+ (over-inl concrete-abstract)
 
-data InitialValue (A : Set) : Set where
-  initial-value : InitialValue A
-
-right-sum-follows
+split-list+-sum
   : {A B : Set}
   → List+ (A + B)
-  ≅ InitialValue B + List+ (A × List B)
-right-sum-follows = {!!}
+  ≅ List+ (A × List B) + List+ (B × List A)
+split-list+-sum {A} {B} = equiv to from to-from from-to
+  where
+  to : List+ (A + B) → List+ (A × List B) + List+ (B × List A)
+  to (inl x , xs) = inr {!!}
+  to (inr x , xs) = inl {!!}
+
+  from : List+ (A × List B) + List+ (B × List A) → List+ (A + B)
+  from (inl (x , xs)) = {!!}
+  from (inr (x , xs)) = {!!}
+
+  to-from : (x : List+ (A × List B) + List+ (B × List A)) → to (from x) ≡ x
+  to-from x = {!!}
+
+  from-to : (x : List+ (A + B)) → from (to x) ≡ x
+  from-to x = {!!}
 
 letters-first
   : List+ (LetterCaseFinal + Mark)
-  ≅ InitialValue Mark + List+ (LetterCaseFinal × List Mark)
-letters-first = {!!}
+  ≅ List+ (Mark × List LetterCaseFinal) + List+ (LetterCaseFinal × List Mark)
+letters-first = swap-sum Eq.∘ split-list+-sum
 
 data Capitalization : Set where
   capitalized uncapitalized : Capitalization
