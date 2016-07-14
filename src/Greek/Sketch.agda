@@ -60,12 +60,48 @@ data ConcreteLetter : Set where
   Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ ς τ υ φ χ ψ ω : ConcreteLetter
 data Mark : Set where
   acute grave circumflex smooth rough diaeresis iota-sub : Mark
-data AbstractLetter : Set where
-  α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ τ υ φ χ ψ ω : AbstractLetter
+data Letter : Set where
+  α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ τ υ φ χ ψ ω : Letter
 data LetterCase : Set where
   upper lower : LetterCase
 data Final : Set where
-  n/a final not-final : Final
+  n/a is-final not-final : Final
+
+data LetterCaseFinalD : Letter → LetterCase → Final → Set where
+  α : (c : LetterCase) → LetterCaseFinalD α c n/a
+  β : (c : LetterCase) → LetterCaseFinalD β c n/a
+  γ : (c : LetterCase) → LetterCaseFinalD γ c n/a
+  δ : (c : LetterCase) → LetterCaseFinalD δ c n/a
+  ε : (c : LetterCase) → LetterCaseFinalD ε c n/a
+  ζ : (c : LetterCase) → LetterCaseFinalD ζ c n/a
+  η : (c : LetterCase) → LetterCaseFinalD η c n/a
+  θ : (c : LetterCase) → LetterCaseFinalD θ c n/a
+  ι : (c : LetterCase) → LetterCaseFinalD ι c n/a
+  κ : (c : LetterCase) → LetterCaseFinalD κ c n/a
+  ƛ : (c : LetterCase) → LetterCaseFinalD ƛ c n/a
+  μ : (c : LetterCase) → LetterCaseFinalD μ c n/a
+  ν : (c : LetterCase) → LetterCaseFinalD ν c n/a
+  ξ : (c : LetterCase) → LetterCaseFinalD ξ c n/a
+  ο : (c : LetterCase) → LetterCaseFinalD ο c n/a
+  π : (c : LetterCase) → LetterCaseFinalD π c n/a
+  ρ : (c : LetterCase) → LetterCaseFinalD ρ c n/a
+  τ : (c : LetterCase) → LetterCaseFinalD τ c n/a
+  υ : (c : LetterCase) → LetterCaseFinalD υ c n/a
+  φ : (c : LetterCase) → LetterCaseFinalD φ c n/a
+  χ : (c : LetterCase) → LetterCaseFinalD χ c n/a
+  ψ : (c : LetterCase) → LetterCaseFinalD ψ c n/a
+  ω : (c : LetterCase) → LetterCaseFinalD ω c n/a
+  Σ : LetterCaseFinalD σ upper n/a
+  σ : LetterCaseFinalD σ lower not-final
+  ς : LetterCaseFinalD σ lower is-final
+
+record LetterCaseFinal : Set where
+  constructor letter-case-final
+  field
+    {letter} : Letter
+    {case} : LetterCase
+    {final} : Final
+    combo : LetterCaseFinalD letter case final
 
 non-empty
   : List (ConcreteLetter + Mark)
@@ -74,12 +110,213 @@ non-empty = emptiness
 
 concrete-abstract
   : ConcreteLetter
-  ≅ AbstractLetter × LetterCase × Final
-concrete-abstract = {!!}
+  ≅ LetterCaseFinal
+concrete-abstract = equiv to from to-from from-to
+  where
+  to : ConcreteLetter → LetterCaseFinal
+  to Α = letter-case-final (α upper)
+  to Β = letter-case-final (β upper)
+  to Γ = letter-case-final (γ upper)
+  to Δ = letter-case-final (δ upper)
+  to Ε = letter-case-final (ε upper)
+  to Ζ = letter-case-final (ζ upper)
+  to Η = letter-case-final (η upper)
+  to Θ = letter-case-final (θ upper)
+  to Ι = letter-case-final (ι upper)
+  to Κ = letter-case-final (κ upper)
+  to Λ = letter-case-final (ƛ upper)
+  to Μ = letter-case-final (μ upper)
+  to Ν = letter-case-final (ν upper)
+  to Ξ = letter-case-final (ξ upper)
+  to Ο = letter-case-final (ο upper)
+  to Π = letter-case-final (π upper)
+  to Ρ = letter-case-final (ρ upper)
+  to Σ = letter-case-final Σ
+  to Τ = letter-case-final (τ upper)
+  to Υ = letter-case-final (υ upper)
+  to Φ = letter-case-final (φ upper)
+  to Χ = letter-case-final (χ upper)
+  to Ψ = letter-case-final (ψ upper)
+  to Ω = letter-case-final (ω upper)
+  to α = letter-case-final (α lower)
+  to β = letter-case-final (β lower)
+  to γ = letter-case-final (γ lower)
+  to δ = letter-case-final (δ lower)
+  to ε = letter-case-final (ε lower)
+  to ζ = letter-case-final (ζ lower)
+  to η = letter-case-final (η lower)
+  to θ = letter-case-final (θ lower)
+  to ι = letter-case-final (ι lower)
+  to κ = letter-case-final (κ lower)
+  to ƛ = letter-case-final (ƛ lower)
+  to μ = letter-case-final (μ lower)
+  to ν = letter-case-final (ν lower)
+  to ξ = letter-case-final (ξ lower)
+  to ο = letter-case-final (ο lower)
+  to π = letter-case-final (π lower)
+  to ρ = letter-case-final (ρ lower)
+  to σ = letter-case-final σ
+  to ς = letter-case-final ς
+  to τ = letter-case-final (τ lower)
+  to υ = letter-case-final (υ lower)
+  to φ = letter-case-final (φ lower)
+  to χ = letter-case-final (χ lower)
+  to ψ = letter-case-final (ψ lower)
+  to ω = letter-case-final (ω lower)
+  from : LetterCaseFinal → ConcreteLetter
+  from (letter-case-final (α upper)) = Α
+  from (letter-case-final (α lower)) = α
+  from (letter-case-final (β upper)) = Β
+  from (letter-case-final (β lower)) = β
+  from (letter-case-final (γ upper)) = Γ
+  from (letter-case-final (γ lower)) = γ
+  from (letter-case-final (δ upper)) = Δ
+  from (letter-case-final (δ lower)) = δ
+  from (letter-case-final (ε upper)) = Ε
+  from (letter-case-final (ε lower)) = ε
+  from (letter-case-final (ζ upper)) = Ζ
+  from (letter-case-final (ζ lower)) = ζ
+  from (letter-case-final (η upper)) = Η
+  from (letter-case-final (η lower)) = η
+  from (letter-case-final (θ upper)) = Θ
+  from (letter-case-final (θ lower)) = θ
+  from (letter-case-final (ι upper)) = Ι
+  from (letter-case-final (ι lower)) = ι
+  from (letter-case-final (κ upper)) = Κ
+  from (letter-case-final (κ lower)) = κ
+  from (letter-case-final (ƛ upper)) = Λ
+  from (letter-case-final (ƛ lower)) = ƛ
+  from (letter-case-final (μ upper)) = Μ
+  from (letter-case-final (μ lower)) = μ
+  from (letter-case-final (ν upper)) = Ν
+  from (letter-case-final (ν lower)) = ν
+  from (letter-case-final (ξ upper)) = Ξ
+  from (letter-case-final (ξ lower)) = ξ
+  from (letter-case-final (ο upper)) = Ο
+  from (letter-case-final (ο lower)) = ο
+  from (letter-case-final (π upper)) = Π
+  from (letter-case-final (π lower)) = π
+  from (letter-case-final (ρ upper)) = Ρ
+  from (letter-case-final (ρ lower)) = ρ
+  from (letter-case-final (τ upper)) = Τ
+  from (letter-case-final (τ lower)) = τ
+  from (letter-case-final (υ upper)) = Υ
+  from (letter-case-final (υ lower)) = υ
+  from (letter-case-final (φ upper)) = Φ
+  from (letter-case-final (φ lower)) = φ
+  from (letter-case-final (χ upper)) = Χ
+  from (letter-case-final (χ lower)) = χ
+  from (letter-case-final (ψ upper)) = Ψ
+  from (letter-case-final (ψ lower)) = ψ
+  from (letter-case-final (ω upper)) = Ω
+  from (letter-case-final (ω lower)) = ω
+  from (letter-case-final Σ) = Σ
+  from (letter-case-final σ) = σ
+  from (letter-case-final ς) = ς
+  to-from : (x : LetterCaseFinal) → to (from x) ≡ x
+  to-from (letter-case-final (α upper)) = refl
+  to-from (letter-case-final (α lower)) = refl
+  to-from (letter-case-final (β upper)) = refl
+  to-from (letter-case-final (β lower)) = refl
+  to-from (letter-case-final (γ upper)) = refl
+  to-from (letter-case-final (γ lower)) = refl
+  to-from (letter-case-final (δ upper)) = refl
+  to-from (letter-case-final (δ lower)) = refl
+  to-from (letter-case-final (ε upper)) = refl
+  to-from (letter-case-final (ε lower)) = refl
+  to-from (letter-case-final (ζ upper)) = refl
+  to-from (letter-case-final (ζ lower)) = refl
+  to-from (letter-case-final (η upper)) = refl
+  to-from (letter-case-final (η lower)) = refl
+  to-from (letter-case-final (θ upper)) = refl
+  to-from (letter-case-final (θ lower)) = refl
+  to-from (letter-case-final (ι upper)) = refl
+  to-from (letter-case-final (ι lower)) = refl
+  to-from (letter-case-final (κ upper)) = refl
+  to-from (letter-case-final (κ lower)) = refl
+  to-from (letter-case-final (ƛ upper)) = refl
+  to-from (letter-case-final (ƛ lower)) = refl
+  to-from (letter-case-final (μ upper)) = refl
+  to-from (letter-case-final (μ lower)) = refl
+  to-from (letter-case-final (ν upper)) = refl
+  to-from (letter-case-final (ν lower)) = refl
+  to-from (letter-case-final (ξ upper)) = refl
+  to-from (letter-case-final (ξ lower)) = refl
+  to-from (letter-case-final (ο upper)) = refl
+  to-from (letter-case-final (ο lower)) = refl
+  to-from (letter-case-final (π upper)) = refl
+  to-from (letter-case-final (π lower)) = refl
+  to-from (letter-case-final (ρ upper)) = refl
+  to-from (letter-case-final (ρ lower)) = refl
+  to-from (letter-case-final (τ upper)) = refl
+  to-from (letter-case-final (τ lower)) = refl
+  to-from (letter-case-final (υ upper)) = refl
+  to-from (letter-case-final (υ lower)) = refl
+  to-from (letter-case-final (φ upper)) = refl
+  to-from (letter-case-final (φ lower)) = refl
+  to-from (letter-case-final (χ upper)) = refl
+  to-from (letter-case-final (χ lower)) = refl
+  to-from (letter-case-final (ψ upper)) = refl
+  to-from (letter-case-final (ψ lower)) = refl
+  to-from (letter-case-final (ω upper)) = refl
+  to-from (letter-case-final (ω lower)) = refl
+  to-from (letter-case-final Σ) = refl
+  to-from (letter-case-final σ) = refl
+  to-from (letter-case-final ς) = refl
+  from-to : (x :  ConcreteLetter) → from (to x) ≡ x
+  from-to Α = refl
+  from-to Β = refl
+  from-to Γ = refl
+  from-to Δ = refl
+  from-to Ε = refl
+  from-to Ζ = refl
+  from-to Η = refl
+  from-to Θ = refl
+  from-to Ι = refl
+  from-to Κ = refl
+  from-to Λ = refl
+  from-to Μ = refl
+  from-to Ν = refl
+  from-to Ξ = refl
+  from-to Ο = refl
+  from-to Π = refl
+  from-to Ρ = refl
+  from-to Σ = refl
+  from-to Τ = refl
+  from-to Υ = refl
+  from-to Φ = refl
+  from-to Χ = refl
+  from-to Ψ = refl
+  from-to Ω = refl
+  from-to α = refl
+  from-to β = refl
+  from-to γ = refl
+  from-to δ = refl
+  from-to ε = refl
+  from-to ζ = refl
+  from-to η = refl
+  from-to θ = refl
+  from-to ι = refl
+  from-to κ = refl
+  from-to ƛ = refl
+  from-to μ = refl
+  from-to ν = refl
+  from-to ξ = refl
+  from-to ο = refl
+  from-to π = refl
+  from-to ρ = refl
+  from-to σ = refl
+  from-to ς = refl
+  from-to τ = refl
+  from-to υ = refl
+  from-to φ = refl
+  from-to χ = refl
+  from-to ψ = refl
+  from-to ω = refl
 
 abstraction
   : List+ (ConcreteLetter + Mark)
-  ≅ List+ (AbstractLetter × LetterCase × Final + Mark)
+  ≅ List+ (LetterCaseFinal + Mark)
 abstraction = {!!}
 
 data InitialValue (A : Set) : Set where
@@ -92,8 +329,8 @@ right-sum-follows
 right-sum-follows = {!!}
 
 letters-first
-  : List+ (AbstractLetter × LetterCase × Final + Mark)
-  ≅ InitialValue Mark + List+ (AbstractLetter × LetterCase × Final × List Mark)
+  : List+ (LetterCaseFinal + Mark)
+  ≅ InitialValue Mark + List+ (LetterCaseFinal × List Mark)
 letters-first = {!!}
 
 data Capitalization : Set where
@@ -102,9 +339,21 @@ data Capitalization : Set where
 data InvalidCapitalization : Set where
   non-initial-upper : InvalidCapitalization
 
+data LetterFinalD : Letter → Final → Set where
+  non-sigma : (l : Letter) → (l ≡ σ → ⊥) → LetterFinalD l n/a
+  σ : LetterFinalD σ not-final
+  ς : LetterFinalD σ is-final
+
+record LetterFinal : Set where
+  constructor letter-final
+  field
+    {letter} : Letter
+    {final} : Final
+    combo : LetterFinalD letter final
+
 word-capitalization
-  : List+ (AbstractLetter × LetterCase × Final × List Mark)
-  ≅ InvalidCapitalization + Capitalization × List+ (AbstractLetter × Final × List Mark)
+  : List+ (LetterCaseFinal × List Mark)
+  ≅ InvalidCapitalization + Capitalization × List+ (LetterFinal × List Mark)
 word-capitalization = {!!}
 
 data InvalidFinal : Set where
@@ -113,8 +362,8 @@ data InvalidFinal : Set where
   final-or-non-final-on-non-sigma : InvalidFinal
 
 finalization
-  : Capitalization × List+ (AbstractLetter × Final × List Mark)
-  ≅ InvalidFinal + Capitalization × List+ (AbstractLetter × List Mark)
+  : Capitalization × List+ (LetterFinal × List Mark)
+  ≅ InvalidFinal + Capitalization × List+ (Letter × List Mark)
 finalization = {!!}
 
 data Accent : Set where
@@ -147,8 +396,8 @@ mark-combos = {!!}
 data OneInvalidMark : Set where
 
 expose-marks
-  : Capitalization × List+ (AbstractLetter × List Mark)
-  ≅ OneInvalidMark + Capitalization × List+ (AbstractLetter × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
+  : Capitalization × List+ (Letter × List Mark)
+  ≅ OneInvalidMark + Capitalization × List+ (Letter × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
 expose-marks = {!!}
 
 data Vowel : Set where
@@ -156,12 +405,12 @@ data Vowel : Set where
 data Consonant : Set where
   β γ δ ζ θ κ ƛ μ ν ξ π ρ σ τ φ χ ψ : Consonant
 
-divide-letter : AbstractLetter → Vowel + Consonant
+divide-letter : Letter → Vowel + Consonant
 divide-letter = {!!}
 
 distinguish-letter
-  : Capitalization × List+ (AbstractLetter × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
-  → Capitalization × List+ ((Vowel + Consonant) × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
+  : Capitalization × List+ (Letter × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
+  ≅ Capitalization × List+ ((Vowel + Consonant) × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
 distinguish-letter = {!!}
 
 data InvalidConsonantMark : Set where
@@ -177,7 +426,7 @@ data OneInvalidConsonantMark : Set where
 
 consonant-marks
   : Capitalization × List+ ((Vowel + Consonant) × Maybe Accent × Maybe Breathing × Maybe SyllabicMark)
-  → OneInvalidConsonantMark + Capitalization × List+ (Vowel × Maybe Accent × Maybe Breathing × Maybe SyllabicMark + Consonantῥ)
+  ≅ OneInvalidConsonantMark + Capitalization × List+ (Vowel × Maybe Accent × Maybe Breathing × Maybe SyllabicMark + Consonantῥ)
 consonant-marks = {!!}
 
 data Diphthong : Set where
@@ -194,7 +443,7 @@ data InvalidVowelSequence : Set where
 
 diphthongize
   : Capitalization × List+ (Vowel × Maybe Accent × Maybe Breathing × Maybe SyllabicMark + Consonantῥ)
-  → InvalidVowelSequence + Capitalization × List+ (VocalicSyllable × Maybe Accent × Maybe Breathing + Consonantῥ)
+  ≅ InvalidVowelSequence + Capitalization × List+ (VocalicSyllable × Maybe Accent × Maybe Breathing + Consonantῥ)
 diphthongize = {!!}
 
 data NoSyllable : Set where
