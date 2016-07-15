@@ -1,3 +1,5 @@
+{-# OPTIONS --exact-split #-}
+
 module Greek.Sketch where
 
 open import Agda.Builtin.Char
@@ -19,8 +21,12 @@ data _+_ (A B : Set) : Set where
   inl : A → A + B
   inr : B → A + B
 
-data _×_ (A B : Set) : Set where
-  _,_ : A → B → A × B
+infixr 3 _,_
+record _×_ (A B : Set) : Set where
+  constructor _,_
+  field
+    fst : A
+    snd : B
 
 data Pair (A : Set) (B : A → Set) : Set where
   pair : (a : A) → (b : B a) → Pair A B
@@ -420,30 +426,50 @@ abstraction
   ≅ List+ (LetterCaseFinal + Mark)
 abstraction = over-list+ (over-inl concrete-abstract)
 
-split-list+-sum
+group-inr
   : {A B : Set}
-  → List+ (A + B)
-  ≅ List+ (A × List B) + List+ (B × List A)
-split-list+-sum {A} {B} = equiv to from to-from from-to
+  → List (A + B)
+  ≅ List B × List (A × List B)
+group-inr {A} {B} = equiv to from to-from from-to
   where
-  to : List+ (A + B) → List+ (A × List B) + List+ (B × List A)
-  to (inl x , xs) = inr {!!}
-  to (inr x , xs) = inl {!!}
+  to-aux : A + B → List B × List (A × List B) → List B × List (A × List B)
+  to-aux (inl a) (bs , xs) = [] , (a , bs) ∷ xs
+  to-aux (inr b) (bs , xs) = b ∷ bs , xs
 
-  from : List+ (A × List B) + List+ (B × List A) → List+ (A + B)
-  from (inl (x , xs)) = {!!}
-  from (inr (x , xs)) = {!!}
+  to : List (A + B) → List B × List (A × List B)
+  to [] = [] , []
+  to (x ∷ xs) = to-aux x (to xs)
 
-  to-from : (x : List+ (A × List B) + List+ (B × List A)) → to (from x) ≡ x
-  to-from x = {!!}
+  from-prepend : List B → List (A + B) → List (A + B)
+  from-prepend [] abs = abs
+  from-prepend (b ∷ bs) abs = inr b ∷ from-prepend bs abs
 
-  from-to : (x : List+ (A + B)) → from (to x) ≡ x
-  from-to x = {!!}
+  from-aux2 : List (A × List B) → List (A + B)
+  from-aux2 [] = []
+  from-aux2 ((a , bs) ∷ zs) = inl a ∷ from-prepend bs (from-aux2 zs)
 
-letters-first
-  : List+ (LetterCaseFinal + Mark)
-  ≅ List+ (Mark × List LetterCaseFinal) + List+ (LetterCaseFinal × List Mark)
-letters-first = swap-sum Eq.∘ split-list+-sum
+  from : List B × List (A × List B) → List (A + B)
+  from (bs , abs) = from-prepend bs (from-aux2 abs)
+
+  to-from-aux : ∀ bs xs → to (from ([] , xs)) ≡ ([] , xs) → to (from (bs , xs)) ≡ (bs , xs)
+  to-from-aux [] xs p = p
+  to-from-aux (x ∷ bs) xs p rewrite to-from-aux bs xs p = refl
+
+  to-from : (x : List B × List (A × List B)) → to (from x) ≡ x
+  to-from ([] , []) = refl
+  to-from ([] , (fst , []) ∷ xs) rewrite to-from ([] , xs) = refl
+  to-from ([] , (fst , b ∷ bs) ∷ xs) rewrite to-from-aux bs xs (to-from ([] , xs)) = refl
+  to-from (x ∷ fst , snd) rewrite to-from (fst , snd) = refl
+
+  from-to : (x : List (A + B)) → from (to x) ≡ x
+  from-to [] = refl
+  from-to (inl a ∷ xs) rewrite from-to xs = refl
+  from-to (inr b ∷ xs) rewrite from-to xs = refl
+
+letters-firstA
+  : List (LetterCaseFinal + Mark)
+  ≅ List Mark × List (LetterCaseFinal × List Mark)
+letters-firstA = group-inr
 
 data Capitalization : Set where
   capitalized uncapitalized : Capitalization
