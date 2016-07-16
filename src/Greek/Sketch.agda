@@ -327,6 +327,7 @@ module Eq where
   id : {A : Set} → A ≅ A
   id = equiv (λ x → x) (λ x → x) (λ _ → refl) (λ _ → refl)
 
+  infixr 9 _∘_
   _∘_ : {A B C : Set} → B ≅ C → A ≅ B → A ≅ C
   _∘_ {A} {B} {C} (equiv toY fromY to-fromY from-toY) (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
     where
@@ -395,6 +396,9 @@ over-snd eq = over-product Eq.id eq
 
 over-list+ : {A B : Set} → A ≅ B → List+ A ≅ List+ B
 over-list+ eq = over-product eq (over-list eq)
+
+promote-list+ : {A B : Set} → List A ≅ B → List+ A ≅ A × B
+promote-list+ {A} {B} eq = over-snd eq
 
 over-sum : {A B C D : Set} → A ≅ B → C ≅ D → A + C ≅ B + D
 over-sum {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
@@ -466,10 +470,96 @@ group-inr {A} {B} = equiv to from to-from from-to
   from-to (inl a ∷ xs) rewrite from-to xs = refl
   from-to (inr b ∷ xs) rewrite from-to xs = refl
 
-letters-firstA
-  : List (LetterCaseFinal + Mark)
-  ≅ List Mark × List (LetterCaseFinal × List Mark)
-letters-firstA = group-inr
+dist-product-fst-sum : {A B C : Set} → (A + B) × C ≅ A × C + B × C
+dist-product-fst-sum {A} {B} {C} = equiv to from to-from from-to
+  where
+  to = {!!}
+  from = {!!}
+  to-from = {!!}
+  from-to = {!!}
+
+assoc-product-left : {A B C : Set} → A × (B × C) ≅ (A × B) × C
+assoc-product-left = {!!}
+
+product-swap-right : {A B C : Set} → A × (B × C) ≅ B × (A × C)
+product-swap-right = {!!}
+
+group-inr+
+  : {A B : Set}
+  → List+ (A + B)
+  ≅ List+ B × List (A × List B)
+    + List B × List+ (A × List B)
+group-inr+ {A} {B} = {!!}
+  where
+  part1 : List (A + B) ≅ List B × List (A × List B)
+  part1 = group-inr
+
+  part2 : List+ (A + B) ≅ (A + B) × (List B × List (A × List B))
+  part2 = promote-list+ part1
+
+  part3 : (A + B) × (List B × List (A × List B))
+    ≅ A × (List B × List (A × List B))
+    + B × (List B × List (A × List B))
+  part3 = dist-product-fst-sum
+
+  part4
+    : A × (List B × List (A × List B))
+    + B × (List B × List (A × List B))
+    ≅ List B × (A × List (A × List B))
+    + (B × List B) × List (A × List B)
+  part4 = over-sum product-swap-right assoc-product-left
+
+  part5
+    : List B × (A × List (A × List B))
+    + (B × List B) × List (A × List B)
+    ≅ (B × List B) × List (A × List B)
+    + List B × (A × List (A × List B))
+  part5 = swap-sum
+
+  open Eq
+  combo : List+ (A + B)
+    ≅ (B × List B) × List (A × List B)
+    + List B × (A × List (A × List B))
+  combo = part5 ∘ part4 ∘ part3 ∘ part2
+
+letters-first-part1
+  : List+ (LetterCaseFinal + Mark)
+  ≅ List+ Mark × List (LetterCaseFinal × List Mark)
+  + List Mark × List+ (LetterCaseFinal × List Mark)
+letters-first-part1 = group-inr+
+
+elim-⊤-product : {A : Set} → ⊤ × A ≅ A
+elim-⊤-product = {!!}
+
+letters-first-part2
+  : List Mark × List+ (LetterCaseFinal × List Mark)
+  ≅ List+ Mark × List+ (LetterCaseFinal × List Mark)
+  + List+ (LetterCaseFinal × List Mark)
+letters-first-part2 = part4 ∘ part3 ∘ part2 ∘ part1 
+  where
+  open Eq
+  part1
+    : List Mark × List+ (LetterCaseFinal × List Mark)
+    ≅ (List∅ + List+ Mark) × List+ (LetterCaseFinal × List Mark)
+  part1 = over-fst emptiness
+
+  part2
+    : (List∅ + List+ Mark) × List+ (LetterCaseFinal × List Mark)
+    ≅ (List+ Mark + List∅) × List+ (LetterCaseFinal × List Mark)
+  part2 = over-fst swap-sum
+
+  part3
+    : (List+ Mark + List∅) × List+ (LetterCaseFinal × List Mark)
+    ≅ List+ Mark × List+ (LetterCaseFinal × List Mark)
+    + List∅ × List+ (LetterCaseFinal × List Mark)
+  part3 = dist-product-fst-sum
+
+  part4
+    : List+ Mark × List+ (LetterCaseFinal × List Mark)
+    + List∅ × List+ (LetterCaseFinal × List Mark)
+    ≅ List+ Mark × List+ (LetterCaseFinal × List Mark)
+    + List+ (LetterCaseFinal × List Mark)
+  part4 = over-inr elim-⊤-product
 
 data Capitalization : Set where
   capitalized uncapitalized : Capitalization
