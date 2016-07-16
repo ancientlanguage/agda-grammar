@@ -473,24 +473,51 @@ group-inr {A} {B} = equiv to from to-from from-to
 dist-product-fst-sum : {A B C : Set} → (A + B) × C ≅ A × C + B × C
 dist-product-fst-sum {A} {B} {C} = equiv to from to-from from-to
   where
-  to = {!!}
-  from = {!!}
-  to-from = {!!}
-  from-to = {!!}
+  to : (A + B) × C → A × C + B × C
+  to (inl a , c) = inl (a , c)
+  to (inr b , c) = inr (b , c)
+  from : A × C + B × C → (A + B) × C
+  from (inl (a , c)) = inl a , c
+  from (inr (b , c)) = inr b , c
+  to-from : (x : A × C + B × C) → to (from x) ≡ x
+  to-from (inl (fst , snd)) = refl
+  to-from (inr (fst , snd)) = refl
+  from-to : (x : (A + B) × C) → from (to x) ≡ x
+  from-to (inl x , snd) = refl
+  from-to (inr x , snd) = refl
 
 assoc-product-left : {A B C : Set} → A × (B × C) ≅ (A × B) × C
-assoc-product-left = {!!}
+assoc-product-left {A} {B} {C} = equiv to from to-from from-to
+  where
+  to : A × (B × C) → (A × B) × C
+  to (a , (b , c)) = (a , b) , c
+  from : (A × B) × C → A × (B × C)
+  from ((a , b) , c) = a , (b , c)
+  to-from : (x : (A × B) × C) → to (from x) ≡ x
+  to-from ((a , b) , c) = refl
+  from-to : (x : A × (B × C)) → from (to x) ≡ x
+  from-to (a , (b , c)) = refl
 
 product-swap-right : {A B C : Set} → A × (B × C) ≅ B × (A × C)
-product-swap-right = {!!}
+product-swap-right {A} {B} {C} = equiv to from to-from from-to
+  where
+  to : A × (B × C) → B × (A × C)
+  to (a , (b , c)) = b , (a , c)
+  from : B × (A × C) → A × (B × C)
+  from (b , (a , c)) = a , (b , c)
+  to-from : (x : B × (A × C)) → to (from x) ≡ x
+  to-from (b , (a , c)) = refl
+  from-to : (x : A × (B × C)) → from (to x) ≡ x
+  from-to (a , (b , c)) = refl
 
 group-inr+
   : {A B : Set}
   → List+ (A + B)
   ≅ List+ B × List (A × List B)
-    + List B × List+ (A × List B)
-group-inr+ {A} {B} = {!!}
+  + List+ (A × List B)
+group-inr+ {A} {B} = part5 ∘ part4 ∘ part3 ∘ part2
   where
+  open Eq
   part1 : List (A + B) ≅ List B × List (A × List B)
   part1 = group-inr
 
@@ -505,61 +532,22 @@ group-inr+ {A} {B} = {!!}
   part4
     : A × (List B × List (A × List B))
     + B × (List B × List (A × List B))
-    ≅ List B × (A × List (A × List B))
+    ≅ (A × List B) × List (A × List B)
     + (B × List B) × List (A × List B)
-  part4 = over-sum product-swap-right assoc-product-left
+  part4 = over-sum assoc-product-left assoc-product-left
 
   part5
-    : List B × (A × List (A × List B))
+    : (A × List B) × List (A × List B)
     + (B × List B) × List (A × List B)
     ≅ (B × List B) × List (A × List B)
-    + List B × (A × List (A × List B))
+    + (A × List B) × List (A × List B)
   part5 = swap-sum
 
-  open Eq
-  combo : List+ (A + B)
-    ≅ (B × List B) × List (A × List B)
-    + List B × (A × List (A × List B))
-  combo = part5 ∘ part4 ∘ part3 ∘ part2
-
-letters-first-part1
+letters-first
   : List+ (LetterCaseFinal + Mark)
   ≅ List+ Mark × List (LetterCaseFinal × List Mark)
-  + List Mark × List+ (LetterCaseFinal × List Mark)
-letters-first-part1 = group-inr+
-
-elim-⊤-product : {A : Set} → ⊤ × A ≅ A
-elim-⊤-product = {!!}
-
-letters-first-part2
-  : List Mark × List+ (LetterCaseFinal × List Mark)
-  ≅ List+ Mark × List+ (LetterCaseFinal × List Mark)
   + List+ (LetterCaseFinal × List Mark)
-letters-first-part2 = part4 ∘ part3 ∘ part2 ∘ part1 
-  where
-  open Eq
-  part1
-    : List Mark × List+ (LetterCaseFinal × List Mark)
-    ≅ (List∅ + List+ Mark) × List+ (LetterCaseFinal × List Mark)
-  part1 = over-fst emptiness
-
-  part2
-    : (List∅ + List+ Mark) × List+ (LetterCaseFinal × List Mark)
-    ≅ (List+ Mark + List∅) × List+ (LetterCaseFinal × List Mark)
-  part2 = over-fst swap-sum
-
-  part3
-    : (List+ Mark + List∅) × List+ (LetterCaseFinal × List Mark)
-    ≅ List+ Mark × List+ (LetterCaseFinal × List Mark)
-    + List∅ × List+ (LetterCaseFinal × List Mark)
-  part3 = dist-product-fst-sum
-
-  part4
-    : List+ Mark × List+ (LetterCaseFinal × List Mark)
-    + List∅ × List+ (LetterCaseFinal × List Mark)
-    ≅ List+ Mark × List+ (LetterCaseFinal × List Mark)
-    + List+ (LetterCaseFinal × List Mark)
-  part4 = over-inr elim-⊤-product
+letters-first = group-inr+
 
 data Capitalization : Set where
   capitalized uncapitalized : Capitalization
