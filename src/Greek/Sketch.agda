@@ -10,8 +10,11 @@ open import Agda.Builtin.Nat using (Nat; zero; suc)
 open import Agda.Builtin.FromString
 open import Agda.Builtin.Unit
 
-infixl 6 _+_
 infixl 7 _×_
+infixl 6 _+_
+infixr 4 _++_
+infixr 3 _,_
+infix 1 _≅_
 
 data ⊥ : Set where
 ⊥-elim : {A : Set} → ⊥ → A
@@ -21,7 +24,10 @@ data _+_ (A B : Set) : Set where
   inl : A → A + B
   inr : B → A + B
 
-infixr 3 _,_
+assume-inr : {A B : Set} → A + B → Set
+assume-inr (inl a) = ⊥
+assume-inr (inr b) = ⊤
+
 record _×_ (A B : Set) : Set where
   constructor _,_
   field
@@ -37,7 +43,15 @@ List∅ = ⊤
 List+ : Set → Set
 List+ A = A × List A
 
-infix 1 _≅_
+module ListM where
+  map : {A B : Set} → (A → B) → List A → List B
+  map f [] = []
+  map f (x ∷ xs) = f x ∷ map f xs
+
+_++_ : {A : Set} → (xs ys : List A) → List A
+[] ++ ys = ys
+(x ∷ xs) ++ ys = x ∷ (xs ++ ys)
+
 record _≅_ (A B : Set) : Set where
   constructor equiv
   field
@@ -45,6 +59,35 @@ record _≅_ (A B : Set) : Set where
     from : B → A
     to-from : (x : B) → to (from x) ≡ x
     from-to : (x : A) → from (to x) ≡ x
+
+module Eq where
+  id : {A : Set} → A ≅ A
+  id = equiv (λ x → x) (λ x → x) (λ _ → refl) (λ _ → refl)
+
+  infixr 9 _∘_
+  _∘_ : {A B C : Set} → B ≅ C → A ≅ B → A ≅ C
+  _∘_ {A} {B} {C} (equiv toY fromY to-fromY from-toY) (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
+    where
+    to : A → C
+    to x = toY (toX x)
+
+    from : C → A
+    from x = fromX (fromY x)
+
+    to-from : (x : C) → to (from x) ≡ x
+    to-from x rewrite to-fromX (fromY x) | to-fromY x = refl
+
+    from-to : (x : A) → from (to x) ≡ x
+    from-to x rewrite from-toY (toX x) | from-toX x = refl
+
+move-inr : {A B C : Set}
+  → (eq : A ≅ B + C)
+  → (a : A)
+  → {p : assume-inr (_≅_.to eq a)}
+  → C
+move-inr eq a {p} with _≅_.to eq a
+move-inr eq a {p} | inl c = ⊥-elim p
+move-inr eq a | inr c = c
 
 emptiness : {A : Set} → List A ≅ List∅ + List+ A
 emptiness {A} = equiv to from to-from from-to
@@ -62,10 +105,331 @@ emptiness {A} = equiv to from to-from from-to
   from-to [] = refl
   from-to (_ ∷ _) = refl
 
+over-list : {A B : Set} → A ≅ B → List A ≅ List B
+over-list {A} {B} (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
+  where
+  to : List A → List B
+  to [] = []
+  to (x ∷ xs) = toX x ∷ to xs
+
+  from : List B → List A
+  from [] = []
+  from (x ∷ xs) = fromX x ∷ from xs
+
+  to-from : (xs : List B) → to (from xs) ≡ xs
+  to-from [] = refl
+  to-from (x ∷ xs) rewrite to-fromX x | to-from xs = refl
+
+  from-to : (xs : List A) → from (to xs) ≡ xs
+  from-to [] = refl
+  from-to (x ∷ xs) rewrite from-toX x | from-to xs = refl
+
+swap-sum : {A B : Set} → A + B ≅ B + A
+swap-sum = equiv swap swap same same
+  where
+  swap : {A B : Set} → A + B → B + A
+  swap (inl x) = inr x
+  swap (inr x) = inl x
+
+  same : {A B : Set} → (x : A + B) → swap (swap x) ≡ x
+  same (inl x) = refl
+  same (inr x) = refl
+
+over-product : {A B C D : Set} → A ≅ B → C ≅ D → A × C ≅ B × D
+over-product {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
+  where
+  to : A × C → B × D
+  to (a , c) = (toX a , toY c)
+
+  from : B × D → A × C
+  from (b , c) = (fromX b , fromY c)
+
+  to-from : (x : B × D) → to (from x) ≡ x
+  to-from (b , d) rewrite to-fromX b | to-fromY d = refl
+
+  from-to : (x : A × C) → from (to x) ≡ x
+  from-to (a , c) rewrite from-toX a | from-toY c = refl
+
+over-fst : {A B C : Set} → A ≅ B → A × C ≅ B × C
+over-fst eq = over-product eq Eq.id
+
+over-snd : {A B C : Set} → A ≅ B → C × A ≅ C × B
+over-snd eq = over-product Eq.id eq
+
+over-list+ : {A B : Set} → A ≅ B → List+ A ≅ List+ B
+over-list+ eq = over-product eq (over-list eq)
+
+promote-list+ : {A B : Set} → List A ≅ B → List+ A ≅ A × B
+promote-list+ {A} {B} eq = over-snd eq
+
+over-sum : {A B C D : Set} → A ≅ B → C ≅ D → A + C ≅ B + D
+over-sum {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
+  where
+  to : A + C → B + D
+  to (inl a) = inl (toX a)
+  to (inr c) = inr (toY c)
+
+  from : B + D → A + C
+  from (inl b) = inl (fromX b)
+  from (inr d) = inr (fromY d)
+
+  to-from : (x : B + D) → to (from x) ≡ x
+  to-from (inl b) rewrite to-fromX b = refl
+  to-from (inr d) rewrite to-fromY d = refl
+
+  from-to : (x : A + C) → from (to x) ≡ x
+  from-to (inl a) rewrite from-toX a = refl
+  from-to (inr c) rewrite from-toY c = refl
+
+over-inl : {A B C : Set} → A ≅ B → A + C ≅ B + C
+over-inl eq = over-sum eq Eq.id
+
+over-inr : {A B C : Set} → A ≅ B → C + A ≅ C + B
+over-inr eq = over-sum Eq.id eq
+
+record ContainsInl (A B : Set) : Set where
+  constructor contains-inl
+  field
+    before : List B
+    value : A
+    after : List (A + B)
+
+all-right : {A B : Set}
+  → List (A + B)
+  ≅ ContainsInl A B + List B
+all-right {A} {B} = equiv to from to-from from-to
+  where
+  to-aux : (A + B) → ContainsInl A B + List B → ContainsInl A B + List B
+  to-aux (inl a) (inl (contains-inl before value after)) = inl (contains-inl [] a (ListM.map inr before ++ inl value ∷ after))
+  to-aux (inr b) (inl (contains-inl before value after)) = inl (contains-inl (b ∷ before) value after)
+  to-aux (inl a) (inr bs) = inl (contains-inl [] a (ListM.map inr bs))
+  to-aux (inr b) (inr bs) = inr (b ∷ bs)
+
+  to : List (A + B) → ContainsInl A B + List B
+  to [] = inr []
+  to (x ∷ xs) = to-aux x (to xs)
+
+  from : ContainsInl A B + List B → List (A + B)
+  from (inl (contains-inl [] value after)) = inl value ∷ after
+  from (inl (contains-inl (b ∷ before) value after)) = inr b ∷ from (inl (contains-inl before value after))
+  from (inr []) = []
+  from (inr (b ∷ bs)) = inr b ∷ from (inr bs) -- ListM.map inr x
+
+  to-from : (x : ContainsInl A B + List B) → to (from x) ≡ x
+  to-from (inl (contains-inl [] value [])) = refl
+  to-from (inl (contains-inl [] value (x ∷ after))) = {!!}
+  to-from (inl (contains-inl (x ∷ before) value after)) rewrite to-from (inl (contains-inl before value after)) = refl
+  to-from (inr []) = refl
+  to-from (inr (x ∷ xs)) rewrite to-from (inr xs) = refl
+
+  from-to : (x : List (A + B)) → from (to x) ≡ x
+  from-to [] = refl
+  from-to (inl a ∷ []) = refl
+  from-to (inl a ∷ inl a2 ∷ xs) = {!!}
+  from-to (inl a ∷ inr b ∷ xs) = {!!}
+  from-to (inr b ∷ []) = refl
+  from-to (inr b ∷ inl a ∷ xs) = {!!}
+  from-to (inr b ∷ inr b2 ∷ xs) = {!!}
+
+group-inr
+  : {A B : Set}
+  → List (A + B)
+  ≅ List B × List (A × List B)
+group-inr {A} {B} = equiv to from to-from from-to
+  where
+  to-aux : A + B → List B × List (A × List B) → List B × List (A × List B)
+  to-aux (inl a) (bs , xs) = [] , (a , bs) ∷ xs
+  to-aux (inr b) (bs , xs) = b ∷ bs , xs
+
+  to : List (A + B) → List B × List (A × List B)
+  to [] = [] , []
+  to (x ∷ xs) = to-aux x (to xs)
+
+  from-prepend : List B → List (A + B) → List (A + B)
+  from-prepend [] abs = abs
+  from-prepend (b ∷ bs) abs = inr b ∷ from-prepend bs abs
+
+  from-aux2 : List (A × List B) → List (A + B)
+  from-aux2 [] = []
+  from-aux2 ((a , bs) ∷ zs) = inl a ∷ from-prepend bs (from-aux2 zs)
+
+  from : List B × List (A × List B) → List (A + B)
+  from (bs , abs) = from-prepend bs (from-aux2 abs)
+
+  to-from-aux : ∀ bs xs → to (from ([] , xs)) ≡ ([] , xs) → to (from (bs , xs)) ≡ (bs , xs)
+  to-from-aux [] xs p = p
+  to-from-aux (x ∷ bs) xs p rewrite to-from-aux bs xs p = refl
+
+  to-from : (x : List B × List (A × List B)) → to (from x) ≡ x
+  to-from ([] , []) = refl
+  to-from ([] , (fst , []) ∷ xs) rewrite to-from ([] , xs) = refl
+  to-from ([] , (fst , b ∷ bs) ∷ xs) rewrite to-from-aux bs xs (to-from ([] , xs)) = refl
+  to-from (x ∷ fst , snd) rewrite to-from (fst , snd) = refl
+
+  from-to : (x : List (A + B)) → from (to x) ≡ x
+  from-to [] = refl
+  from-to (inl a ∷ xs) rewrite from-to xs = refl
+  from-to (inr b ∷ xs) rewrite from-to xs = refl
+
+dist-product-fst-sum : {A B C : Set} → (A + B) × C ≅ A × C + B × C
+dist-product-fst-sum {A} {B} {C} = equiv to from to-from from-to
+  where
+  to : (A + B) × C → A × C + B × C
+  to (inl a , c) = inl (a , c)
+  to (inr b , c) = inr (b , c)
+  from : A × C + B × C → (A + B) × C
+  from (inl (a , c)) = inl a , c
+  from (inr (b , c)) = inr b , c
+  to-from : (x : A × C + B × C) → to (from x) ≡ x
+  to-from (inl (fst , snd)) = refl
+  to-from (inr (fst , snd)) = refl
+  from-to : (x : (A + B) × C) → from (to x) ≡ x
+  from-to (inl x , snd) = refl
+  from-to (inr x , snd) = refl
+
+assoc-product-left : {A B C : Set} → A × (B × C) ≅ (A × B) × C
+assoc-product-left {A} {B} {C} = equiv to from to-from from-to
+  where
+  to : A × (B × C) → (A × B) × C
+  to (a , (b , c)) = (a , b) , c
+  from : (A × B) × C → A × (B × C)
+  from ((a , b) , c) = a , (b , c)
+  to-from : (x : (A × B) × C) → to (from x) ≡ x
+  to-from ((a , b) , c) = refl
+  from-to : (x : A × (B × C)) → from (to x) ≡ x
+  from-to (a , (b , c)) = refl
+
+product-swap-right : {A B C : Set} → A × (B × C) ≅ B × (A × C)
+product-swap-right {A} {B} {C} = equiv to from to-from from-to
+  where
+  to : A × (B × C) → B × (A × C)
+  to (a , (b , c)) = b , (a , c)
+  from : B × (A × C) → A × (B × C)
+  from (b , (a , c)) = a , (b , c)
+  to-from : (x : B × (A × C)) → to (from x) ≡ x
+  to-from (b , (a , c)) = refl
+  from-to : (x : A × (B × C)) → from (to x) ≡ x
+  from-to (a , (b , c)) = refl
+
+group-inr+
+  : {A B : Set}
+  → List+ (A + B)
+  ≅ List+ B × List (A × List B)
+  + List+ (A × List B)
+group-inr+ {A} {B} = part5 ∘ part4 ∘ part3 ∘ part2
+  where
+  open Eq
+  part1 : List (A + B) ≅ List B × List (A × List B)
+  part1 = group-inr
+
+  part2 : List+ (A + B) ≅ (A + B) × (List B × List (A × List B))
+  part2 = promote-list+ part1
+
+  part3 : (A + B) × (List B × List (A × List B))
+    ≅ A × (List B × List (A × List B))
+    + B × (List B × List (A × List B))
+  part3 = dist-product-fst-sum
+
+  part4
+    : A × (List B × List (A × List B))
+    + B × (List B × List (A × List B))
+    ≅ (A × List B) × List (A × List B)
+    + (B × List B) × List (A × List B)
+  part4 = over-sum assoc-product-left assoc-product-left
+
+  part5
+    : (A × List B) × List (A × List B)
+    + (B × List B) × List (A × List B)
+    ≅ (B × List B) × List (A × List B)
+    + (A × List B) × List (A × List B)
+  part5 = swap-sum
+
 data ConcreteLetter : Set where
   Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ ς τ υ φ χ ψ ω : ConcreteLetter
 data Mark : Set where
   acute grave circumflex smooth rough diaeresis iota-sub : Mark
+
+from-char : Char → Char + (ConcreteLetter + Mark)
+from-char 'Α' = inr (inl Α)
+from-char 'Β' = inr (inl Β)
+from-char 'Γ' = inr (inl Γ)
+from-char 'Δ' = inr (inl Δ)
+from-char 'Ε' = inr (inl Ε)
+from-char 'Ζ' = inr (inl Ζ)
+from-char 'Η' = inr (inl Η)
+from-char 'Θ' = inr (inl Θ)
+from-char 'Ι' = inr (inl Ι)
+from-char 'Κ' = inr (inl Κ)
+from-char 'Λ' = inr (inl Λ)
+from-char 'Μ' = inr (inl Μ)
+from-char 'Ν' = inr (inl Ν)
+from-char 'Ξ' = inr (inl Ξ)
+from-char 'Ο' = inr (inl Ο)
+from-char 'Π' = inr (inl Π)
+from-char 'Ρ' = inr (inl Ρ)
+from-char 'Σ' = inr (inl Σ)
+from-char 'Τ' = inr (inl Τ)
+from-char 'Υ' = inr (inl Υ)
+from-char 'Φ' = inr (inl Φ)
+from-char 'Χ' = inr (inl Χ)
+from-char 'Ψ' = inr (inl Ψ)
+from-char 'Ω' = inr (inl Ω)
+from-char 'α' = inr (inl α)
+from-char 'β' = inr (inl β)
+from-char 'γ' = inr (inl γ)
+from-char 'δ' = inr (inl δ)
+from-char 'ε' = inr (inl ε)
+from-char 'ζ' = inr (inl ζ)
+from-char 'η' = inr (inl η)
+from-char 'θ' = inr (inl θ)
+from-char 'ι' = inr (inl ι)
+from-char 'κ' = inr (inl κ)
+from-char 'λ' = inr (inl ƛ)
+from-char 'μ' = inr (inl μ)
+from-char 'ν' = inr (inl ν)
+from-char 'ξ' = inr (inl ξ)
+from-char 'ο' = inr (inl ο)
+from-char 'π' = inr (inl π)
+from-char 'ρ' = inr (inl ρ)
+from-char 'σ' = inr (inl σ)
+from-char 'ς' = inr (inl ς)
+from-char 'τ' = inr (inl τ)
+from-char 'υ' = inr (inl υ)
+from-char 'φ' = inr (inl φ)
+from-char 'χ' = inr (inl χ)
+from-char 'ψ' = inr (inl ψ)
+from-char 'ω' = inr (inl ω)
+from-char '\x0300' = inr (inr grave) -- COMBINING GRAVE ACCENT
+from-char '\x0301' = inr (inr acute) -- COMBINING ACUTE ACCENT
+from-char '\x0308' = inr (inr diaeresis) -- COMBINING DIAERESIS
+from-char '\x0313' = inr (inr smooth) -- COMBINING COMMA ABOVE
+from-char '\x0314' = inr (inr rough) -- COMBINING REVERSED COMMA ABOVE
+from-char '\x0342' = inr (inr circumflex) -- COMBINING GREEK PERISPOMENI
+from-char '\x0345' = inr (inr iota-sub) -- COMBINING GREEK YPOGEGRAMMENI
+from-char x = inl x
+
+from-any-string : String → List (Char + (ConcreteLetter + Mark))
+from-any-string xs = ListM.map from-char (primStringToList (decompose xs))
+    where
+    open import Unicode.Decompose
+
+string-expected
+  : List (Char + (ConcreteLetter + Mark))
+  ≅ ContainsInl Char (ConcreteLetter + Mark)
+  + List (ConcreteLetter + Mark)
+string-expected = all-right
+
+from-string : (xs : String) → {{p : assume-inr (_≅_.to string-expected (from-any-string xs))}} → List (ConcreteLetter + Mark)
+from-string xs {{p}} = move-inr string-expected (from-any-string xs) {p = p}
+
+instance
+  StringScript : IsString (List (ConcreteLetter + Mark))
+  IsString.Constraint StringScript xs = assume-inr (_≅_.to string-expected (from-any-string xs))
+  IsString.fromString StringScript xs = from-string xs
+
+Βίβλος : List (ConcreteLetter + Mark)
+Βίβλος = "Βίβλος"
+
 data Letter : Set where
   α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ τ υ φ χ ψ ω : Letter
 data LetterCase : Set where
@@ -323,225 +687,10 @@ concrete-abstract = equiv to from to-from from-to
   from-to ψ = refl
   from-to ω = refl
 
-module Eq where
-  id : {A : Set} → A ≅ A
-  id = equiv (λ x → x) (λ x → x) (λ _ → refl) (λ _ → refl)
-
-  infixr 9 _∘_
-  _∘_ : {A B C : Set} → B ≅ C → A ≅ B → A ≅ C
-  _∘_ {A} {B} {C} (equiv toY fromY to-fromY from-toY) (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
-    where
-    to : A → C
-    to x = toY (toX x)
-
-    from : C → A
-    from x = fromX (fromY x)
-
-    to-from : (x : C) → to (from x) ≡ x
-    to-from x rewrite to-fromX (fromY x) | to-fromY x = refl
-
-    from-to : (x : A) → from (to x) ≡ x
-    from-to x rewrite from-toY (toX x) | from-toX x = refl
-
-over-list : {A B : Set} → A ≅ B → List A ≅ List B
-over-list {A} {B} (equiv toX fromX to-fromX from-toX) = equiv to from to-from from-to
-  where
-  to : List A → List B
-  to [] = []
-  to (x ∷ xs) = toX x ∷ to xs
-
-  from : List B → List A
-  from [] = []
-  from (x ∷ xs) = fromX x ∷ from xs
-
-  to-from : (xs : List B) → to (from xs) ≡ xs
-  to-from [] = refl
-  to-from (x ∷ xs) rewrite to-fromX x | to-from xs = refl
-
-  from-to : (xs : List A) → from (to xs) ≡ xs
-  from-to [] = refl
-  from-to (x ∷ xs) rewrite from-toX x | from-to xs = refl
-
-swap-sum : {A B : Set} → A + B ≅ B + A
-swap-sum = equiv swap swap same same
-  where
-  swap : {A B : Set} → A + B → B + A
-  swap (inl x) = inr x
-  swap (inr x) = inl x
-
-  same : {A B : Set} → (x : A + B) → swap (swap x) ≡ x
-  same (inl x) = refl
-  same (inr x) = refl
-
-over-product : {A B C D : Set} → A ≅ B → C ≅ D → A × C ≅ B × D
-over-product {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
-  where
-  to : A × C → B × D
-  to (a , c) = (toX a , toY c)
-
-  from : B × D → A × C
-  from (b , c) = (fromX b , fromY c)
-
-  to-from : (x : B × D) → to (from x) ≡ x
-  to-from (b , d) rewrite to-fromX b | to-fromY d = refl
-
-  from-to : (x : A × C) → from (to x) ≡ x
-  from-to (a , c) rewrite from-toX a | from-toY c = refl
-
-over-fst : {A B C : Set} → A ≅ B → A × C ≅ B × C
-over-fst eq = over-product eq Eq.id
-
-over-snd : {A B C : Set} → A ≅ B → C × A ≅ C × B
-over-snd eq = over-product Eq.id eq
-
-over-list+ : {A B : Set} → A ≅ B → List+ A ≅ List+ B
-over-list+ eq = over-product eq (over-list eq)
-
-promote-list+ : {A B : Set} → List A ≅ B → List+ A ≅ A × B
-promote-list+ {A} {B} eq = over-snd eq
-
-over-sum : {A B C D : Set} → A ≅ B → C ≅ D → A + C ≅ B + D
-over-sum {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
-  where
-  to : A + C → B + D
-  to (inl a) = inl (toX a)
-  to (inr c) = inr (toY c)
-
-  from : B + D → A + C
-  from (inl b) = inl (fromX b)
-  from (inr d) = inr (fromY d)
-
-  to-from : (x : B + D) → to (from x) ≡ x
-  to-from (inl b) rewrite to-fromX b = refl
-  to-from (inr d) rewrite to-fromY d = refl
-
-  from-to : (x : A + C) → from (to x) ≡ x
-  from-to (inl a) rewrite from-toX a = refl
-  from-to (inr c) rewrite from-toY c = refl
-
-over-inl : {A B C : Set} → A ≅ B → A + C ≅ B + C
-over-inl eq = over-sum eq Eq.id
-
-over-inr : {A B C : Set} → A ≅ B → C + A ≅ C + B
-over-inr eq = over-sum Eq.id eq
-
 abstraction
   : List+ (ConcreteLetter + Mark)
   ≅ List+ (LetterCaseFinal + Mark)
 abstraction = over-list+ (over-inl concrete-abstract)
-
-group-inr
-  : {A B : Set}
-  → List (A + B)
-  ≅ List B × List (A × List B)
-group-inr {A} {B} = equiv to from to-from from-to
-  where
-  to-aux : A + B → List B × List (A × List B) → List B × List (A × List B)
-  to-aux (inl a) (bs , xs) = [] , (a , bs) ∷ xs
-  to-aux (inr b) (bs , xs) = b ∷ bs , xs
-
-  to : List (A + B) → List B × List (A × List B)
-  to [] = [] , []
-  to (x ∷ xs) = to-aux x (to xs)
-
-  from-prepend : List B → List (A + B) → List (A + B)
-  from-prepend [] abs = abs
-  from-prepend (b ∷ bs) abs = inr b ∷ from-prepend bs abs
-
-  from-aux2 : List (A × List B) → List (A + B)
-  from-aux2 [] = []
-  from-aux2 ((a , bs) ∷ zs) = inl a ∷ from-prepend bs (from-aux2 zs)
-
-  from : List B × List (A × List B) → List (A + B)
-  from (bs , abs) = from-prepend bs (from-aux2 abs)
-
-  to-from-aux : ∀ bs xs → to (from ([] , xs)) ≡ ([] , xs) → to (from (bs , xs)) ≡ (bs , xs)
-  to-from-aux [] xs p = p
-  to-from-aux (x ∷ bs) xs p rewrite to-from-aux bs xs p = refl
-
-  to-from : (x : List B × List (A × List B)) → to (from x) ≡ x
-  to-from ([] , []) = refl
-  to-from ([] , (fst , []) ∷ xs) rewrite to-from ([] , xs) = refl
-  to-from ([] , (fst , b ∷ bs) ∷ xs) rewrite to-from-aux bs xs (to-from ([] , xs)) = refl
-  to-from (x ∷ fst , snd) rewrite to-from (fst , snd) = refl
-
-  from-to : (x : List (A + B)) → from (to x) ≡ x
-  from-to [] = refl
-  from-to (inl a ∷ xs) rewrite from-to xs = refl
-  from-to (inr b ∷ xs) rewrite from-to xs = refl
-
-dist-product-fst-sum : {A B C : Set} → (A + B) × C ≅ A × C + B × C
-dist-product-fst-sum {A} {B} {C} = equiv to from to-from from-to
-  where
-  to : (A + B) × C → A × C + B × C
-  to (inl a , c) = inl (a , c)
-  to (inr b , c) = inr (b , c)
-  from : A × C + B × C → (A + B) × C
-  from (inl (a , c)) = inl a , c
-  from (inr (b , c)) = inr b , c
-  to-from : (x : A × C + B × C) → to (from x) ≡ x
-  to-from (inl (fst , snd)) = refl
-  to-from (inr (fst , snd)) = refl
-  from-to : (x : (A + B) × C) → from (to x) ≡ x
-  from-to (inl x , snd) = refl
-  from-to (inr x , snd) = refl
-
-assoc-product-left : {A B C : Set} → A × (B × C) ≅ (A × B) × C
-assoc-product-left {A} {B} {C} = equiv to from to-from from-to
-  where
-  to : A × (B × C) → (A × B) × C
-  to (a , (b , c)) = (a , b) , c
-  from : (A × B) × C → A × (B × C)
-  from ((a , b) , c) = a , (b , c)
-  to-from : (x : (A × B) × C) → to (from x) ≡ x
-  to-from ((a , b) , c) = refl
-  from-to : (x : A × (B × C)) → from (to x) ≡ x
-  from-to (a , (b , c)) = refl
-
-product-swap-right : {A B C : Set} → A × (B × C) ≅ B × (A × C)
-product-swap-right {A} {B} {C} = equiv to from to-from from-to
-  where
-  to : A × (B × C) → B × (A × C)
-  to (a , (b , c)) = b , (a , c)
-  from : B × (A × C) → A × (B × C)
-  from (b , (a , c)) = a , (b , c)
-  to-from : (x : B × (A × C)) → to (from x) ≡ x
-  to-from (b , (a , c)) = refl
-  from-to : (x : A × (B × C)) → from (to x) ≡ x
-  from-to (a , (b , c)) = refl
-
-group-inr+
-  : {A B : Set}
-  → List+ (A + B)
-  ≅ List+ B × List (A × List B)
-  + List+ (A × List B)
-group-inr+ {A} {B} = part5 ∘ part4 ∘ part3 ∘ part2
-  where
-  open Eq
-  part1 : List (A + B) ≅ List B × List (A × List B)
-  part1 = group-inr
-
-  part2 : List+ (A + B) ≅ (A + B) × (List B × List (A × List B))
-  part2 = promote-list+ part1
-
-  part3 : (A + B) × (List B × List (A × List B))
-    ≅ A × (List B × List (A × List B))
-    + B × (List B × List (A × List B))
-  part3 = dist-product-fst-sum
-
-  part4
-    : A × (List B × List (A × List B))
-    + B × (List B × List (A × List B))
-    ≅ (A × List B) × List (A × List B)
-    + (B × List B) × List (A × List B)
-  part4 = over-sum assoc-product-left assoc-product-left
-
-  part5
-    : (A × List B) × List (A × List B)
-    + (B × List B) × List (A × List B)
-    ≅ (B × List B) × List (A × List B)
-    + (A × List B) × List (A × List B)
-  part5 = swap-sum
 
 letters-first
   : List+ (LetterCaseFinal + Mark)
