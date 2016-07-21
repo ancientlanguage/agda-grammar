@@ -89,6 +89,14 @@ move-inr eq a {p} with _≅_.to eq a
 move-inr eq a {p} | inl c = ⊥-elim p
 move-inr eq a | inr c = c
 
+infixl 1 _|>>_
+_|>>_ : {A B C : Set}
+  → (a : A)
+  → (eq : A ≅ B + C)
+  → {p : assume-inr (_≅_.to eq a)}
+  → C
+_|>>_ a eq {p} = move-inr eq a {p}
+
 emptiness : {A : Set} → List A ≅ List∅ + List+ A
 emptiness {A} = equiv to from to-from from-to
   where
@@ -419,16 +427,16 @@ string-expected
   + List (ConcreteLetter + Mark)
 string-expected = all-right
 
-from-string : (xs : String) → {{p : assume-inr (_≅_.to string-expected (from-any-string xs))}} → List (ConcreteLetter + Mark)
+from-string
+  : (xs : String)
+  → {{p : assume-inr (_≅_.to string-expected (from-any-string xs))}}
+  → List (ConcreteLetter + Mark)
 from-string xs {{p}} = move-inr string-expected (from-any-string xs) {p = p}
 
 instance
   StringScript : IsString (List (ConcreteLetter + Mark))
   IsString.Constraint StringScript xs = assume-inr (_≅_.to string-expected (from-any-string xs))
   IsString.fromString StringScript xs = from-string xs
-
-Βίβλος : List (ConcreteLetter + Mark)
-Βίβλος = "Βίβλος"
 
 data Letter : Set where
   α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ τ υ φ χ ψ ω : Letter
@@ -697,6 +705,16 @@ letters-first
   ≅ List+ Mark × List (LetterCaseFinal × List Mark)
   + List+ (LetterCaseFinal × List Mark)
 letters-first = group-inr+
+
+infixl 1 _|>_
+_|>_ : {A B : Set} → (a : A) → (A → B) → B
+_|>_ a f = f a
+
+Βίβλος : List+ (LetterCaseFinal × List Mark)
+Βίβλος = "Βίβλος"
+  |>> emptiness
+  |> _≅_.to abstraction
+  |>> letters-first
 
 data Capitalization : Set where
   capitalized uncapitalized : Capitalization
