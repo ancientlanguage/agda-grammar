@@ -195,6 +195,11 @@ over-inl eq = over-sum eq Eq.id
 over-inr : {A B C : Set} → A ≅ B → C + A ≅ C + B
 over-inr eq = over-sum Eq.id eq
 
+infix 3 _∈_
+data _∈_ {A : Set} : A → List A → Set where
+  top : (x : A) → (xs : List A) → x ∈ x ∷ xs
+  pop : (x y : A) → (xs : List A) → x ∈ xs → x ∈ y ∷ xs
+
 record ContainsInl (A B : Set) : Set where
   constructor contains-inl
   field
@@ -215,6 +220,7 @@ all-right {A} {B} = equiv to from to-from from-to
 
   to : List (A + B) → ContainsInl A B + List B
   to [] = inr []
+--  to (x ∷ xs) = to-aux x (to xs)
   to (x ∷ xs) = to-aux x (to xs)
 
   from : ContainsInl A B + List B → List (A + B)
@@ -445,33 +451,36 @@ data LetterCase : Set where
 data Final : Set where
   n/a is-final not-final : Final
 
+data NonSigma : Letter → Set where
+  α : NonSigma α
+  β : NonSigma β
+  γ : NonSigma γ
+  δ : NonSigma δ
+  ε : NonSigma ε
+  ζ : NonSigma ζ
+  η : NonSigma η
+  θ : NonSigma θ
+  ι : NonSigma ι
+  κ : NonSigma κ
+  ƛ : NonSigma ƛ
+  μ : NonSigma μ
+  ν : NonSigma ν
+  ξ : NonSigma ξ
+  ο : NonSigma ο
+  π : NonSigma π
+  ρ : NonSigma ρ
+  τ : NonSigma τ
+  υ : NonSigma υ
+  φ : NonSigma φ
+  χ : NonSigma χ
+  ψ : NonSigma ψ
+  ω : NonSigma ω
+
 data LetterCaseFinalD : Letter → LetterCase → Final → Set where
-  α : (c : LetterCase) → LetterCaseFinalD α c n/a
-  β : (c : LetterCase) → LetterCaseFinalD β c n/a
-  γ : (c : LetterCase) → LetterCaseFinalD γ c n/a
-  δ : (c : LetterCase) → LetterCaseFinalD δ c n/a
-  ε : (c : LetterCase) → LetterCaseFinalD ε c n/a
-  ζ : (c : LetterCase) → LetterCaseFinalD ζ c n/a
-  η : (c : LetterCase) → LetterCaseFinalD η c n/a
-  θ : (c : LetterCase) → LetterCaseFinalD θ c n/a
-  ι : (c : LetterCase) → LetterCaseFinalD ι c n/a
-  κ : (c : LetterCase) → LetterCaseFinalD κ c n/a
-  ƛ : (c : LetterCase) → LetterCaseFinalD ƛ c n/a
-  μ : (c : LetterCase) → LetterCaseFinalD μ c n/a
-  ν : (c : LetterCase) → LetterCaseFinalD ν c n/a
-  ξ : (c : LetterCase) → LetterCaseFinalD ξ c n/a
-  ο : (c : LetterCase) → LetterCaseFinalD ο c n/a
-  π : (c : LetterCase) → LetterCaseFinalD π c n/a
-  ρ : (c : LetterCase) → LetterCaseFinalD ρ c n/a
-  τ : (c : LetterCase) → LetterCaseFinalD τ c n/a
-  υ : (c : LetterCase) → LetterCaseFinalD υ c n/a
-  φ : (c : LetterCase) → LetterCaseFinalD φ c n/a
-  χ : (c : LetterCase) → LetterCaseFinalD χ c n/a
-  ψ : (c : LetterCase) → LetterCaseFinalD ψ c n/a
-  ω : (c : LetterCase) → LetterCaseFinalD ω c n/a
-  Σ : LetterCaseFinalD σ upper n/a
-  σ : LetterCaseFinalD σ lower not-final
-  ς : LetterCaseFinalD σ lower is-final
+  non-sigma : {l : Letter} → NonSigma l → (c : LetterCase) → LetterCaseFinalD l c n/a
+  sigma-upper-n/a : LetterCaseFinalD σ upper n/a
+  sigma-lower-not-final : LetterCaseFinalD σ lower not-final
+  sigma-lower-is-final : LetterCaseFinalD σ lower is-final
 
 record LetterCaseFinal : Set where
   constructor letter-case-final
@@ -481,170 +490,165 @@ record LetterCaseFinal : Set where
     {final} : Final
     combo : LetterCaseFinalD letter case final
 
-non-empty
-  : List (ConcreteLetter + Mark)
-  ≅ List∅ + List+ (ConcreteLetter + Mark)
-non-empty = emptiness
-
 concrete-abstract
   : ConcreteLetter
   ≅ LetterCaseFinal
 concrete-abstract = equiv to from to-from from-to
   where
   to : ConcreteLetter → LetterCaseFinal
-  to Α = letter-case-final (α upper)
-  to Β = letter-case-final (β upper)
-  to Γ = letter-case-final (γ upper)
-  to Δ = letter-case-final (δ upper)
-  to Ε = letter-case-final (ε upper)
-  to Ζ = letter-case-final (ζ upper)
-  to Η = letter-case-final (η upper)
-  to Θ = letter-case-final (θ upper)
-  to Ι = letter-case-final (ι upper)
-  to Κ = letter-case-final (κ upper)
-  to Λ = letter-case-final (ƛ upper)
-  to Μ = letter-case-final (μ upper)
-  to Ν = letter-case-final (ν upper)
-  to Ξ = letter-case-final (ξ upper)
-  to Ο = letter-case-final (ο upper)
-  to Π = letter-case-final (π upper)
-  to Ρ = letter-case-final (ρ upper)
-  to Σ = letter-case-final Σ
-  to Τ = letter-case-final (τ upper)
-  to Υ = letter-case-final (υ upper)
-  to Φ = letter-case-final (φ upper)
-  to Χ = letter-case-final (χ upper)
-  to Ψ = letter-case-final (ψ upper)
-  to Ω = letter-case-final (ω upper)
-  to α = letter-case-final (α lower)
-  to β = letter-case-final (β lower)
-  to γ = letter-case-final (γ lower)
-  to δ = letter-case-final (δ lower)
-  to ε = letter-case-final (ε lower)
-  to ζ = letter-case-final (ζ lower)
-  to η = letter-case-final (η lower)
-  to θ = letter-case-final (θ lower)
-  to ι = letter-case-final (ι lower)
-  to κ = letter-case-final (κ lower)
-  to ƛ = letter-case-final (ƛ lower)
-  to μ = letter-case-final (μ lower)
-  to ν = letter-case-final (ν lower)
-  to ξ = letter-case-final (ξ lower)
-  to ο = letter-case-final (ο lower)
-  to π = letter-case-final (π lower)
-  to ρ = letter-case-final (ρ lower)
-  to σ = letter-case-final σ
-  to ς = letter-case-final ς
-  to τ = letter-case-final (τ lower)
-  to υ = letter-case-final (υ lower)
-  to φ = letter-case-final (φ lower)
-  to χ = letter-case-final (χ lower)
-  to ψ = letter-case-final (ψ lower)
-  to ω = letter-case-final (ω lower)
+  to Α = letter-case-final (non-sigma α upper)
+  to Β = letter-case-final (non-sigma β upper)
+  to Γ = letter-case-final (non-sigma γ upper)
+  to Δ = letter-case-final (non-sigma δ upper)
+  to Ε = letter-case-final (non-sigma ε upper)
+  to Ζ = letter-case-final (non-sigma ζ upper)
+  to Η = letter-case-final (non-sigma η upper)
+  to Θ = letter-case-final (non-sigma θ upper)
+  to Ι = letter-case-final (non-sigma ι upper)
+  to Κ = letter-case-final (non-sigma κ upper)
+  to Λ = letter-case-final (non-sigma ƛ upper)
+  to Μ = letter-case-final (non-sigma μ upper)
+  to Ν = letter-case-final (non-sigma ν upper)
+  to Ξ = letter-case-final (non-sigma ξ upper)
+  to Ο = letter-case-final (non-sigma ο upper)
+  to Π = letter-case-final (non-sigma π upper)
+  to Ρ = letter-case-final (non-sigma ρ upper)
+  to Σ = letter-case-final (sigma-upper-n/a)
+  to Τ = letter-case-final (non-sigma τ upper)
+  to Υ = letter-case-final (non-sigma υ upper)
+  to Φ = letter-case-final (non-sigma φ upper)
+  to Χ = letter-case-final (non-sigma χ upper)
+  to Ψ = letter-case-final (non-sigma ψ upper)
+  to Ω = letter-case-final (non-sigma ω upper)
+  to α = letter-case-final (non-sigma α lower)
+  to β = letter-case-final (non-sigma β lower)
+  to γ = letter-case-final (non-sigma γ lower)
+  to δ = letter-case-final (non-sigma δ lower)
+  to ε = letter-case-final (non-sigma ε lower)
+  to ζ = letter-case-final (non-sigma ζ lower)
+  to η = letter-case-final (non-sigma η lower)
+  to θ = letter-case-final (non-sigma θ lower)
+  to ι = letter-case-final (non-sigma ι lower)
+  to κ = letter-case-final (non-sigma κ lower)
+  to ƛ = letter-case-final (non-sigma ƛ lower)
+  to μ = letter-case-final (non-sigma μ lower)
+  to ν = letter-case-final (non-sigma ν lower)
+  to ξ = letter-case-final (non-sigma ξ lower)
+  to ο = letter-case-final (non-sigma ο lower)
+  to π = letter-case-final (non-sigma π lower)
+  to ρ = letter-case-final (non-sigma ρ lower)
+  to σ = letter-case-final (sigma-lower-not-final)
+  to ς = letter-case-final (sigma-lower-is-final)
+  to τ = letter-case-final (non-sigma τ lower)
+  to υ = letter-case-final (non-sigma υ lower)
+  to φ = letter-case-final (non-sigma φ lower)
+  to χ = letter-case-final (non-sigma χ lower)
+  to ψ = letter-case-final (non-sigma ψ lower)
+  to ω = letter-case-final (non-sigma ω lower)
 
   from : LetterCaseFinal → ConcreteLetter
-  from (letter-case-final (α upper)) = Α
-  from (letter-case-final (α lower)) = α
-  from (letter-case-final (β upper)) = Β
-  from (letter-case-final (β lower)) = β
-  from (letter-case-final (γ upper)) = Γ
-  from (letter-case-final (γ lower)) = γ
-  from (letter-case-final (δ upper)) = Δ
-  from (letter-case-final (δ lower)) = δ
-  from (letter-case-final (ε upper)) = Ε
-  from (letter-case-final (ε lower)) = ε
-  from (letter-case-final (ζ upper)) = Ζ
-  from (letter-case-final (ζ lower)) = ζ
-  from (letter-case-final (η upper)) = Η
-  from (letter-case-final (η lower)) = η
-  from (letter-case-final (θ upper)) = Θ
-  from (letter-case-final (θ lower)) = θ
-  from (letter-case-final (ι upper)) = Ι
-  from (letter-case-final (ι lower)) = ι
-  from (letter-case-final (κ upper)) = Κ
-  from (letter-case-final (κ lower)) = κ
-  from (letter-case-final (ƛ upper)) = Λ
-  from (letter-case-final (ƛ lower)) = ƛ
-  from (letter-case-final (μ upper)) = Μ
-  from (letter-case-final (μ lower)) = μ
-  from (letter-case-final (ν upper)) = Ν
-  from (letter-case-final (ν lower)) = ν
-  from (letter-case-final (ξ upper)) = Ξ
-  from (letter-case-final (ξ lower)) = ξ
-  from (letter-case-final (ο upper)) = Ο
-  from (letter-case-final (ο lower)) = ο
-  from (letter-case-final (π upper)) = Π
-  from (letter-case-final (π lower)) = π
-  from (letter-case-final (ρ upper)) = Ρ
-  from (letter-case-final (ρ lower)) = ρ
-  from (letter-case-final (τ upper)) = Τ
-  from (letter-case-final (τ lower)) = τ
-  from (letter-case-final (υ upper)) = Υ
-  from (letter-case-final (υ lower)) = υ
-  from (letter-case-final (φ upper)) = Φ
-  from (letter-case-final (φ lower)) = φ
-  from (letter-case-final (χ upper)) = Χ
-  from (letter-case-final (χ lower)) = χ
-  from (letter-case-final (ψ upper)) = Ψ
-  from (letter-case-final (ψ lower)) = ψ
-  from (letter-case-final (ω upper)) = Ω
-  from (letter-case-final (ω lower)) = ω
-  from (letter-case-final Σ) = Σ
-  from (letter-case-final σ) = σ
-  from (letter-case-final ς) = ς
+  from (letter-case-final (non-sigma α upper)) = Α
+  from (letter-case-final (non-sigma α lower)) = α
+  from (letter-case-final (non-sigma β upper)) = Β
+  from (letter-case-final (non-sigma β lower)) = β
+  from (letter-case-final (non-sigma γ upper)) = Γ
+  from (letter-case-final (non-sigma γ lower)) = γ
+  from (letter-case-final (non-sigma δ upper)) = Δ
+  from (letter-case-final (non-sigma δ lower)) = δ
+  from (letter-case-final (non-sigma ε upper)) = Ε
+  from (letter-case-final (non-sigma ε lower)) = ε
+  from (letter-case-final (non-sigma ζ upper)) = Ζ
+  from (letter-case-final (non-sigma ζ lower)) = ζ
+  from (letter-case-final (non-sigma η upper)) = Η
+  from (letter-case-final (non-sigma η lower)) = η
+  from (letter-case-final (non-sigma θ upper)) = Θ
+  from (letter-case-final (non-sigma θ lower)) = θ
+  from (letter-case-final (non-sigma ι upper)) = Ι
+  from (letter-case-final (non-sigma ι lower)) = ι
+  from (letter-case-final (non-sigma κ upper)) = Κ
+  from (letter-case-final (non-sigma κ lower)) = κ
+  from (letter-case-final (non-sigma ƛ upper)) = Λ
+  from (letter-case-final (non-sigma ƛ lower)) = ƛ
+  from (letter-case-final (non-sigma μ upper)) = Μ
+  from (letter-case-final (non-sigma μ lower)) = μ
+  from (letter-case-final (non-sigma ν upper)) = Ν
+  from (letter-case-final (non-sigma ν lower)) = ν
+  from (letter-case-final (non-sigma ξ upper)) = Ξ
+  from (letter-case-final (non-sigma ξ lower)) = ξ
+  from (letter-case-final (non-sigma ο upper)) = Ο
+  from (letter-case-final (non-sigma ο lower)) = ο
+  from (letter-case-final (non-sigma π upper)) = Π
+  from (letter-case-final (non-sigma π lower)) = π
+  from (letter-case-final (non-sigma ρ upper)) = Ρ
+  from (letter-case-final (non-sigma ρ lower)) = ρ
+  from (letter-case-final (non-sigma τ upper)) = Τ
+  from (letter-case-final (non-sigma τ lower)) = τ
+  from (letter-case-final (non-sigma υ upper)) = Υ
+  from (letter-case-final (non-sigma υ lower)) = υ
+  from (letter-case-final (non-sigma φ upper)) = Φ
+  from (letter-case-final (non-sigma φ lower)) = φ
+  from (letter-case-final (non-sigma χ upper)) = Χ
+  from (letter-case-final (non-sigma χ lower)) = χ
+  from (letter-case-final (non-sigma ψ upper)) = Ψ
+  from (letter-case-final (non-sigma ψ lower)) = ψ
+  from (letter-case-final (non-sigma ω upper)) = Ω
+  from (letter-case-final (non-sigma ω lower)) = ω
+  from (letter-case-final sigma-upper-n/a) = Σ
+  from (letter-case-final sigma-lower-not-final) = σ
+  from (letter-case-final sigma-lower-is-final) = ς
 
   to-from : (x : LetterCaseFinal) → to (from x) ≡ x
-  to-from (letter-case-final (α upper)) = refl
-  to-from (letter-case-final (α lower)) = refl
-  to-from (letter-case-final (β upper)) = refl
-  to-from (letter-case-final (β lower)) = refl
-  to-from (letter-case-final (γ upper)) = refl
-  to-from (letter-case-final (γ lower)) = refl
-  to-from (letter-case-final (δ upper)) = refl
-  to-from (letter-case-final (δ lower)) = refl
-  to-from (letter-case-final (ε upper)) = refl
-  to-from (letter-case-final (ε lower)) = refl
-  to-from (letter-case-final (ζ upper)) = refl
-  to-from (letter-case-final (ζ lower)) = refl
-  to-from (letter-case-final (η upper)) = refl
-  to-from (letter-case-final (η lower)) = refl
-  to-from (letter-case-final (θ upper)) = refl
-  to-from (letter-case-final (θ lower)) = refl
-  to-from (letter-case-final (ι upper)) = refl
-  to-from (letter-case-final (ι lower)) = refl
-  to-from (letter-case-final (κ upper)) = refl
-  to-from (letter-case-final (κ lower)) = refl
-  to-from (letter-case-final (ƛ upper)) = refl
-  to-from (letter-case-final (ƛ lower)) = refl
-  to-from (letter-case-final (μ upper)) = refl
-  to-from (letter-case-final (μ lower)) = refl
-  to-from (letter-case-final (ν upper)) = refl
-  to-from (letter-case-final (ν lower)) = refl
-  to-from (letter-case-final (ξ upper)) = refl
-  to-from (letter-case-final (ξ lower)) = refl
-  to-from (letter-case-final (ο upper)) = refl
-  to-from (letter-case-final (ο lower)) = refl
-  to-from (letter-case-final (π upper)) = refl
-  to-from (letter-case-final (π lower)) = refl
-  to-from (letter-case-final (ρ upper)) = refl
-  to-from (letter-case-final (ρ lower)) = refl
-  to-from (letter-case-final (τ upper)) = refl
-  to-from (letter-case-final (τ lower)) = refl
-  to-from (letter-case-final (υ upper)) = refl
-  to-from (letter-case-final (υ lower)) = refl
-  to-from (letter-case-final (φ upper)) = refl
-  to-from (letter-case-final (φ lower)) = refl
-  to-from (letter-case-final (χ upper)) = refl
-  to-from (letter-case-final (χ lower)) = refl
-  to-from (letter-case-final (ψ upper)) = refl
-  to-from (letter-case-final (ψ lower)) = refl
-  to-from (letter-case-final (ω upper)) = refl
-  to-from (letter-case-final (ω lower)) = refl
-  to-from (letter-case-final Σ) = refl
-  to-from (letter-case-final σ) = refl
-  to-from (letter-case-final ς) = refl
+  to-from (letter-case-final (non-sigma α upper)) = refl
+  to-from (letter-case-final (non-sigma α lower)) = refl
+  to-from (letter-case-final (non-sigma β upper)) = refl
+  to-from (letter-case-final (non-sigma β lower)) = refl
+  to-from (letter-case-final (non-sigma γ upper)) = refl
+  to-from (letter-case-final (non-sigma γ lower)) = refl
+  to-from (letter-case-final (non-sigma δ upper)) = refl
+  to-from (letter-case-final (non-sigma δ lower)) = refl
+  to-from (letter-case-final (non-sigma ε upper)) = refl
+  to-from (letter-case-final (non-sigma ε lower)) = refl
+  to-from (letter-case-final (non-sigma ζ upper)) = refl
+  to-from (letter-case-final (non-sigma ζ lower)) = refl
+  to-from (letter-case-final (non-sigma η upper)) = refl
+  to-from (letter-case-final (non-sigma η lower)) = refl
+  to-from (letter-case-final (non-sigma θ upper)) = refl
+  to-from (letter-case-final (non-sigma θ lower)) = refl
+  to-from (letter-case-final (non-sigma ι upper)) = refl
+  to-from (letter-case-final (non-sigma ι lower)) = refl
+  to-from (letter-case-final (non-sigma κ upper)) = refl
+  to-from (letter-case-final (non-sigma κ lower)) = refl
+  to-from (letter-case-final (non-sigma ƛ upper)) = refl
+  to-from (letter-case-final (non-sigma ƛ lower)) = refl
+  to-from (letter-case-final (non-sigma μ upper)) = refl
+  to-from (letter-case-final (non-sigma μ lower)) = refl
+  to-from (letter-case-final (non-sigma ν upper)) = refl
+  to-from (letter-case-final (non-sigma ν lower)) = refl
+  to-from (letter-case-final (non-sigma ξ upper)) = refl
+  to-from (letter-case-final (non-sigma ξ lower)) = refl
+  to-from (letter-case-final (non-sigma ο upper)) = refl
+  to-from (letter-case-final (non-sigma ο lower)) = refl
+  to-from (letter-case-final (non-sigma π upper)) = refl
+  to-from (letter-case-final (non-sigma π lower)) = refl
+  to-from (letter-case-final (non-sigma ρ upper)) = refl
+  to-from (letter-case-final (non-sigma ρ lower)) = refl
+  to-from (letter-case-final (non-sigma τ upper)) = refl
+  to-from (letter-case-final (non-sigma τ lower)) = refl
+  to-from (letter-case-final (non-sigma υ upper)) = refl
+  to-from (letter-case-final (non-sigma υ lower)) = refl
+  to-from (letter-case-final (non-sigma φ upper)) = refl
+  to-from (letter-case-final (non-sigma φ lower)) = refl
+  to-from (letter-case-final (non-sigma χ upper)) = refl
+  to-from (letter-case-final (non-sigma χ lower)) = refl
+  to-from (letter-case-final (non-sigma ψ upper)) = refl
+  to-from (letter-case-final (non-sigma ψ lower)) = refl
+  to-from (letter-case-final (non-sigma ω upper)) = refl
+  to-from (letter-case-final (non-sigma ω lower)) = refl
+  to-from (letter-case-final sigma-upper-n/a) = refl
+  to-from (letter-case-final sigma-lower-not-final) = refl
+  to-from (letter-case-final sigma-lower-is-final) = refl
 
-  from-to : (x :  ConcreteLetter) → from (to x) ≡ x
+  from-to : (x : ConcreteLetter) → from (to x) ≡ x
   from-to Α = refl
   from-to Β = refl
   from-to Γ = refl
@@ -723,7 +727,7 @@ data InvalidCapitalization : Set where
   non-initial-upper : InvalidCapitalization
 
 data LetterFinalD : Letter → Final → Set where
-  non-sigma : (l : Letter) → (l ≡ σ → ⊥) → LetterFinalD l n/a
+  non-sigma : {l : Letter} → NonSigma l → LetterFinalD l n/a
   σ : LetterFinalD σ not-final
   ς : LetterFinalD σ is-final
 
