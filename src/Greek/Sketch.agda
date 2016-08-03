@@ -143,6 +143,27 @@ swap-sum = equiv swap swap same same
   same (inl x) = refl
   same (inr x) = refl
 
+swap-product : {A B : Set} → A × B ≅ B × A
+swap-product = equiv swap swap same same
+  where
+  swap : {A B : Set} → A × B → B × A
+  swap (fst , snd) = snd , fst
+
+  same : {A B : Set} → (x : A × B) → swap (swap x) ≡ x
+  same (fst , snd) = refl
+
+product-top : {A : Set} → A × ⊤ ≅ A
+product-top {A} = equiv to from to-from from-to
+  where
+  to : A × ⊤ → A
+  to (fst , snd) = fst
+  from : A → A × ⊤
+  from x = x , _
+  to-from : (x : A) → to (from x) ≡ x
+  to-from x = refl
+  from-to : (x : A × ⊤) → from (to x) ≡ x
+  from-to (fst , tt) = refl
+
 over-product : {A B C D : Set} → A ≅ B → C ≅ D → A × C ≅ B × D
 over-product {A} {B} {C} {D} (equiv toX fromX to-fromX from-toX) (equiv toY fromY to-fromY from-toY) = equiv to from to-from from-to
   where
@@ -200,50 +221,17 @@ data _∈_ {A : Set} : A → List A → Set where
   top : (x : A) → (xs : List A) → x ∈ x ∷ xs
   pop : (x y : A) → (xs : List A) → x ∈ xs → x ∈ y ∷ xs
 
-record ContainsInl (A B : Set) : Set where
-  constructor contains-inl
-  field
-    before : List B
-    value : A
-    after : List (A + B)
+module Inspect where
+  open import Agda.Primitive
+  record Reveal_·_is_ {a b} {A : Set a} {B : A → Set b}
+                      (f : (x : A) → B x) (x : A) (y : B x) :
+                      Set (a ⊔ b) where
+    constructor [_]
+    field eq : f x ≡ y
 
-all-right : {A B : Set}
-  → List (A + B)
-  ≅ ContainsInl A B + List B
-all-right {A} {B} = equiv to from to-from from-to
-  where
-  to-aux : (A + B) → ContainsInl A B + List B → ContainsInl A B + List B
-  to-aux (inl a) (inl (contains-inl before value after)) = inl (contains-inl [] a (ListM.map inr before ++ inl value ∷ after))
-  to-aux (inr b) (inl (contains-inl before value after)) = inl (contains-inl (b ∷ before) value after)
-  to-aux (inl a) (inr bs) = inl (contains-inl [] a (ListM.map inr bs))
-  to-aux (inr b) (inr bs) = inr (b ∷ bs)
-
-  to : List (A + B) → ContainsInl A B + List B
-  to [] = inr []
---  to (x ∷ xs) = to-aux x (to xs)
-  to (x ∷ xs) = to-aux x (to xs)
-
-  from : ContainsInl A B + List B → List (A + B)
-  from (inl (contains-inl [] value after)) = inl value ∷ after
-  from (inl (contains-inl (b ∷ before) value after)) = inr b ∷ from (inl (contains-inl before value after))
-  from (inr []) = []
-  from (inr (b ∷ bs)) = inr b ∷ from (inr bs) -- ListM.map inr x
-
-  to-from : (x : ContainsInl A B + List B) → to (from x) ≡ x
-  to-from (inl (contains-inl [] value [])) = refl
-  to-from (inl (contains-inl [] value (x ∷ after))) = {!!}
-  to-from (inl (contains-inl (x ∷ before) value after)) rewrite to-from (inl (contains-inl before value after)) = refl
-  to-from (inr []) = refl
-  to-from (inr (x ∷ xs)) rewrite to-from (inr xs) = refl
-
-  from-to : (x : List (A + B)) → from (to x) ≡ x
-  from-to [] = refl
-  from-to (inl a ∷ []) = refl
-  from-to (inl a ∷ inl a2 ∷ xs) = {!!}
-  from-to (inl a ∷ inr b ∷ xs) = {!!}
-  from-to (inr b ∷ []) = refl
-  from-to (inr b ∷ inl a ∷ xs) = {!!}
-  from-to (inr b ∷ inr b2 ∷ xs) = {!!}
+  inspect : ∀ {a b} {A : Set a} {B : A → Set b}
+            (f : (x : A) → B x) (x : A) → Reveal f · x is f x
+  inspect f x = [ refl ]
 
 group-inr
   : {A B : Set}
@@ -300,6 +288,41 @@ dist-product-fst-sum {A} {B} {C} = equiv to from to-from from-to
   from-to : (x : (A + B) × C) → from (to x) ≡ x
   from-to (inl x , snd) = refl
   from-to (inr x , snd) = refl
+
+dist-product-snd-sum : {A B C : Set} → A × (B + C) ≅ A × B + A × C
+dist-product-snd-sum {A} {B} {C} = p3 Eq.∘ p2
+  where
+  p1 : A × (B + C) ≅ (B + C) × A
+  p1 = swap-product
+
+  p2 : A × (B + C) ≅ B × A + C × A
+  p2 = dist-product-fst-sum Eq.∘ p1
+
+  p3 : B × A + C × A ≅ A × B + A × C
+  p3 = over-sum swap-product swap-product
+
+group-inr-snd
+  : {A B : Set}
+  → List (A + B)
+  ≅ List B × List+ (A × List B) + List B
+group-inr-snd {A} {B} = part4 ∘ part3 ∘ part2 ∘ part1 ∘ group-inr
+  where
+  open Eq using (_∘_)
+  part1 : List B × List (A × List B)
+    ≅ List B × (List∅ + List+ (A × List B))
+  part1 = over-snd emptiness
+
+  part2 : List B × (List∅ + List+ (A × List B))
+    ≅ List B × List∅ + List B × List+ (A × List B)
+  part2 = dist-product-snd-sum
+
+  part3 : List B × List∅ + List B × List+ (A × List B)
+    ≅ List B + List B × List+ (A × List B)
+  part3 = over-inl product-top
+
+  part4 : List B + List B × List+ (A × List B)
+    ≅ List B × List+ (A × List B) + List B
+  part4 = swap-sum
 
 assoc-product-left : {A B C : Set} → A × (B × C) ≅ (A × B) × C
 assoc-product-left {A} {B} {C} = equiv to from to-from from-to
@@ -424,14 +447,14 @@ from-char x = inl x
 
 from-any-string : String → List (Char + (ConcreteLetter + Mark))
 from-any-string xs = ListM.map from-char (primStringToList (decompose xs))
-    where
-    open import Unicode.Decompose
+  where
+  open import Unicode.Decompose
 
 string-expected
   : List (Char + (ConcreteLetter + Mark))
-  ≅ ContainsInl Char (ConcreteLetter + Mark)
+  ≅ List (ConcreteLetter + Mark) × List+ (Char × List (ConcreteLetter + Mark))
   + List (ConcreteLetter + Mark)
-string-expected = all-right
+string-expected = group-inr-snd
 
 from-string
   : (xs : String)
