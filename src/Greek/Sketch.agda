@@ -751,8 +751,8 @@ data InvalidCapitalization : Set where
 
 data LetterFinalD : Letter → Final → Set where
   non-sigma : {l : Letter} → NonSigma l → LetterFinalD l n/a
-  σ : LetterFinalD σ not-final
-  ς : LetterFinalD σ is-final
+  sigma-not-final : LetterFinalD σ not-final
+  sigma-is-final : LetterFinalD σ is-final
 
 record LetterFinal : Set where
   constructor letter-final
