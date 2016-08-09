@@ -1,18 +1,14 @@
 module Greek.SketchNP where
 
-module Zero where
-  data ⊥ : Set where
-  ⊥-elim : {A : Set} → ⊥ → A
-  ⊥-elim ()
-
+open import Agda.Builtin.Equality
 open import Agda.Builtin.List
-  using (List)
-  using ([])
-  using (_∷_)
+open import Agda.Builtin.Unit
 
 infixl 7 _×_
 infixl 6 _+_
+infixl 1 _↔_
 
+data ⊥ : Set where
 record _×_ (A B : Set) : Set where
   constructor _,_
   field
@@ -22,6 +18,10 @@ record _×_ (A B : Set) : Set where
 data _+_ (A B : Set) : Set where
   inl : A → A + B
   inr : B → A + B
+
+module Zero where
+  ⊥-elim : {A : Set} → ⊥ → A
+  ⊥-elim ()
 
 List∅ : Set
 List∅ = ⊤ where open import Agda.Builtin.Unit
@@ -57,6 +57,50 @@ module ListSum where
   split (inl a ∷ xs) | inr bs = inl (a ∷ [])
   split (inr b ∷ xs) | inr bs = inr (b ∷ bs)
 
+record ToFrom (A B : Set) : Set where
+  field
+    to : A → B
+    from : B → A
+
+_↔_ = ToFrom
+
+Id : {A : Set} → A ↔ A
+Id = record { to = λ x → x ; from = λ x → x }
+
+module OverProductM {A B C D : Set} (X : A ↔ B) (Y : C ↔ D) where
+  to : A × C → B × D
+  to (a , c) = (ToFrom.to X a , ToFrom.to Y c)
+
+  from : B × D → A × C
+  from (b , c) = (ToFrom.from X b , ToFrom.from Y c)
+
+OverProduct : {A B C D : Set} → A ↔ B → C ↔ D → A × C ↔ B × D
+OverProduct X Y = record { OverProductM X Y }
+
+module OverSumM {A B C D : Set} (X : A ↔ B) (Y : C ↔ D) where
+  to : A + C → B + D
+  to (inl a) = inl (ToFrom.to X a)
+  to (inr c) = inr (ToFrom.to Y c)
+
+  from : B + D → A + C
+  from (inl b) = inl (ToFrom.from X b)
+  from (inr d) = inr (ToFrom.from Y d)
+
+OverSum : {A B C D : Set} → A ↔ B → C ↔ D → A + C ↔ B + D
+OverSum X Y = record { OverSumM X Y }
+
+module OverListM {A B : Set} (X : ToFrom A B) where
+  to : List A → List B
+  to [] = []
+  to (x ∷ xs) = ToFrom.to X x ∷ to xs
+
+  from : List B → List A
+  from [] = []
+  from (x ∷ xs) = ToFrom.from X x ∷ from xs
+
+OverList : {A B : Set} → A ↔ B → List A ↔ List B
+OverList X = record { OverListM X }
+
 data ConcreteLetter : Set where
   Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω : ConcreteLetter
   α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ ς τ υ φ χ ψ ω : ConcreteLetter
@@ -65,7 +109,7 @@ data Mark : Set where
   smooth rough : Mark
   diaeresis iota-sub : Mark
 
-module Unicode where
+module UnicodeChar where
   open import Agda.Builtin.Char
 
   pattern valid-letter x = inr (inl x)
@@ -192,24 +236,34 @@ module Unicode where
   to (mark circumflex) = '\x0342' -- COMBINING GREEK PERISPOMENI
   to (mark iota-sub) = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 
-module UnicodeFromString where
+module UnicodeString where
   open import Agda.Builtin.Char
   open import Agda.Builtin.FromString
   open import Agda.Builtin.String
   open import Unicode.Decompose
-  from-any-string : String → List (Char + (ConcreteLetter + Mark))
-  from-any-string xs = ListM.map Unicode.from (primStringToList (decompose xs))
+  from-any : String → List (Char + (ConcreteLetter + Mark))
+  from-any xs = ListM.map UnicodeChar.from (primStringToList (decompose xs))
 
-  from-string
+  from
     : (xs : String)
-    → {{p : SumInhabit.assume-inr (ListSum.split (from-any-string xs))}}
+    → {{p : SumInhabit.assume-inr (ListSum.split (from-any xs))}}
     → List (ConcreteLetter + Mark)
-  from-string xs {{p}} = SumInhabit.move-inr (ListSum.split (from-any-string xs)) {p = p}
+  from xs {{p}} = SumInhabit.move-inr (ListSum.split (from-any xs)) {p = p}
 
   instance
     StringScript : IsString (List (ConcreteLetter + Mark))
-    IsString.Constraint StringScript xs = SumInhabit.assume-inr (ListSum.split (from-any-string xs))
-    IsString.fromString StringScript xs = from-string xs
+    IsString.Constraint StringScript xs = SumInhabit.assume-inr (ListSum.split (from-any xs))
+    IsString.fromString StringScript xs = from xs
+
+  instance
+    StringString : IsString String
+    IsString.Constraint StringString xs = ⊤
+    IsString.fromString StringString xs = xs
+
+  to
+    : List (ConcreteLetter + Mark)
+    → String
+  to xs = primStringFromList (ListM.map UnicodeChar.to xs)
 
 data Letter : Set where
   α β γ δ ε ζ η θ ι κ ƛ μ ν ξ ο π ρ σ τ υ φ χ ψ ω : Letter
@@ -257,7 +311,7 @@ record LetterCaseFinal : Set where
     {final} : Final
     combo : LetterCaseFinalD letter case final
 
-module AbstractLetter where
+module AbstractLetterM where
   to : ConcreteLetter → LetterCaseFinal
   to Α = letter-case-final (non-sigma α upper)
   to Β = letter-case-final (non-sigma β upper)
@@ -360,8 +414,22 @@ module AbstractLetter where
   from (letter-case-final sigma-lower-not-final) = σ
   from (letter-case-final sigma-lower-is-final) = ς
 
+AbstractLetter : ConcreteLetter ↔ LetterCaseFinal
+AbstractLetter = record { AbstractLetterM }
 
 module GreekWords where
-  Βίβλος : List (ConcreteLetter + Mark)
+  open import Unicode.Decompose
+  open import Agda.Builtin.String
+
+  Word : List (ConcreteLetter + Mark) ↔ List (LetterCaseFinal + Mark)
+  Word = OverList (OverSum AbstractLetter Id)
+
+  Script = List (ConcreteLetter + Mark)
+  Βίβλος : Script
   Βίβλος = "Βίβλος"
 
+  ΒίβλοςT : List (LetterCaseFinal + Mark)
+  ΒίβλοςT = ToFrom.to Word "Βίβλος"
+
+  test1 : decompose "Βίβλος" ≡ UnicodeString.to Βίβλος
+  test1 = refl
