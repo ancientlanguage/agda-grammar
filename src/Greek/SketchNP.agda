@@ -1,14 +1,15 @@
 module Greek.SketchNP where
 
 open import Agda.Builtin.Equality
-open import Agda.Builtin.List
-open import Agda.Builtin.Unit
 
 infixl 7 _×_
 infixl 6 _+_
 infixl 1 _↔_
+infixl 1 _∘_
 
 data ⊥ : Set where
+open import Agda.Builtin.Unit
+
 record _×_ (A B : Set) : Set where
   constructor _,_
   field
@@ -18,6 +19,78 @@ record _×_ (A B : Set) : Set where
 data _+_ (A B : Set) : Set where
   inl : A → A + B
   inr : B → A + B
+
+_∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
+(f ∘ g) x = f (g x)
+
+open import Agda.Builtin.List
+module ListM where
+  map : {A B : Set} → (A → B) → List A → List B
+  map f [] = []
+  map f (x ∷ xs) = f x ∷ map f xs
+
+  _++_ : {A : Set} → (xs ys : List A) → List A
+  [] ++ ys = ys
+  (x ∷ xs) ++ ys = x ∷ (xs ++ ys)
+
+record Applicative (F : Set → Set) : Set1 where
+  field
+    pure : {A : Set} → A → F A
+    ap : {A B : Set} → F (A → B) → F A → F B
+
+module ApplicativeInstance where
+  infixl 4 _⊛_
+  _⊛_ : {F : Set → Set} → {{X : Applicative F}} → {A B : Set} → F (A → B) → F A → F B
+  _⊛_ {{X}} = Applicative.ap X
+
+  pure : {F : Set → Set} → {{X : Applicative F}} → {A : Set} → A → F A
+  pure {{X}} = Applicative.pure X
+
+module Lens {F : Set → Set} {{X : Applicative F}} where
+  open ApplicativeInstance
+  traverse : {A B : Set} → (A → F B) → List A → F (List B)
+  traverse f [] = pure []
+  traverse f (x ∷ xs) = (pure _∷_) ⊛ (f x) ⊛ (traverse f xs)
+
+  fstLens : {A B C : Set} → (A → F B) → (A × C) → F (B × C)
+  fstLens f (fst , snd) = pure (_, snd) ⊛ (f fst)
+
+  sndLens : {A B C : Set} → (A → F B) → (C × A) → F (C × B)
+  sndLens f (fst , snd) = pure (fst ,_) ⊛ (f snd)
+
+  inlLens : {A B C : Set} → (A → F B) → (A + C) → F (B + C)
+  inlLens f (inl x) = pure inl ⊛ f x
+  inlLens f (inr x) = pure (inr x)
+
+  inrLens : {A B C : Set} → (A → F B) → (C + A) → F (C + B)
+  inrLens f (inl x) = pure (inl x)
+  inrLens f (inr x) = pure inr ⊛ f x
+open Lens
+
+data Expect (E A : Set) : Set where
+  expected : A → Expect E A
+  unexpected : List E → Expect E A
+
+module ExpectApplicativeM (E : Set) where
+  F : (A : Set) → Set
+  F A = Expect E A
+
+  pure : {A : Set} → A → F A
+  pure a = expected a
+
+  ap : {A B : Set} → F (A → B) → F A → F B
+  ap (expected f) (expected x) = expected (f x)
+  ap (expected f) (unexpected e) = unexpected e
+  ap (unexpected e) (expected x) = unexpected e
+  ap (unexpected e1) (unexpected e2) = unexpected (e1 ListM.++ e2)
+
+instance
+  ExpectApplicative : {E : Set} → Applicative (Expect E)
+  ExpectApplicative {E} = record { ExpectApplicativeM E }
+
+mapUnexpected : {A E1 E2 : Set} → (E1 → E2) → Expect E1 A → Expect E2 A
+mapUnexpected f (expected x) = expected x
+mapUnexpected f (unexpected x) = unexpected (ListM.map f x)
 
 module Zero where
   ⊥-elim : {A : Set} → ⊥ → A
@@ -29,9 +102,21 @@ List∅ = ⊤ where open import Agda.Builtin.Unit
 List+ : Set → Set
 List+ A = A × List A
 
+module ExpectInhabit where
+  open Zero
+  assume-expected : {A B : Set} → Expect A B → Set
+  assume-expected (expected x) = ⊤
+  assume-expected (unexpected x) = ⊥
+
+  move-expected : {A B : Set}
+    → (x : Expect A B)
+    → {p : assume-expected x}
+    → B
+  move-expected (expected b) = b
+  move-expected (unexpected a) {p} = ⊥-elim p
+
 module SumInhabit where
   open Zero
-  open import Agda.Builtin.Unit
   assume-inr : {A B : Set} → A + B → Set
   assume-inr (inl a) = ⊥
   assume-inr (inr b) = ⊤
@@ -42,11 +127,6 @@ module SumInhabit where
     → B
   move-inr (inl a) {p} = ⊥-elim p
   move-inr (inr b) = b
-
-module ListM where
-  map : {A B : Set} → (A → B) → List A → List B
-  map f [] = []
-  map f (x ∷ xs) = f x ∷ map f xs
 
 module ListSum where
   split : {A B : Set} → List (A + B) → List A + List B
@@ -65,7 +145,7 @@ record ToFrom (A B : Set) : Set where
 _↔_ = ToFrom
 
 Id : {A : Set} → A ↔ A
-Id = record { to = λ x → x ; from = λ x → x }
+Id = record { to = id ; from = id } where id = λ x → x
 
 module OverProductM {A B C D : Set} (X : A ↔ B) (Y : C ↔ D) where
   to : A × C → B × D
@@ -76,6 +156,12 @@ module OverProductM {A B C D : Set} (X : A ↔ B) (Y : C ↔ D) where
 
 OverProduct : {A B C D : Set} → A ↔ B → C ↔ D → A × C ↔ B × D
 OverProduct X Y = record { OverProductM X Y }
+
+OverFst : {A B C : Set} → A ↔ B → A × C ↔ B × C
+OverFst X = OverProduct X Id
+
+OverSnd : {A B C : Set} → A ↔ B → C × A ↔ C × B
+OverSnd X = OverProduct Id X
 
 module OverSumM {A B C D : Set} (X : A ↔ B) (Y : C ↔ D) where
   to : A + C → B + D
@@ -88,6 +174,12 @@ module OverSumM {A B C D : Set} (X : A ↔ B) (Y : C ↔ D) where
 
 OverSum : {A B C D : Set} → A ↔ B → C ↔ D → A + C ↔ B + D
 OverSum X Y = record { OverSumM X Y }
+
+OverInl : {A B C : Set} → A ↔ B → A + C ↔ B + C
+OverInl X = OverSum X Id
+
+OverInr : {A B C : Set} → A ↔ B → C + A ↔ C + B
+OverInr X = OverSum Id X
 
 module OverListM {A B : Set} (X : ToFrom A B) where
   to : List A → List B
@@ -109,14 +201,17 @@ data Mark : Set where
   smooth rough : Mark
   diaeresis iota-sub : Mark
 
+open import Agda.Builtin.Char using (Char)
+data NonGreekChar : Set where
+  non-greek-char : Char → NonGreekChar
+
 module UnicodeChar where
-  open import Agda.Builtin.Char
 
-  pattern valid-letter x = inr (inl x)
-  pattern valid-mark x = inr (inr x)
-  pattern invalid-char x = inl x
+  pattern valid-letter x = expected (inl x)
+  pattern valid-mark x = expected (inr x)
+  pattern invalid-char x = unexpected (non-greek-char x ∷ [])
 
-  from : Char → Char + (ConcreteLetter + Mark)
+  from : Char → Expect NonGreekChar (ConcreteLetter + Mark)
   from 'Α' = valid-letter Α
   from 'Β' = valid-letter Β
   from 'Γ' = valid-letter Γ
@@ -237,22 +332,21 @@ module UnicodeChar where
   to (mark iota-sub) = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 
 module UnicodeString where
-  open import Agda.Builtin.Char
   open import Agda.Builtin.FromString
   open import Agda.Builtin.String
   open import Unicode.Decompose
-  from-any : String → List (Char + (ConcreteLetter + Mark))
-  from-any xs = ListM.map UnicodeChar.from (primStringToList (decompose xs))
+  from-any : String → Expect NonGreekChar (List (ConcreteLetter + Mark))
+  from-any xs = traverse UnicodeChar.from (primStringToList (decompose xs))
 
   from
     : (xs : String)
-    → {{p : SumInhabit.assume-inr (ListSum.split (from-any xs))}}
+    → {{p : ExpectInhabit.assume-expected (from-any xs)}}
     → List (ConcreteLetter + Mark)
-  from xs {{p}} = SumInhabit.move-inr (ListSum.split (from-any xs)) {p = p}
+  from xs {{p}} = ExpectInhabit.move-expected (from-any xs) {p = p}
 
   instance
     StringScript : IsString (List (ConcreteLetter + Mark))
-    IsString.Constraint StringScript xs = SumInhabit.assume-inr (ListSum.split (from-any xs))
+    IsString.Constraint StringScript xs = ExpectInhabit.assume-expected (from-any xs)
     IsString.fromString StringScript xs = from xs
 
   instance
