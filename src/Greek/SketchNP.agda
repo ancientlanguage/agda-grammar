@@ -48,21 +48,29 @@ module ApplicativeInstance where
 
 module Lens {F : Set → Set} {{X : Applicative F}} where
   open ApplicativeInstance
-  traverse : {A B : Set} → (A → F B) → List A → F (List B)
+  Traversal : (T : Set → Set) → Set1
+  Traversal T = {A B : Set} → (A → F B) → T A → F (T B)
+
+--  traverse : {A B : Set} → (A → F B) → List A → F (List B)
+  traverse : Traversal List
   traverse f [] = pure []
   traverse f (x ∷ xs) = (pure _∷_) ⊛ (f x) ⊛ (traverse f xs)
 
-  fstLens : {A B C : Set} → (A → F B) → (A × C) → F (B × C)
+--  fstLens : {A B C : Set} → (A → F B) → (A × C) → F (B × C)
+  fstLens : {C : Set} → Traversal (_× C)
   fstLens f (fst , snd) = pure (_, snd) ⊛ (f fst)
 
-  sndLens : {A B C : Set} → (A → F B) → (C × A) → F (C × B)
+--  sndLens : {A B C : Set} → (A → F B) → (C × A) → F (C × B)
+  sndLens : {C : Set} → Traversal (C ×_)
   sndLens f (fst , snd) = pure (fst ,_) ⊛ (f snd)
 
-  inlLens : {A B C : Set} → (A → F B) → (A + C) → F (B + C)
+--  inlLens : {A B C : Set} → (A → F B) → (A + C) → F (B + C)
+  inlLens : {C : Set} → Traversal (_+ C)
   inlLens f (inl x) = pure inl ⊛ f x
   inlLens f (inr x) = pure (inr x)
 
-  inrLens : {A B C : Set} → (A → F B) → (C + A) → F (C + B)
+--  inrLens : {A B C : Set} → (A → F B) → (C + A) → F (C + B)
+  inrLens : {C : Set} → Traversal (C +_)
   inrLens f (inl x) = pure (inl x)
   inrLens f (inr x) = pure inr ⊛ f x
 open Lens
@@ -70,6 +78,8 @@ open Lens
 data Expect (E A : Set) : Set where
   expected : A → Expect E A
   unexpected : List E → Expect E A
+
+pattern unexpected-single x = unexpected (x ∷ [])
 
 module ExpectApplicativeM (E : Set) where
   F : (A : Set) → Set
@@ -142,7 +152,19 @@ record ToFrom (A B : Set) : Set where
     to : A → B
     from : B → A
 
+_↔_ : (A B : Set) → Set
 _↔_ = ToFrom
+
+record ToFromM (F : Set → Set) (A B : Set) : Set where
+  field
+    toM : A → F B
+    from : B → A
+
+PartialToFrom : {E : Set} → (A B : Set) → Set
+PartialToFrom {E} = ToFromM (Expect E)
+
+AmbiguousToFrom : (A B : Set) → Set
+AmbiguousToFrom = ToFromM List
 
 Id : {A : Set} → A ↔ A
 Id = record { to = id ; from = id } where id = λ x → x
@@ -209,7 +231,7 @@ module UnicodeChar where
 
   pattern valid-letter x = expected (inl x)
   pattern valid-mark x = expected (inr x)
-  pattern invalid-char x = unexpected (non-greek-char x ∷ [])
+  pattern invalid-char x = unexpected-single (non-greek-char x)
 
   from : Char → Expect NonGreekChar (ConcreteLetter + Mark)
   from 'Α' = valid-letter Α
