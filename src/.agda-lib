@@ -1,0 +1,5 @@
+name: greek
+include:
+  .
+  ../modules/agda-primary/modules/agda-primary-type/src
+  ../modules/agda-primary/src
