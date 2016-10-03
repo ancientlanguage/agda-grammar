@@ -1,4 +1,0 @@
-name: agda-greek
-include:
-  src
-  modules/freebroccolo/agda-prelude/src
