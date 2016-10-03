@@ -1,0 +1,15 @@
+notifications:
+  email: false
+
+sudo: required
+
+language: ruby
+
+services:
+  - docker
+
+before_install:
+  - docker pull scottfleischman/agda:2.5.1.1
+
+script:
+  - docker run -v $TRAVIS_BUILD_DIR:/opt/agda-build scottfleischman/agda:2.5.1.1 /bin/sh -c 'cd /opt/agda-build/src; agda AncientLanguage/Test.agda'
