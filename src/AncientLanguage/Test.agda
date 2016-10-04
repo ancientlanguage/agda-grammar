@@ -2,14 +2,11 @@ module AncientLanguage.Test where
 
 open import Agda.Builtin.Bool
 open import Agda.Builtin.Char
-open import Agda.Builtin.Nat
 open import Agda.Builtin.String
-open import AncientLanguage.PrimarySource
+open import AncientLanguage.Common
+open import AncientLanguage.PrimarySource using (Source; Group)
+open import AncientLanguage.PrimarySource.Raw
 open import AncientLanguage.PrimarySource.Greek.Sblgnt
-
-length : {A : Set} → List A → Nat
-length [] = 0
-length (_ ∷ xs) = suc (length xs)
 
 maybeCons : {A : Set} → Bool → A → List A → List A
 maybeCons true x xs = x ∷ xs
@@ -23,14 +20,13 @@ isBeta : Char → Bool
 isBeta 'β' = true
 isBeta _ = false
 
-betas : Content → List Char
-betas (word (word _ t _)) = filter isBeta (primStringToList t)
-betas _ = []
-
-map : {A B : Set} → (A → B) → List A → List B
-map f [] = []
-map f (x ∷ xs) = f x ∷ map f xs
+betas : String → List Char
+betas t = filter isBeta (primStringToList t)
 
 sourceBetas : Source -> List Char
-sourceBetas x = join (map betas (Source.getContents x))
-betaCount = length (join (map sourceBetas (Group.getSources sblgnt)))
+sourceBetas x = joinMap betas (raw x)
+
+betaCount = length (joinMap sourceBetas (Group.getSources sblgnt))
+
+testBetaCount : betaCount ≡ 3356
+testBetaCount = refl
