@@ -133,8 +133,11 @@ to (mark circumflex) = '\x0342' -- COMBINING GREEK PERISPOMENI
 to (mark iota-sub) = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 to (mark right-quote) = '\x2019'
 
-fromString : String → String + List (Symbol + Mark)
-fromString = overInl primStringFromList ∘ traverse ∘ List.map from ∘ primStringToList
+fromString : String → List Char + List (Symbol + Mark)
+fromString = travList (Over.travInl List.singleton ∘ from) ∘ primStringToList
+  where
+  open MonoidalApplicative listAppendMonoid
+  open Traverse inrApp
 
 toString : List (Symbol + Mark) → String
 toString = primStringFromList ∘ List.map to

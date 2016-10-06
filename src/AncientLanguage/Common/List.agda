@@ -22,3 +22,6 @@ map f (x ∷ xs) = f x ∷ map f xs
 joinMap : {A B : Set} → (f : A → List B) → (xs : List A) → List B
 joinMap f [] = []
 joinMap f (x ∷ xs) = append (f x) (joinMap f xs)
+
+singleton : {A : Set} → A → List A
+singleton x = x ∷ []
