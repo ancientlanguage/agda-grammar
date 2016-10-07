@@ -30,6 +30,15 @@ data _+_ (A B : Set) : Set where
 _∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
 (f ∘ g) x = f (g x)
 
+const : {A B : Set} → B → (A → B)
+const x _ = x
+
+Maybe : Set → Set
+Maybe A = ⊤ + A
+
+pattern none = inl tt
+pattern some x = inr x
+
 record Monoid (A : Set) : Set where
   constructor monoid
   field
