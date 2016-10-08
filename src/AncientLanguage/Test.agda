@@ -33,10 +33,9 @@ sourceBetas x = List.joinMap betas (raw x)
 betaCount = List.length (List.joinMap sourceBetas (Group.getSources sblgnt))
 
 matthew-symbol : List Char + List (List (Symbol + Mark))
-matthew-symbol = travList Unicode-Symbol.fromString (raw matthew)
+matthew-symbol = traverse Unicode-Symbol.fromString (raw matthew)
   where
-  open MonoidalApplicative listAppendMonoid
-  open Traverse inrApp
+  traverse = Traverse.travList (MonoidalApplicative.inrApp listAppendMonoid)
 
 test-matthew : inr (raw matthew) ≡ Over.travInr (List.map Unicode-Symbol.toString) matthew-symbol
 test-matthew = refl

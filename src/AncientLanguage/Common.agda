@@ -10,8 +10,8 @@ open List using (List; []; _∷_) public
 
 infixr 7 _×_
 infixr 6 _+_
-infixl 1 _∘_
-infixr 1 _,_
+infixr 9 _∘_
+infixr 6 _,_
 
 data ⊥ : Set where
 open import Agda.Builtin.Unit public
@@ -30,6 +30,10 @@ data _+_ (A B : Set) : Set where
 _∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
 (f ∘ g) x = f (g x)
 
+infixr 0 _$_
+_$_ : {A B : Set} → (A → B) → A → B
+f $ x = f x
+
 const : {A B : Set} → B → (A → B)
 const x _ = x
 
@@ -44,7 +48,7 @@ record Monoid (A : Set) : Set where
   field
     identity : A
     _•_ : (x y : A) → A
-  infixl 2 _•_
+  infixl 7 _•_
 
 listAppendMonoid : {A : Set} → Monoid (List A)
 listAppendMonoid = monoid [] List.append
