@@ -31,11 +31,11 @@ data _+_ (A B : Set) : Set where
   inl : A → A + B
   inr : B → A + B
 
-_∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
+_∘_ : {a b c : Level} → {A : Set a} → {B : Set b} → {C : Set c} → (B → C) → (A → B) → A → C
 (f ∘ g) x = f (g x)
 
 infixr 0 _$_
-_$_ : {A B : Set} → (A → B) → A → B
+_$_ : {a b : Level} → {A : Set a} → {B : Set b} → (A → B) → A → B
 f $ x = f x
 
 const : {A B : Set} → B → (A → B)
