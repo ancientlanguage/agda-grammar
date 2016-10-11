@@ -5,8 +5,12 @@ open import Agda.Builtin.Equality public
 open import Agda.Builtin.Nat using (Nat; zero; suc) public
 
 import AncientLanguage.Common.List
-module List = AncientLanguage.Common.List
-open List using (List; []; _∷_) public
+module Fwd = AncientLanguage.Common.List
+open Fwd
+  renaming (List to Fwd)
+  using ([])
+  renaming (_∷_ to _:>_)
+  public
 
 infixr 7 _×_
 infixr 6 _+_
@@ -50,8 +54,8 @@ record Monoid (A : Set) : Set where
     _•_ : (x y : A) → A
   infixl 7 _•_
 
-listAppendMonoid : {A : Set} → Monoid (List A)
-listAppendMonoid = monoid [] List.append
+fwdAppendMonoid : {A : Set} → Monoid (Fwd A)
+fwdAppendMonoid = monoid [] Fwd.append
 
 record Applicative (F : Set → Set) : Set1 where
   constructor applicative
@@ -117,9 +121,9 @@ Traversal F T = {A B : Set} → (A → F B) → T A → F (T B)
 module Traverse {F : Set → Set} (X : Applicative F) where
   open Applicative X
 
-  travList : Traversal F List
-  travList f [] = pure []
-  travList f (x ∷ xs) = pure _∷_ ⊛ f x ⊛ travList f xs
+  travFwd : Traversal F Fwd
+  travFwd f [] = pure []
+  travFwd f (x :> xs) = pure _:>_ ⊛ f x ⊛ travFwd f xs
 
   travInl : {A : Set} → Traversal F (_+ A)
   travInl f (inl x) = pure inl ⊛ f x
