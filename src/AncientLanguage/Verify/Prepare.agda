@@ -34,6 +34,24 @@ Source X = SourceId × X
 SourceWords : Set → Set
 SourceWords = Source ∘ Fwd ∘ Milestoned
 
+withMilestone
+  : {A B : Set}
+  → (A → Fwd A + B)
+  → Milestone × A
+  → Fwd (Milestone × A) + Milestone × B
+withMilestone f (m , a) with f a
+withMilestone f (m , _) | _+_.inl a = _+_.inl (Fwd.map (m ,_) a)
+withMilestone f (m , _) | _+_.inr b = _+_.inr (m , b)
+
+sourceWordsPath
+  : {A B : Set}
+  → (A → Fwd A + B)
+  → SourceId × (Fwd $ Milestone × A)
+  → Fwd (Milestone × A) + SourceId × (Fwd $ Milestone × B)
+sourceWordsPath f = snd ∘ fwd $ withMilestone f
+  where
+  open TraverseInr
+
 eachWord
   : {F : Set → Set}
   → (X : Applicative F)

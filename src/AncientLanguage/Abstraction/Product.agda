@@ -1,11 +1,10 @@
 module AncientLanguage.Abstraction.Product where
 
-infixr 7 _×_
-infixr 6 _,_
-
 data ⊥ : Set where
 open import Agda.Builtin.Unit public
 
+infixr 7 _×_
+infixr 6 _,_
 record _×_ (A B : Set) : Set where
   no-eta-equality
   constructor _,_

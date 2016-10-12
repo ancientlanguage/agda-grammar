@@ -8,8 +8,8 @@ open import AncientLanguage.Grammar.Greek.Script.Symbol
 open import AncientLanguage.Grammar.Greek.Script.Mark
 import AncientLanguage.Grammar.Greek.Script.Unicode-Symbol
 
-prepared-sources : Fwd ∘ SourceWords $ String × EndSentence
-prepared-sources = prepareGroup sblgnt 
+input : Fwd ∘ SourceWords $ String × EndSentence
+input = prepareGroup sblgnt 
 
-stage000-sources : Fwd ∘ SourceWords $ (Fwd $ Symbol + Mark) × EndSentence
-stage000-sources = {!!}
+output : Fwd ∘ SourceWords $ (Fwd $ Symbol + Mark) × EndSentence
+output = {!!}
