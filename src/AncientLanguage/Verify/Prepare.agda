@@ -2,7 +2,7 @@ module AncientLanguage.Verify.Prepare where
 
 open import Agda.Builtin.Char
 open import Agda.Builtin.String
-open import AncientLanguage.Common
+open import AncientLanguage.Abstraction
 import AncientLanguage.PrimarySource as PS
 
 data ¶Num : Set where
@@ -34,8 +34,19 @@ Source X = SourceId × X
 SourceWords : Set → Set
 SourceWords = Source ∘ Fwd ∘ Milestoned
 
+eachWord
+  : {F : Set → Set}
+  → (X : Applicative F)
+  → {A B : Set}
+  → (A → F B)
+  → Fwd ∘ SourceWords $ A
+  → F (Fwd ∘ SourceWords $ B)
+eachWord X = fwd ∘ snd ∘ fwd ∘ snd
+  where
+  open Traverse X
+
 forgetMilestone : {X : Set} → SourceWords X → Source (Fwd X)
-forgetMilestone sw = (Over.travSnd ∘ Over.travFwd) _×_.snd sw
+forgetMilestone sw = (TraverseId.snd ∘ TraverseId.fwd) _×_.snd sw
 
 suffixEndSentence : String → EndSentence
 suffixEndSentence x = go not-end-sentence $ primStringToList x
@@ -52,8 +63,8 @@ prepareContents = go emptyMilestone
   open Traverse
   go : Milestone → Fwd PS.Content → Fwd (Milestoned (String × EndSentence))
   go m [] = []
-  go m (PS.milestone (PS.verse x) :> xs) = go (Over.travFst (const (some x)) m) xs 
-  go m (PS.milestone PS.paragraph :> xs) = go (Over.travSnd next¶ m) xs 
+  go m (PS.milestone (PS.verse x) :> xs) = go (TraverseId.fst (Function.const (some x)) m) xs 
+  go m (PS.milestone PS.paragraph :> xs) = go (TraverseId.snd next¶ m) xs 
   go m (PS.word (PS.word p t s) :> xs) = m , t , suffixEndSentence s :> go m xs
 
 prepareSource : String → PS.Source → SourceWords $ String × EndSentence

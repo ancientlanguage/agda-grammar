@@ -3,7 +3,7 @@
 module AncientLanguage.PrimarySource.Raw where
 
 open import Agda.Builtin.String
-open import AncientLanguage.Common
+open import AncientLanguage.Abstraction
 import AncientLanguage.PrimarySource as PS
 
 rawContent : PS.Content → Fwd String

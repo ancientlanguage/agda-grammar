@@ -2,13 +2,13 @@ module AncientLanguage.Grammar.Greek.Script.Unicode-Symbol where
 
 open import Agda.Builtin.Char
 open import Agda.Builtin.String
-open import AncientLanguage.Common
+open import AncientLanguage.Abstraction
 open import AncientLanguage.Grammar.Greek.Script.Mark
 open import AncientLanguage.Grammar.Greek.Script.Symbol
 
-pattern valid-symbol x = inr (inl x)
-pattern valid-mark x = inr (inr x)
-pattern invalid-char x = inl x
+pattern valid-symbol x = CP.inr (CP.inl x)
+pattern valid-mark x = CP.inr (CP.inr x)
+pattern invalid-char x = CP.inl x
 
 from : Char → Char + (Symbol + Mark)
 from 'Α' = valid-symbol Α
@@ -71,8 +71,8 @@ from '\x2019' = valid-mark right-quote
 from x = invalid-char x
 
 
-pattern symbol x = inl x
-pattern mark x = inr x
+pattern symbol x = CP.inl x
+pattern mark x = CP.inr x
 
 to : Symbol + Mark → Char
 to (symbol Α) = 'Α'
@@ -134,10 +134,9 @@ to (mark iota-sub) = '\x0345' -- COMBINING GREEK YPOGEGRAMMENI
 to (mark right-quote) = '\x2019'
 
 fromString : String → Fwd Char + Fwd (Symbol + Mark)
-fromString = travFwd (Over.travInl Fwd.singleton ∘ from) ∘ primStringToList
+fromString = TraverseInr.fwd asFwdChar ∘ primStringToList
   where
-  open MonoidalApplicative fwdAppendMonoid
-  open Traverse inrApp
+  asFwdChar = TraverseId.inl Fwd.singleton ∘ from
 
 toString : Fwd (Symbol + Mark) → String
 toString = primStringFromList ∘ Fwd.map to

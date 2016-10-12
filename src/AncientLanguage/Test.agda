@@ -3,7 +3,7 @@ module AncientLanguage.Test where
 open import Agda.Builtin.Bool
 open import Agda.Builtin.Char
 open import Agda.Builtin.String
-open import AncientLanguage.Common
+open import AncientLanguage.Abstraction
 open import AncientLanguage.PrimarySource using (Source; Group)
 open import AncientLanguage.PrimarySource.Raw
 open import AncientLanguage.PrimarySource.Greek.Sblgnt
@@ -33,9 +33,7 @@ sourceBetas x = Fwd.joinMap betas (raw x)
 betaCount = Fwd.length (Fwd.joinMap sourceBetas (Group.getSources sblgnt))
 
 matthew-symbol : Fwd Char + Fwd (Fwd (Symbol + Mark))
-matthew-symbol = traverse Unicode-Symbol.fromString (raw matthew)
-  where
-  traverse = Traverse.travFwd (MonoidalApplicative.inrApp fwdAppendMonoid)
+matthew-symbol = TraverseInr.fwd Unicode-Symbol.fromString (raw matthew)
 
-test-matthew : inr (raw matthew) ≡ Over.travInr (Fwd.map Unicode-Symbol.toString) matthew-symbol
+test-matthew : CP.inr (raw matthew) ≡ TraverseId.inr (Fwd.map Unicode-Symbol.toString) matthew-symbol
 test-matthew = refl
