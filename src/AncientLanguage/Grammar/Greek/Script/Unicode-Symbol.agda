@@ -140,3 +140,13 @@ stringToSymbol = TraverseInr.fwd asFwdChar ∘ primStringToList
 
 symbolToString : Fwd (Symbol + Mark) → String
 symbolToString = primStringFromList ∘ Fwd.map from
+
+module Test where
+  around : (x : String) → {p : CP.inrSet (stringToSymbol x)} → Set
+  around x {p} = symbolToString (CP.asInr (stringToSymbol x) {p}) ≡ x
+
+  symbols : around "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρσςτυφχψω"
+  symbols = refl
+
+  marks : around "α\x0300\x0301\x0308\x0313\x0314\x0342\x0345\x2019"
+  marks = refl
