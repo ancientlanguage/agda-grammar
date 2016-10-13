@@ -13,10 +13,9 @@ input : Fwd ∘ SourceWords $ String × EndSentence
 input = prepareGroup sblgnt
 
 output-w/error : Fwd (Milestone × Char) + (Fwd ∘ SourceWords $ (Fwd $ Symbol + Mark) × EndSentence)
-output-w/error = (sourceWordsPath ∘ fst) fromString input
+output-w/error = (sourceWordsPath ∘ fst) stringToSymbol input
   where
   open TraverseInr
 
 output : Fwd ∘ SourceWords $ (Fwd $ Symbol + Mark) × EndSentence
 output = CP.asInr output-w/error
-

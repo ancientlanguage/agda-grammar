@@ -5,5 +5,5 @@ open import AncientLanguage.Verify.Prepare
 open import AncientLanguage.Grammar.Greek.Script.Unicode-Symbol
 open import AncientLanguage.Verify.Greek.Stage.Stage000.Output
 
-back : (sourceWordsPathId ∘ TraverseId.fst) toString output ≡ input
+back : (sourceWordsPathId ∘ TraverseId.fst) symbolToString output ≡ input
 back = {!!} -- refl
