@@ -52,6 +52,15 @@ sourceWordsPath f = fwd ∘ snd ∘ fwd $ withMilestone f
   where
   open TraverseInr
 
+sourceWordsPathId
+  : {A B : Set}
+  → (A → B)
+  → Fwd $ SourceId × (Fwd $ Milestone × A)
+  → Fwd $ SourceId × (Fwd $ Milestone × B)
+sourceWordsPathId = fwd ∘ snd ∘ fwd ∘ snd
+  where
+  open TraverseId
+
 eachWord
   : {F : Set → Set}
   → (X : Applicative F)

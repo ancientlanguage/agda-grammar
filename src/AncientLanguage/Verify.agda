@@ -1,3 +1,3 @@
 module AncientLanguage.Verify where
 
-import AncientLanguage.Verify.Stage
+import AncientLanguage.Verify.Greek.Stage
