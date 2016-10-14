@@ -33,47 +33,35 @@ Source : Set → Set
 Source X = SourceId × X
 SourceWords : Set → Set
 SourceWords = Source ∘ Fwd ∘ Milestoned
+AllWords : Set → Set
+AllWords = Fwd ∘ SourceWords
 
 withMilestone
   : {A B C : Set}
   → (A → Fwd C + B)
   → Milestone × A
-  → Fwd (Milestone × C) + Milestone × B
+  → Fwd (Milestone × A × C) + Milestone × B
 withMilestone f (m , a) with f a
-withMilestone f (m , _) | _+_.inl c = _+_.inl (Fwd.map (m ,_) c)
-withMilestone f (m , _) | _+_.inr b = _+_.inr (m , b)
+withMilestone f (m , a) | _+_.inl c = _+_.inl (Fwd.map (λ x → m , a , x) c)
+withMilestone f (m , a) | _+_.inr b = _+_.inr (m , b)
 
-sourceWordsPath
+allWordsPath
   : {A B C : Set}
   → (A → Fwd C + B)
   → Fwd $ SourceId × (Fwd $ Milestone × A)
-  → Fwd (Milestone × C) + Fwd (SourceId × (Fwd $ Milestone × B))
-sourceWordsPath f = fwd ∘ snd ∘ fwd $ withMilestone f
+  → Fwd (Milestone × A × C) + Fwd (SourceId × (Fwd $ Milestone × B))
+allWordsPath f = fwd ∘ snd ∘ fwd $ withMilestone f
   where
   open TraverseInr
 
-sourceWordsPathId
+allWordsPathId
   : {A B : Set}
   → (A → B)
   → Fwd $ SourceId × (Fwd $ Milestone × A)
   → Fwd $ SourceId × (Fwd $ Milestone × B)
-sourceWordsPathId = fwd ∘ snd ∘ fwd ∘ snd
+allWordsPathId = fwd ∘ snd ∘ fwd ∘ snd
   where
   open TraverseId
-
-eachWord
-  : {F : Set → Set}
-  → (X : Applicative F)
-  → {A B : Set}
-  → (A → F B)
-  → Fwd ∘ SourceWords $ A
-  → F (Fwd ∘ SourceWords $ B)
-eachWord X = fwd ∘ snd ∘ fwd ∘ snd
-  where
-  open Traverse X
-
-forgetMilestone : {X : Set} → SourceWords X → Source (Fwd X)
-forgetMilestone sw = (TraverseId.snd ∘ TraverseId.fwd) _×_.snd sw
 
 suffixEndSentence : String → EndSentence
 suffixEndSentence x = go not-end-sentence $ primStringToList x
@@ -97,5 +85,5 @@ prepareContents = go emptyMilestone
 prepareSource : String → PS.Source → SourceWords $ String × EndSentence
 prepareSource groupId s = sourceId groupId (PS.Source.getId s) , prepareContents (PS.Source.getContents s)
 
-prepareGroup : PS.Group → Fwd ∘ SourceWords $ String × EndSentence
+prepareGroup : PS.Group → AllWords $ String × EndSentence
 prepareGroup g = Fwd.map (prepareSource (PS.Group.getId g)) (PS.Group.getSources g)

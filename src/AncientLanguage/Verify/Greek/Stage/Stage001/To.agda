@@ -8,6 +8,6 @@ import AncientLanguage.Grammar.Greek.Script.Symbol-Letter as Symbol-Letter
 to
   : Fwd ∘ SourceWords $ (Fwd $ Symbol + Mark) × EndSentence
   → Fwd ∘ SourceWords $ (Fwd $ LetterCaseFinalRecord + Mark) × EndSentence
-to = (sourceWordsPathId ∘ fst ∘ fwd ∘ inl) Symbol-Letter.to
+to = (allWordsPathId ∘ fst ∘ fwd ∘ inl) Symbol-Letter.to
   where
   open TraverseId
