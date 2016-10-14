@@ -1,1 +1,7 @@
 *.agdai
+*.hi
+*.o
+*.agda#
+*.agda~
+.#*.agda
+**/MAlonzo/
