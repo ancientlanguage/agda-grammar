@@ -26,11 +26,11 @@ module Coproduct where
   asInr (inl x) {()}
   asInr (inr x) {tt} = x
 open Coproduct using (_+_) public
-module CP = Coproduct
+module Sum = Coproduct
 
 
 Maybe : Set → Set
 Maybe A = ⊤ + A
 
-pattern none = CP.inl tt
-pattern some x = CP.inr x
+pattern none = Sum.inl tt
+pattern some x = Sum.inr x

@@ -16,12 +16,12 @@ module Traverse {F : Set → Set} (X : Applicative F) where
   fwd f (x :> xs) = pure _:>_ ⊛ f x ⊛ fwd f xs
 
   inl : {A : Set} → Traversal F (_+ A)
-  inl f (CP.inl x) = pure CP.inl ⊛ f x
-  inl f (CP.inr x) = pure CP.inr ⊛ pure x
+  inl f (Sum.inl x) = pure Sum.inl ⊛ f x
+  inl f (Sum.inr x) = pure Sum.inr ⊛ pure x
 
   inr : {A : Set} → Traversal F (A +_)
-  inr f (CP.inl x) = pure CP.inl ⊛ pure x
-  inr f (CP.inr x) = pure CP.inr ⊛ f x
+  inr f (Sum.inl x) = pure Sum.inl ⊛ pure x
+  inr f (Sum.inr x) = pure Sum.inr ⊛ f x
 
   fst : {A : Set} → Traversal F (_× A)
   fst f (x , y) = pure _,_ ⊛ f x ⊛ pure y

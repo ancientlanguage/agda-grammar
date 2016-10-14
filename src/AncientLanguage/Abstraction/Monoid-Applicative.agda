@@ -12,25 +12,25 @@ module Monoid-Applicative {A : Set} (X : Monoid A) where
   inl = applicative pure _⊛_
     where
     pure : {B : Set} → B → B + A
-    pure = CP.inl
+    pure = Sum.inl
 
     _⊛_ : {B1 B2 : Set} → ((B1 → B2) + A) → (B1 + A) → (B2 + A)
-    CP.inl f ⊛ CP.inl x = CP.inl (f x)
-    CP.inl _ ⊛ CP.inr x = CP.inr x
-    CP.inr x ⊛ CP.inl _ = CP.inr x
-    CP.inr x ⊛ CP.inr y = CP.inr (x • y)
+    Sum.inl f ⊛ Sum.inl x = Sum.inl (f x)
+    Sum.inl _ ⊛ Sum.inr x = Sum.inr x
+    Sum.inr x ⊛ Sum.inl _ = Sum.inr x
+    Sum.inr x ⊛ Sum.inr y = Sum.inr (x • y)
 
   inr : Applicative (A +_)
   inr = applicative pure _⊛_
     where
     pure : {B : Set} → B → A + B
-    pure = CP.inr
+    pure = Sum.inr
 
     _⊛_ : {B1 B2 : Set} → (A + (B1 → B2)) → (A + B1) → (A + B2)
-    CP.inl x ⊛ CP.inl y = CP.inl (x • y)
-    CP.inl x ⊛ CP.inr _ = CP.inl x
-    CP.inr _ ⊛ CP.inl x = CP.inl x
-    CP.inr f ⊛ CP.inr x = CP.inr (f x)
+    Sum.inl x ⊛ Sum.inl y = Sum.inl (x • y)
+    Sum.inl x ⊛ Sum.inr _ = Sum.inl x
+    Sum.inr _ ⊛ Sum.inl x = Sum.inl x
+    Sum.inr f ⊛ Sum.inr x = Sum.inr (f x)
 
   fst : Applicative (_× A)
   fst = applicative pure _⊛_

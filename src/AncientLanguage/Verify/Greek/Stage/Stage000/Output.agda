@@ -18,4 +18,4 @@ output-w/error = (sourceWordsPath ∘ fst) stringToSymbol input
   open TraverseInr
 
 output : Fwd ∘ SourceWords $ (Fwd $ Symbol + Mark) × EndSentence
-output = CP.asInr output-w/error
+output = Sum.asInr output-w/error

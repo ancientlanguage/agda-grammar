@@ -6,9 +6,9 @@ open import AncientLanguage.Abstraction
 open import AncientLanguage.Grammar.Greek.Script.Mark
 open import AncientLanguage.Grammar.Greek.Script.Symbol
 
-pattern valid-symbol x = CP.inr (CP.inl x)
-pattern valid-mark x = CP.inr (CP.inr x)
-pattern invalid-char x = CP.inl x
+pattern valid-symbol x = Sum.inr (Sum.inl x)
+pattern valid-mark x = Sum.inr (Sum.inr x)
+pattern invalid-char x = Sum.inl x
 
 to : Char → Char + (Symbol + Mark)
 to 'Α' = valid-symbol Α
@@ -71,8 +71,8 @@ to '\x2019' = valid-mark right-quote
 to x = invalid-char x
 
 
-pattern symbol x = CP.inl x
-pattern mark x = CP.inr x
+pattern symbol x = Sum.inl x
+pattern mark x = Sum.inr x
 
 from : Symbol + Mark → Char
 from (symbol Α) = 'Α'
@@ -142,8 +142,8 @@ symbolToString : Fwd (Symbol + Mark) → String
 symbolToString = primStringFromList ∘ Fwd.map from
 
 module Test where
-  around : (x : String) → {p : CP.inrSet (stringToSymbol x)} → Set
-  around x {p} = symbolToString (CP.asInr (stringToSymbol x) {p}) ≡ x
+  around : (x : String) → {p : Sum.inrSet (stringToSymbol x)} → Set
+  around x {p} = symbolToString (Sum.asInr (stringToSymbol x) {p}) ≡ x
 
   symbols : around "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρσςτυφχψω"
   symbols = refl
