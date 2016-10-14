@@ -28,7 +28,8 @@ data LetterCaseFinal : Letter → Case → Final → Set where
   π : (c : Case) → LetterCaseFinal π c n/a-final
   ρ : (c : Case) → LetterCaseFinal ρ c n/a-final
   Σ : LetterCaseFinal σ upper n/a-final
-  σ : (f : Final) → LetterCaseFinal σ lower f
+  σ : LetterCaseFinal σ lower is-final
+  ς : LetterCaseFinal σ lower not-final
   τ : (c : Case) → LetterCaseFinal τ c n/a-final
   υ : (c : Case) → LetterCaseFinal υ c n/a-final
   φ : (c : Case) → LetterCaseFinal φ c n/a-final
