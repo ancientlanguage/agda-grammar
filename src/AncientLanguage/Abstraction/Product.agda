@@ -18,6 +18,14 @@ module Coproduct where
     inl : A → A + B
     inr : B → A + B
 
+  inlSet : {A B : Set} → A + B → Set
+  inlSet (inl _) = ⊤
+  inlSet (inr _) = ⊥
+
+  asInl : {A B : Set} → (x : A + B) → {p : inlSet x} → A
+  asInl (inl x) {tt} = x
+  asInl (inr x) {()}
+
   inrSet : {A B : Set} → A + B → Set
   inrSet (inl _) = ⊥
   inrSet (inr _) = ⊤

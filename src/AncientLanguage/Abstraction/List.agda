@@ -17,6 +17,9 @@ module Fwd where
   append [] ys = ys
   append (x :> xs) ys = x :> append xs ys
 
+  infixl 1 _++_
+  _++_ = append
+
   join : {A : Set} → Fwd (Fwd A) → Fwd A
   join [] = []
   join (x :> xs) = append x (join xs)
@@ -31,5 +34,9 @@ module Fwd where
 
   singleton : {A : Set} → A → Fwd A
   singleton x = x :> []
+
+  foldr : {A B : Set} → (A → B → B) → B → Fwd A → B
+  foldr f b [] = b
+  foldr f b (x :> xs) = f x (foldr f b xs)
 
 open Fwd using (Fwd; []; _:>_) public
