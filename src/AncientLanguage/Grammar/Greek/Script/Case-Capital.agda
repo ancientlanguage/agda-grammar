@@ -40,3 +40,14 @@ from : {A : Set} → Fwd (Letter × A) × Capital → Fwd (Letter × Case × A)
 from ([] , capital) = []
 from ((x :> xs) , capital) = set-case upper x :> Fwd.map (set-case lower) xs
 from (xs , lowercase) = Fwd.map (set-case lower) xs
+
+module Test where
+  open import AncientLanguage.Grammar.Greek.Script.Symbol
+  open import AncientLanguage.Grammar.Greek.Script.Mark
+  import AncientLanguage.Grammar.Greek.Script.Unicode-Symbol as Unicode-Symbol
+  import AncientLanguage.Grammar.Greek.Script.Symbol-Letter as Symbol-Letter
+  cap-word : Fwd (Letter × Case × Final + Mark)
+  cap-word =
+    (TraverseId.fwd ∘ TraverseId.inl)
+    (toProduct ∘ Symbol-Letter.to)
+    (Sum.asInr (Unicode-Symbol.stringToSymbol "Βίβλος"))

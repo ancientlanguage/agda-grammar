@@ -44,3 +44,7 @@ record LetterCaseFinalRecord : Set where
     {case} : Case
     {final} : Final
     letter-case-final : LetterCaseFinal letter case final
+
+open import AncientLanguage.Abstraction
+toProduct : LetterCaseFinalRecord → Letter × Case × Final
+toProduct (letter-case-final-record {l} {c} {f} _) = l , c , f
