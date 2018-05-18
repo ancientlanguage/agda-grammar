@@ -1,14 +1,19 @@
 module Base where
 
 infixr 4 _+_
-infixr 5 _*_
+infixr 5 _×_
+infix 1 _,_
+infix 1 _~_
+
+record ⊤ : Set where
+  constructor tt
 
 data _+_ (A B : Set) : Set where
   inl : (a : A) → A + B
   inr : (b : B) → A + B
 
-record _*_ (A B : Set) : Set where
-  constructor pair
+record _×_ (A B : Set) : Set where
+  constructor _,_
   field
     fst : A
     snd : B
@@ -61,44 +66,22 @@ module List1M where
   prepend : {A : Set} (a : A) (list : List1 A) → List1 A
   prepend a (list1 a2 rest) = list1 a (a2 ∷ rest)
 
-module +GroupAdjacent (A B : Set) where
-  to-next : (ab : A + B) (result : List (List1 A + List1 B)) → List (List1 A + List1 B)
-  to-next (inl a) []                       = inl (list1 a []) ∷ []
-  to-next (inl a)        (inl as ∷ result) = inl (List1M.prepend a as) ∷ result
-  to-next (inl a) result@(inr _ ∷ _)       = inl (list1 a []) ∷ result
-  to-next (inr b) []                       = inr (list1 b []) ∷ []
-  to-next (inr b) result@(inl _ ∷ _)       = inr (list1 b []) ∷ result
-  to-next (inr b)        (inr bs ∷ result) = inr (List1M.prepend b bs) ∷ result
+module ×List (A : Set) where
+  to : List A → ⊤ + A × List A
+  to [] = inl _
+  to (x ∷ xs) = inr (x , xs)
 
-  to : List (A + B) → List (List1 A + List1 B)
-  to [] = []
-  to (x ∷ xs) = to-next x (to xs)
+  from : ⊤ + A × List A → List A
+  from (inl tt) = []
+  from (inr (x , xs)) = x ∷ xs
 
-  from : List (List1 A + List1 B) → List (A + B)
-  from-as : List A → List (List1 A + List1 B) → List (A + B)
-  from-bs : List B → List (List1 A + List1 B) → List (A + B)
+  to-from : (x : ⊤ + A × List A) → to (from x) ≡ x
+  to-from (inl tt) = refl
+  to-from (inr (x , xs)) = refl
 
-  from-as [] rest = from rest
-  from-as (a ∷ as) rest = inl a ∷ from-as as rest
-
-  from-bs [] rest = from rest
-  from-bs (b ∷ bs) rest = inr b ∷ from-bs bs rest
-
-  from [] = []
-  from (inl (list1 a as) ∷ xs) = inl a ∷ from-as as xs
-  from (inr (list1 b bs) ∷ xs) = inr b ∷ from-bs bs xs
-
-  to-from : (result : List (List1 A + List1 B)) → to (from result) ≡ result
-  to-from [] = refl
-  to-from (inl (list1 a []) ∷ []) = refl
-  to-from (inl (list1 a []) ∷ inl (list1 a₁ rest) ∷ result) = {!!}
-  to-from (inl (list1 a []) ∷ inr bs ∷ result) = {!!}
-  to-from (inl (list1 a (x ∷ rest)) ∷ result) = {!!}
-  to-from (inr b ∷ result) = {!!}
-
-  from-to : (input : List (A + B)) → from (to input) ≡ input
+  from-to : (xs : List A) → from (to xs) ≡ xs
   from-to [] = refl
-  from-to (inl a ∷ []) = refl
-  from-to (inl a ∷ inl a2 ∷ input) = {!!}
-  from-to (inl a ∷ inr b ∷ input) = {!!}
-  from-to (inr b ∷ input) = {!!}
+  from-to (x ∷ xs) = refl
+
+×List : {A : Set} → List A ~ ⊤ + A × List A
+×List {A} = record { ×List A }
